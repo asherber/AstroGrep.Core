@@ -147,6 +147,7 @@
     <Compile Include="Plugin\IAstroGrepPlugin.cs" />
     <Compile Include="Plugin\PluginCollection.cs" />
     <Compile Include="Plugin\PluginWrapper.cs" />
+    <Compile Include="SearchInterfaces.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
