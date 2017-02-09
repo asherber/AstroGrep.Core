@@ -1,11 +1,11 @@
-﻿using libAstroGrep.EncodingDetection;
+﻿using AstroGrep.Core.EncodingDetection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace libAstroGrep
+namespace AstroGrep.Core
 {
     /// <summary>
     /// Implement ISearchSpec interface.

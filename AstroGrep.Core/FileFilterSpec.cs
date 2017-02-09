@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace libAstroGrep
+namespace AstroGrep.Core
 {
     /// <summary>
     /// Implement IFileFilterSpec interface.

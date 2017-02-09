@@ -1,6 +1,6 @@
 using System;
 
-namespace libAstroGrep.Plugin
+namespace AstroGrep.Core.Plugin
 {
    /// <summary>
    /// Interface definition for AstroGrep plugins.

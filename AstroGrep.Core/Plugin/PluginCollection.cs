@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace libAstroGrep.Plugin
+namespace AstroGrep.Core.Plugin
 {
    /// <summary>
    /// Used to store PluginWrapper modules in a type-specific collection.

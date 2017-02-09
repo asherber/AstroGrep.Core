@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace libAstroGrep.EncodingDetection
+namespace AstroGrep.Core.EncodingDetection
 {
    /// <summary>
    /// File detection encoding options.

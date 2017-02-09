@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace libAstroGrep
+namespace AstroGrep.Core
 {
    /// <summary>
    /// Used to define each FilterItem's type is and what it can do.

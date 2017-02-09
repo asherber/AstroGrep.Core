@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace libAstroGrep.EncodingDetection
+namespace AstroGrep.Core.EncodingDetection
 {
    /// <summary>
    /// Used to force a file to load with a certain Encoding.

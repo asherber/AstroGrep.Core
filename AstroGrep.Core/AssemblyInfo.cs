@@ -5,10 +5,10 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("libAstroGrep")]
+[assembly: AssemblyTitle("AstroGrep.Core")]
 [assembly: AssemblyDescription("This application and its source code are freely distributable.")]
 [assembly: AssemblyCompany("AstroComma Inc.")]
-[assembly: AssemblyProduct("libAstroGrep")]
+[assembly: AssemblyProduct("AstroGrep.Core")]
 [assembly: AssemblyCopyright("Program and source copyright (c) AstroComma Incorporated")]
 [assembly: AssemblyTrademark("AstroGrep")]
 [assembly: AssemblyCulture("")]

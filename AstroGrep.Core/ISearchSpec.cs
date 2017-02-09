@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 
-using libAstroGrep.EncodingDetection;
+using AstroGrep.Core.EncodingDetection;
 
-namespace libAstroGrep
+namespace AstroGrep.Core
 {
    /// <summary>
    /// ISearchSpec interface to Grep.

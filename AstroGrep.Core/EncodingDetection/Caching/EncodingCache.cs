@@ -5,9 +5,9 @@ using System.IO.Compression;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 
-using libAstroGrep;
+using AstroGrep.Core;
 
-namespace libAstroGrep.EncodingDetection.Caching
+namespace AstroGrep.Core.EncodingDetection.Caching
 {
    /// <summary>
    /// Provides the ability to cache file encodings and save/load them to disk.  

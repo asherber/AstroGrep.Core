@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace libAstroGrep
+namespace AstroGrep.Core
 {
    /// <summary>
    /// 
@@ -32,32 +32,36 @@ namespace libAstroGrep
    /// <history>
    /// [Curtis_Beard]      03/31/2015	ADD: rework Grep/Matches
    /// </history>
-   public class MatchResultLineMatch
+   public class MatchResultLine
    {
-      /// <summary>Start position of found match in this line</summary>
-      public int StartPosition { get; set; }
+      /// <summary>Current line</summary>
+      public string Line { get; set; }
 
-      /// <summary>Length of found match in this line</summary>
-      public int Length { get; set; }
+      /// <summary>Current line number</summary>
+      public int LineNumber { get; set; }
+
+      /// <summary>Current column number</summary>
+      public int ColumnNumber { get; set; }
+
+      /// <summary>Determines if this line has a match within it</summary>
+      public bool HasMatch { get; set; }
+
+      /// <summary>List of line matches</summary>
+      public List<MatchResultLineMatch> Matches { get; set; }
 
       /// <summary>
-      /// Creates an instance of a MatchResultLineMatch.
+      /// Initializes this class.
       /// </summary>
-      public MatchResultLineMatch()
+      /// <history>
+      /// [Curtis_Beard]      03/31/2015	ADD: rework Grep/Matches
+      /// </history>
+      public MatchResultLine()
       {
-         StartPosition = -1;
-         Length = 0;
-      }
-
-      /// <summary>
-      /// Creates an instance of a MatchResultLineMatch with a given start position and length.
-      /// </summary>
-      /// <param name="startPosition">Start position of found match in this line</param>
-      /// <param name="length">Length of found match in this line</param>
-      public MatchResultLineMatch(int startPosition, int length)
-      {
-         StartPosition = startPosition;
-         Length = length;
+         Line = string.Empty;
+         LineNumber = 1;
+         ColumnNumber = 1;
+         HasMatch = false;
+         Matches = new List<MatchResultLineMatch>();
       }
    }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace libAstroGrep
+namespace AstroGrep.Core
 {
    /// <summary>
    /// Container for an exclusion item. [DEPRECATED, use FilterItem]

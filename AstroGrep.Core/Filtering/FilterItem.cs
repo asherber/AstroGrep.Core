@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace libAstroGrep
+namespace AstroGrep.Core
 {
    /// <summary>
    /// Used to store a user's exclusion input.
@@ -313,7 +313,7 @@ namespace libAstroGrep
       /// </history>
       private bool CheckLongAgainstOption(long checkValue)
       {
-         if (Enabled && (FilterType.ValueType == FilterType.ValueTypes.Long || FilterType.ValueType == libAstroGrep.FilterType.ValueTypes.Size))
+         if (Enabled && (FilterType.ValueType == FilterType.ValueTypes.Long || FilterType.ValueType == AstroGrep.Core.FilterType.ValueTypes.Size))
          {
             long itemValue = Convert.ToInt64(Value);
 

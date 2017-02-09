@@ -1,4 +1,4 @@
-namespace libAstroGrep.Plugin
+namespace AstroGrep.Core.Plugin
 {
    /// <summary>
    /// Wrapper class for IAstroGrepPlugins.

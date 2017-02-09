@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 
-using libAstroGrep.EncodingDetection;
-using libAstroGrep.EncodingDetection.Caching;
-using libAstroGrep.Plugin;
+using AstroGrep.Core.EncodingDetection;
+using AstroGrep.Core.EncodingDetection.Caching;
+using AstroGrep.Core.Plugin;
 
-namespace libAstroGrep
+namespace AstroGrep.Core
 {
    /// <summary>
    /// Searches files, given a starting directory, for a given search text.  Results 

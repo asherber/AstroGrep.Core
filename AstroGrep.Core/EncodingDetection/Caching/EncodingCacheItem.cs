@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace libAstroGrep.EncodingDetection.Caching
+namespace AstroGrep.Core.EncodingDetection.Caching
 {
    /// <summary>
    /// Encapsulates an encoding cache item.

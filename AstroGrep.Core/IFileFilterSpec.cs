@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace libAstroGrep
+namespace AstroGrep.Core
 {
    /// <summary>
    /// Interface to grep that allow filter of files.
