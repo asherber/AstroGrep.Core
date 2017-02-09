@@ -135,6 +135,7 @@
     <Compile Include="EncodingDetection\Ude\Ude.Core\UniversalDetector.cs" />
     <Compile Include="EncodingDetection\Ude\Ude.Core\UTF8Prober.cs" />
     <Compile Include="EncodingDetection\WinMergeEncodingDetector.cs" />
+    <Compile Include="FileFilterSpec.cs" />
     <Compile Include="Filtering\ExclusionItem.cs" />
     <Compile Include="Filtering\FilterItem.cs" />
     <Compile Include="Filtering\FilterType.cs" />
@@ -147,7 +148,7 @@
     <Compile Include="Plugin\IAstroGrepPlugin.cs" />
     <Compile Include="Plugin\PluginCollection.cs" />
     <Compile Include="Plugin\PluginWrapper.cs" />
-    <Compile Include="SearchInterfaces.cs" />
+    <Compile Include="SearchSpec.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
