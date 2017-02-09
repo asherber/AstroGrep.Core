@@ -225,7 +225,7 @@ namespace libAstroGrep
       public void Execute()
       {
          // search only specified file paths (usually used for search in results)
-         if (SearchSpec.StartFilePaths != null && SearchSpec.StartFilePaths.Length > 0)
+         if (SearchSpec.StartFilePaths != null && SearchSpec.StartFilePaths.Any())
          {
             foreach (string path in SearchSpec.StartFilePaths)
             {

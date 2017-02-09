@@ -16,13 +16,13 @@ namespace libAstroGrep
     /// [Curtis_Beard]      04/07/2015	CHG: remove line numbers
     /// [Curtis_Beard]	   05/26/2015	FIX: 69, add performance setting for file detection
     /// </history>
-    public struct SearchSpec : ISearchSpec
+    public class SearchSpec : ISearchSpec
     {
         /// <summary>starting directories</summary>
-        public string[] StartDirectories { get; set; }
+        public List<string> StartDirectories { get; set; }
 
         /// <summary>starting full file paths which if defined will ignore StartDirectories</summary>
-        public string[] StartFilePaths { get; set; }
+        public List<string> StartFilePaths { get; set; }
 
         /// <summary>search in sub folders</summary>
         public bool SearchInSubfolders { get; set; }
@@ -53,5 +53,13 @@ namespace libAstroGrep
 
         /// <summary>Current encoding options set by user</summary>
         public EncodingOptions EncodingDetectionOptions { get; set; }
+
+        public SearchSpec()
+        {
+            StartDirectories = new List<string>();
+            StartFilePaths = new List<string>();
+            FileEncodings = new List<FileEncoding>();
+            EncodingDetectionOptions = new EncodingDetection.EncodingOptions();
+        }
     }
 }
