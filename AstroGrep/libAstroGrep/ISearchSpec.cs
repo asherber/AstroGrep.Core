@@ -33,6 +33,7 @@ namespace libAstroGrep
    /// [Curtis_Beard]      04/02/2015	CHG: remove line numbers option
    /// [Curtis_Beard]	   05/26/2015	FIX: 69, add encoding detection options
    /// [Curtis_Beard]	   09/29/2016	CHG: 24/115, use one interface for search in prep for saving to file
+   /// [Curtis_Beard]      01/16/2019	FIX: 103, CHG: 122, trim long lines support
    /// </history>
    public interface ISearchSpec
    {
@@ -74,6 +75,12 @@ namespace libAstroGrep
 
       /// <summary>The FileFilter</summary>
       string FileFilter { get; }
+
+      /// <summary>The number of characters to indicate a long line</summary>
+      int LongLineCharCount { get; }
+
+      /// <summary>The number of characters to include before and after a match (0 is disabled)</summary>
+      int BeforeAfterCharCount { get; }
 
       /// <summary>
       /// List of FilterItems that will filter out files/directories based on user inputted options.

@@ -49,7 +49,7 @@ namespace Plugin.MicrosoftWord
       private object __WordSelection;
 
       private const string PLUGIN_NAME = "Microsoft Word";
-      private const string PLUGIN_VERSION = "1.2.0";
+      private const string PLUGIN_VERSION = "1.2.1";
       private const string PLUGIN_AUTHOR = "The AstroGrep Team";
       private const string PLUGIN_DESCRIPTION = "Searches Microsoft Word documents for specified text.  Line numbers are shown as (Line,Page).  Currently doesn't support Regular Expressions or Context lines.";
       private const string PLUGIN_EXTENSIONS = ".doc,.docx";
@@ -86,23 +86,11 @@ namespace Plugin.MicrosoftWord
       /// <history>
       /// [Curtis_Beard]      07/28/2006  Created
       /// [Curtis_Beard]      05/25/2007  CHG: properly call methods (makes it work with Word 2007)
+      /// [Curtis_Beard]      08/15/2017  FIX: 101/85, use unload method with try/catch
       /// </history>
       public void Dispose()
       {
-         if (__WordType != null && __WordApplication != null)
-         {
-            // Close the application.
-            __WordApplication.GetType().InvokeMember("Quit", BindingFlags.InvokeMethod, null,
-               __WordApplication, new object[] { });
-         }
-
-         if (__WordApplication != null)
-            Marshal.ReleaseComObject(__WordApplication);
-
-         __WordApplication = null;
-         __WordType = null;
-
-         __IsAvailable = false;
+         Unload();
       }
 
       /// <summary>
@@ -204,7 +192,6 @@ namespace Plugin.MicrosoftWord
          {
             if (this.IsAvailable)
             {
-
                if (!this.IsUsable)
                {
                   // load word
@@ -251,7 +238,7 @@ namespace Plugin.MicrosoftWord
       /// </history>
       public void Unload()
       {
-         if (__WordType != null && __WordApplication != null)
+         if (__WordApplication != null)
          {
             // Close the application.
             try
@@ -316,6 +303,7 @@ namespace Plugin.MicrosoftWord
       /// [Curtis_Beard]      07/28/2006  Created
       /// [Curtis_Beard]      05/25/2007  ADD: support for Exception object
       /// [Curtis_Beard]      03/31/2015	CHG: rework Grep/Matches
+      /// [Curtis_Beard]      01/16/2019	FIX: 103, CHG: 122, trim long lines support
       /// </history>
       public MatchResult Grep(FileInfo file, ISearchSpec searchSpec, ref Exception ex)
       {
@@ -431,7 +419,9 @@ namespace Plugin.MicrosoftWord
                            HasMatch = true,
                            ColumnNumber = colNum,
                            LineNumber = lineNum,
-                           Line = line
+                           Line = line,
+                           LongLineCharCount = searchSpec.LongLineCharCount,
+                           BeforeAfterCharCount = searchSpec.BeforeAfterCharCount
                         };
                         var lineMatches = libAstroGrep.Grep.RetrieveLineMatches(line, searchSpec);
                         match.SetHitCount(lineMatches.Count);
@@ -574,7 +564,7 @@ namespace Plugin.MicrosoftWord
       /// </history>
       private object OpenDocument(string path, bool bReadOnly)
       {
-         if (this.IsAvailable && __WordDocuments != null && __WordDocuments != null)
+         if (this.IsAvailable && __WordDocuments != null)
          {
             return __WordDocuments.GetType().InvokeMember("Open", BindingFlags.InvokeMethod,
                null, __WordDocuments, new object[3] { path, MISSING_VALUE, bReadOnly });

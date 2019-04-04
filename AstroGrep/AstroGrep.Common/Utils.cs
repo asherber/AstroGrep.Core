@@ -83,5 +83,36 @@ namespace AstroGrep.Common
 
          return final;
       }
+
+      /// <summary>
+      /// Get number of valid leading spaces in text line.
+      /// </summary>
+      /// <param name="line">text line to evaluate</param>
+      /// <param name="maxValidSpaces">maximum number of valid leading spaces to return</param>
+      /// <returns>number of valid leading spaces in text line</returns>
+      /// <history>
+      /// [LinkNet]        08/01/2017  ADD: Created
+      /// [LinkNet]        08/21/2017  CHG: Use Char.IsWhiteSpace to match up with TrimStart
+      /// </history>
+      public static int GetValidLeadingSpaces(string line, int maxValidSpaces)
+      {
+         int numValidSpaces = 0;
+
+         foreach (char c in line)
+         {
+            if (numValidSpaces == maxValidSpaces) break;
+
+            if (Char.IsWhiteSpace(c))
+            {
+               numValidSpaces++;
+            }
+            else
+            {
+               break;
+            }
+         }
+
+         return numValidSpaces;
+      }
    }
 }

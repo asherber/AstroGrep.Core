@@ -56,6 +56,7 @@ namespace AstroGrep.Core
       /// [Curtis_Beard]	   04/08/2015	CHG: add logging
       /// [Curtis_Beard]	   08/20/2015	FIX: 81, use associated app instead of displaying message
       /// [Curtis_Beard]	   08/16/2016	CHG: use common class for parameters, rename from EditFile -> Open
+      /// [Curtis_Beard]	   01/31/2019	FIX: 113, pass search text to method
       /// </history>
       public static void Open(TextEditorOpener opener)
       {
@@ -137,13 +138,13 @@ namespace AstroGrep.Core
                         opener.ColumnNumber += ((count * editorToUse.TabSize) - count);
                      }
 
-                     LaunchEditor(editorToUse, opener.Path, opener.LineNumber, opener.ColumnNumber, string.Empty);
+                     LaunchEditor(editorToUse, opener.Path, opener.LineNumber, opener.ColumnNumber, opener.SearchText);
                   }
                }
             }
             catch (Exception ex)
             {
-               LogClient.Instance.Logger.Error("Unable to open text editor for file {0} at line {1}, column {2}, with text {3} and message {4}", opener.Path, opener.LineNumber, opener.ColumnNumber, opener.LineText, ex.Message);
+               LogClient.Instance.Logger.Error("Unable to open text editor for file {0} at line {1}, column {2}, with text {3}, search text {4}, and message {5}", opener.Path, opener.LineNumber, opener.ColumnNumber, opener.LineText, opener.SearchText, ex.Message);
 
                MessageBox.Show(String.Format(Language.GetGenericText("TextEditorsErrorGeneric"), opener.Path, ex.Message),
                      ProductInformation.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
@@ -301,7 +302,7 @@ namespace AstroGrep.Core
          }
          catch (Exception ex)
          {
-            LogClient.Instance.Logger.Error("Unable to open text editor for editor {0}, file {1} at line {2}, column {3}, with message {4}", textEditor.ToString(), path, line, column, ex.Message);
+            LogClient.Instance.Logger.Error("Unable to open text editor for editor {0}, file {1} at line {2}, column {3}, search text {4}, with message {5}", textEditor.ToString(), path, line, column, searchText, ex.Message);
 
             MessageBox.Show(String.Format(Language.GetGenericText("TextEditorsErrorGeneric"), path, ex.Message),
                ProductInformation.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);

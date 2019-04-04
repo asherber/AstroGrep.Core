@@ -17,7 +17,7 @@
       <control name="chkAllResultsAfterSearch" value="&amp;Mostra tutti i risultati dopo la ricerca" tooltip="Mostra tutti i risultati insieme nell'anteprima dopo una ricerca" />
       <control name="chkSearchInResults" value="Cerca nei risultati" tooltip="Esegui ricerca all'interno dell'elenco dei file risultati attualmente visualizzato" />
       <control name="lblSearchOptions" value="Opzioni di ricerca" />
-      <control name="picBrowse" tooltip="Sfoglia..." />
+      <control name="picBrowse" tooltip="Sfoglia...(Maiusc-clic per aggiungere)" />
       <control name="lnkExclusions" value="Esclusioni" />
       <control name="lstFileNames">
          <menuitem index="0" value="Copia tutto" />
@@ -95,7 +95,7 @@
 
       <!-- status bar items default state-->
       <control name="sbTotalCountPanel" value="Totale: 0"/>
-      <control name="sbFileCountPanel" value="File: 0"/>
+      <control name="sbFileCountPanel" value="File: 0 / 0"/>
       <control name="sbFilterCountPanel" value="Esclusioni: 0" tooltip="Fare doppio clic per visualizzare le esclusioni"/>
       <control name="sbErrorCountPanel" value="Errore: 0" tooltip="Fare doppio clic per visualizzare gli errori"/>
    </screen>
@@ -133,6 +133,8 @@
       <control name="lblResultsWindowBack" value="Colore sfondo" />
       <control name="lblResultsWindowFore" value="Colore carattere" />
       <control name="lblResultsContextForeColor" value="Contesto in primo piano" />
+      <control name="lblResultsLongLineCount" value="Conteggio delle righe lunghe" />
+      <control name="lblResultsBeforeAfterCount" value="Conteggio prima / dopo" />
       <control name="grpResultWindow" value="Finestra risultati" />
       <control name="BackColorLabel" value="Colore sfondo" />
       <control name="ForeColorLabel" value="Colore carattere" />
@@ -168,6 +170,7 @@
       <control name="lblPerformance" value="Prestazione"/>
       <control name="chkUseEncodingCache" value="Attiva cache per le codifiche rilevate"/>
       <control name="btnCacheClear" value="Cancella cache"/>
+      <control name="lblForceEncoding" value="Force Encoding"/>
    </screen>
    
    <screen name="frmPrint" value="Stampa">
@@ -286,8 +289,8 @@
       <text name="ResultsColumnSize" value="Dimensione"/>
       <text name="ResultsColumnFileExt" value="Estensione del file"/>
 
-      <text name="ResultsStatusTotalCount" value="Totale: {0}"/>
-      <text name="ResultsStatusFileCount" value="File: {0}"/>
+      <text name="ResultsStatusTotalCount" value="Totale: {0} / {1}"/>
+      <text name="ResultsStatusFileCount" value="File: {0} / {1}"/>
       <text name="ResultsStatusFilterCount" value="Esclusioni: {0}"/>
       <text name="ResultsStatusErrorCount" value="Errori: {0}"/>
 

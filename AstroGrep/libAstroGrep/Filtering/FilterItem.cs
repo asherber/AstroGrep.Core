@@ -275,6 +275,7 @@ namespace libAstroGrep
       /// <returns>true if matches, false otherwise</returns>
       /// <history>
       /// [Curtis_Beard]	   10/31/2014	ADD: exclusions update
+      /// [Curtis_Beard]	   01/10/2019	CHG: 110, Strings should allow not equals
       /// </history>
       private bool CheckStringAgainstOption(string checkValue)
       {
@@ -284,6 +285,9 @@ namespace libAstroGrep
             {
                case FilterType.ValueOptions.Equals:
                   return checkValue.Equals(Value, ValueIgnoreCase ? StringComparison.InvariantCultureIgnoreCase : StringComparison.InvariantCulture);
+
+               case FilterType.ValueOptions.NotEquals:
+                  return !checkValue.Equals(Value, ValueIgnoreCase ? StringComparison.InvariantCultureIgnoreCase : StringComparison.InvariantCulture);
 
                case FilterType.ValueOptions.Contains:
                   return checkValue.IndexOf(Value, ValueIgnoreCase ? StringComparison.InvariantCultureIgnoreCase : StringComparison.InvariantCulture) > -1;
@@ -352,35 +356,38 @@ namespace libAstroGrep
       /// <returns>true if needs to be filtered, false otherwise</returns>
       /// <history>
       /// [Curtis_Beard]	   10/31/2014	ADD: exclusions update
+      /// [Curtis_Beard]	   08/15/2017	FIX: 98, TryParse on DateTime instead of just converting
       /// </history>
       private bool CheckDateTimeAgainstOption(DateTime checkValue)
       {
          if (Enabled && FilterType.ValueType == FilterType.ValueTypes.DateTime)
          {
-            DateTime itemValue = Convert.ToDateTime(Value);
-
-            switch (ValueOption)
+            DateTime itemValue = DateTime.MinValue;
+            if (DateTime.TryParse(Value, out itemValue))
             {
-               case FilterType.ValueOptions.Equals:
-                  return checkValue == itemValue;
+               switch (ValueOption)
+               {
+                  case FilterType.ValueOptions.Equals:
+                     return checkValue == itemValue;
 
-               case FilterType.ValueOptions.NotEquals:
-                  return checkValue != itemValue;
+                  case FilterType.ValueOptions.NotEquals:
+                     return checkValue != itemValue;
 
-               case FilterType.ValueOptions.GreaterThan:
-                  return checkValue > itemValue;
+                  case FilterType.ValueOptions.GreaterThan:
+                     return checkValue > itemValue;
 
-               case FilterType.ValueOptions.GreaterThanEquals:
-                  return checkValue >= itemValue;
+                  case FilterType.ValueOptions.GreaterThanEquals:
+                     return checkValue >= itemValue;
 
-               case FilterType.ValueOptions.LessThan:
-                  return checkValue < itemValue;
+                  case FilterType.ValueOptions.LessThan:
+                     return checkValue < itemValue;
 
-               case FilterType.ValueOptions.LessThanEquals:
-                  return checkValue <= itemValue;
+                  case FilterType.ValueOptions.LessThanEquals:
+                     return checkValue <= itemValue;
 
-               default:
-                  return false;
+                  default:
+                     return false;
+               }
             }
          }
 

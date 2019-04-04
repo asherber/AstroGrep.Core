@@ -176,7 +176,8 @@ namespace AstroGrep.Windows
       /// <history>
       /// [Curtis_Beard]		07/26/2006	Created
       /// [Curtis_Beard]		05/08/2007	ADD: 1590157, support project file
-      /// [Curtis_Beard]	  04/08/2015	CHG: add logging
+      /// [Curtis_Beard]	   04/08/2015	CHG: add logging
+      /// [Curtis_Beard]	   01/31/2019	CHG: 139, expand environment variables within search path(s)
       /// </history>
       public static CommandLineArguments Process(string[] CommandLineArgs)
       {
@@ -195,7 +196,7 @@ namespace AstroGrep.Windows
             // Check command line for a path to start at
             string arg1 = CommandLineArgs[1];
 
-            // remove an extra quote if (a drive letter
+            // remove an extra quote if a drive letter
             if (arg1.EndsWith("\""))
                arg1 = arg1.Substring(0, arg1.Length - 1);
 
@@ -207,7 +208,7 @@ namespace AstroGrep.Windows
             //}
 
             // check for a directory
-            if (!args.IsProjectFile && System.IO.Directory.Exists(arg1))
+            if (!args.IsProjectFile && System.IO.Directory.Exists(Environment.ExpandEnvironmentVariables(arg1)))
             {
                args.StartPath = arg1;
                args.IsValidStartPath = true;
@@ -308,6 +309,7 @@ namespace AstroGrep.Windows
       /// [Curtis_Beard]		09/26/2012	ADD: display help option
       /// [Curtis_Beard]		04/08/2014	CHG: 74, add missing search options, exit, save
       /// [Curtis_Beard]		06/02/2015	CHG: 97, remove /local since portable version created
+      /// [Curtis_Beard]		01/08/2019	FIX: 104, allow any path to be passed to UI and UI will validate
       /// </history>
       private static void ProcessFlags(Arguments myArgs, ref CommandLineArguments args)
       {
@@ -381,11 +383,8 @@ namespace AstroGrep.Windows
 
          if (myArgs["spath"] != null)
          {
-            if (System.IO.Directory.Exists(myArgs["spath"]))
-            {
-               args.IsValidStartPath = true;
-               args.StartPath = myArgs["spath"];
-            }
+            args.IsValidStartPath = true;
+            args.StartPath = myArgs["spath"];
          }         
 
          if (myArgs["stypes"] != null)

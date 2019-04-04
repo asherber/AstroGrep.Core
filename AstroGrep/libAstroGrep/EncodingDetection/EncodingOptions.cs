@@ -32,6 +32,7 @@ namespace libAstroGrep.EncodingDetection
    /// </remarks>
    /// <history>
    /// [Curtis_Beard]		05/28/2015	FIX: 69, Created for speed improvements for encoding detection
+   /// [Curtis_Beard]	   01/10/2019  CHG: 136, add option to force encoding for all
    /// </history>
    public class EncodingOptions
    {
@@ -80,6 +81,15 @@ namespace libAstroGrep.EncodingDetection
       }
 
       /// <summary>
+      /// Gets/Sets whether a forced encoding CodePage is used.
+      /// </summary>
+      public int ForcedEncoding
+      {
+         get;
+         set;
+      }
+
+      /// <summary>
       /// Creates an instance of the EncodingOptions class.
       /// </summary>
       public EncodingOptions()
@@ -87,6 +97,7 @@ namespace libAstroGrep.EncodingDetection
          DetectFileEncoding = true;
          PerformanceSetting = Performance.Default;
          UseEncodingCache = true;
+         ForcedEncoding = -1;
       }
 
       /// <summary>

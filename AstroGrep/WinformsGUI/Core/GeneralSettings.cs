@@ -52,6 +52,8 @@ namespace AstroGrep.Core
    /// [LinkNet]           04/24/2017	CHG: Increased default file panel font size from 8.25 to 9 points
    /// [LinkNet]           04/27/2017	ADD: Added save and restore exclusions window position settings
    /// [Curtis_Beard]	   05/19/2017	CHG: 120, add option to use accent color
+   /// [Curtis_Beard]	   01/10/2019  CHG: 136, add option to force encoding for all
+   /// [Curtis_Beard]      01/16/2019	FIX: 103, CHG: 122, trim long lines support
    /// </history>
    public sealed class GeneralSettings
    {
@@ -138,10 +140,14 @@ namespace AstroGrep.Core
       private string fileEncodings = string.Empty;
       private int encodingPerformance = 2;
       private bool useEncodingCache = true;
+      private int forcedEncoding = -1;
 
       private bool showEntireFile = false;
 
       private bool useAstroGrepAccentColor = true;
+
+      private int longLineCharCount = 10000;
+      private int beforeAfterCharCount = 100;
       #endregion
       
       /// <summary>
@@ -698,6 +704,15 @@ namespace AstroGrep.Core
       }
 
       /// <summary>
+      /// Gets/Sets the forced encoding CodePage.
+      /// </summary>
+      static public int ForcedEncoding
+      {
+         get { return MySettings.forcedEncoding; }
+         set { MySettings.forcedEncoding = value; }
+      }
+
+      /// <summary>
       /// Gets/Sets Windows DPI percent scale setting.
       /// </summary>
       static public int WindowsDPIPerCentSetting
@@ -722,6 +737,24 @@ namespace AstroGrep.Core
       {
          get { return MySettings.useAstroGrepAccentColor; }
          set { MySettings.useAstroGrepAccentColor = value; }
+      }
+
+      /// <summary>
+      /// Gets/sets the number of characters that trigger a long line.
+      /// </summary>
+      static public int LongLineCharCount
+      {
+         get { return MySettings.longLineCharCount; }
+         set { MySettings.longLineCharCount = value; }
+      }
+
+      /// <summary>
+      /// Gets/sets the number of characters to show before/after a match in a long line.
+      /// </summary>
+      static public int BeforeAfterCharCount
+      {
+         get { return MySettings.beforeAfterCharCount; }
+         set { MySettings.beforeAfterCharCount = value; }
       }
    }
 }

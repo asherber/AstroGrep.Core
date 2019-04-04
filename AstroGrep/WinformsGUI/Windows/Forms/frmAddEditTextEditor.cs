@@ -224,6 +224,7 @@ namespace AstroGrep.Windows.Forms
       /// [Curtis_Beard]		05/22/2007	FIX: 1646328, check when adding a new extension
       /// [Curtis_Beard]		08/13/2014	FIX: better detection of file types
       /// [Curtis_Beard]	   08/13/2014	ADD: 80, add ability to open default app when no editor is specified
+      /// [Curtis_Beard]	   08/21/2017	FIX: ignore current file type when checking existence
       /// </history>
       private void btnOK_Click(object sender, System.EventArgs e)
       {
@@ -235,21 +236,24 @@ namespace AstroGrep.Windows.Forms
             {
                foreach (string fileType in ExistingFileTypes)
                {
-                  if (fileType.Contains(Constants.TEXT_EDITOR_TYPE_SEPARATOR))
+                  if (fileType != __OriginalFileType)
                   {
-                     foreach (string val in fileType.Split(Constants.TEXT_EDITOR_TYPE_SEPARATOR.ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
+                     if (fileType.Contains(Constants.TEXT_EDITOR_TYPE_SEPARATOR))
                      {
-                        if (FindType(val, txtFileType.Text))
+                        foreach (string val in fileType.Split(Constants.TEXT_EDITOR_TYPE_SEPARATOR.ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
                         {
-                           exists = true;
-                           break;
+                           if (FindType(val, txtFileType.Text))
+                           {
+                              exists = true;
+                              break;
+                           }
                         }
                      }
-                  }
-                  else if (FindType(fileType, txtFileType.Text))
-                  {
-                     exists = true;
-                     break;
+                     else if (FindType(fileType, txtFileType.Text))
+                     {
+                        exists = true;
+                        break;
+                     }
                   }
                }
 

@@ -73,6 +73,7 @@ namespace AstroGrep.Core
       /// <history>
       /// [Curtis_Beard]	   05/27/2015	FIX: 73, open text editor even when no first match (usually during file only search)
       /// [Curtis_Beard]	   08/16/2016	CHG: move to TextEditorOpener class
+      /// [Curtis_Beard]      01/16/2019	FIX: 103, CHG: 122, trim long lines support
       /// </history>
       public static TextEditorOpener FromMatch(libAstroGrep.MatchResult match, string searchText)
       {
@@ -90,7 +91,7 @@ namespace AstroGrep.Core
             {
                lineNumber = matchLine.LineNumber;
                columnNumber = matchLine.ColumnNumber;
-               lineText = matchLine.Line;
+               lineText = matchLine.OriginalLine;
             }
 
             opener = new TextEditorOpener(match.File.FullName, lineNumber, columnNumber, lineText, searchText);

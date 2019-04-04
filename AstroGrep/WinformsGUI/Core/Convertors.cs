@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
 using System.Text;
+using System.Windows.Forms;
 
 using AstroGrep.Common;
 
@@ -33,7 +36,7 @@ namespace AstroGrep.Core
    /// <history>
    /// [Curtis_Beard]      11/07/2012  Initial
    /// </history>
-   public class Convertors
+   public static class Convertors
    {
       /// <summary>
       /// Retrieves all the ComboBox entries as a string.
@@ -210,6 +213,127 @@ namespace AstroGrep.Core
          }
 
          return retVal;
+      }
+
+      /// <summary>
+      /// Get the hit count from the hit/line count display text (assumes in format hit / line)
+      /// </summary>
+      /// <param name="displayText">The display text to parse (format hit / line)</param>
+      /// <returns>hit count</returns>
+      /// <history>
+      /// [Curtis_Beard]		01/08/2019	CHG: 119, add line hit count
+      /// </history>
+      public static int GetHitCountFromCountDisplay(string displayText)
+      {
+         string text = displayText;
+         
+         int pos = text.IndexOf(" /");
+         if (pos == -1)
+         {
+            pos = text.Length;
+         }
+         text = text.Substring(0, pos);
+
+         return int.Parse(text);
+      }
+
+      /// <summary>
+      /// Get the line count from the hit/line count display text (assumes in format hit / line)
+      /// </summary>
+      /// <param name="displayText">The display text to parse (format hit / line)</param>
+      /// <returns>hit count</returns>
+      /// <history>
+      /// [Curtis_Beard]		01/08/2019	CHG: 119, add line hit count
+      /// </history>
+      public static int GetLineCountFromCountDisplay(string displayText)
+      {
+         string text = displayText;
+
+         int pos = text.IndexOf("/ ");
+         if (pos == -1)
+         {
+            pos = -2;
+         }
+         text = text.Substring(pos + 2);
+
+         return int.Parse(text);
+      }
+
+      /// <summary>
+      /// Calculates the width of the drop down list of the given combo box
+      /// </summary>
+      /// <param name="combo">Combo box to base calculate from</param>
+      /// <returns>Width of longest string in combo box items</returns>
+      /// <history>
+      /// [Curtis_Beard]    11/21/2005	Created
+      /// </history>
+      public static int CalculateDropDownWidth(ComboBox combo)
+      {
+         const int EXTRA = 10;
+         int _max = combo.Width;
+
+         using (Graphics g = combo.CreateGraphics())
+         {
+            string _itemValue = string.Empty;
+            SizeF _size;
+
+            foreach (object _item in combo.Items)
+            {
+               _itemValue = _item.ToString();
+               _size = g.MeasureString(_itemValue, combo.Font);
+
+               if (_size.Width > _max)
+                  _max = Convert.ToInt32(_size.Width);
+            }
+
+            // keep original width if no item longer
+            if (_max != combo.Width)
+               _max += EXTRA;
+         }
+
+         return _max;
+      }
+
+      /// <summary>
+      /// Invoke action delegate on main thread if required.
+      /// </summary>
+      /// <param name="obj">Object to check for InvokeRequired</param>
+      /// <param name="action">Action delegate to perform (either on the current thread or invoked).</param>
+      /// <remarks>
+      /// Extension for any object that supports the ISynchronizeInvoke interface (such as WinForms
+      /// controls). This will handle the InvokeRequired check and call the action delegate from
+      /// the appropriate thread.
+      /// </remarks>
+      /// <example>
+      /// <code>
+      /// <![CDATA[
+      /// private void DB_OfflineModeChanged(object sender, Lib.DB.OfflineModeEventArgs e)
+      /// {
+      /// // This code could be ran from a background thread
+      /// this.InvokeIfRequired(() =>
+      /// {
+      /// // Code to run after invoking if required
+      /// OfflineStatusLabel.Visible = e.OfflineMode;
+      /// });
+      /// }
+      /// ]]>
+      /// </code>
+      /// </example>
+      public static void InvokeIfRequired(this ISynchronizeInvoke obj, System.Windows.Forms.MethodInvoker action)
+      {
+         if (obj.InvokeRequired)
+         {
+            var args = new object[0];
+            try
+            {
+               obj.Invoke(action, args);
+            }
+            catch { }
+         }
+         else
+         {
+            action();
+         }
       }
    }
 }

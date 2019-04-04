@@ -38,13 +38,14 @@ namespace AstroGrep.Windows.Forms
    /// </remarks>
    /// <history>
    /// [Curtis_Beard]	   12/06/2012	ADD: 1741735, initial dialog for filterable log items viewer.
+   /// [Curtis_Beard]	   08/15/2017	FIX: 100, performance changes
    /// </history>
    public partial class frmLogDisplay : BaseForm
    {
       /// <summary>
       /// Collection of messages to display
       /// </summary>
-      public List<LogItem> LogItems 
+      public LogItems LogItems 
       { 
          get; 
          set; 
@@ -98,6 +99,7 @@ namespace AstroGrep.Windows.Forms
       /// [Curtis_Beard]	   11/11/2014	CHG: set width of columns, language calls for column names, support null for DefaultFilterType
       /// [Curtis_Beard]	   03/02/2015	CHG: add counts to tabs
       /// [Curtis_Beard]      03/03/2015	CHG: 93, load column widths from user settings
+      /// [Curtis_Beard]	   08/15/2017	FIX: 100, performance changes
       /// </history>
       private void frmLogDisplay_Load(object sender, EventArgs e)
       {
@@ -138,9 +140,9 @@ namespace AstroGrep.Windows.Forms
             lstLog.Columns[3].Width = Constants.LOG_DISPLAY_COLUMN_WIDTH_DETAILS * GeneralSettings.WindowsDPIPerCentSetting / 100;
 
          // do counts after Language.ProcessForm to get language specific text.
-         sbtnStatus.Text = string.Format("{0} ({1})", sbtnStatus.Text, LogItems.FindAll(l=>l.ItemType == LogItem.LogItemTypes.Status).Count);
-         sbtnExclusions.Text = string.Format("{0} ({1})", sbtnExclusions.Text, LogItems.FindAll(l => l.ItemType == LogItem.LogItemTypes.Exclusion).Count);
-         sbtnError.Text = string.Format("{0} ({1})", sbtnError.Text, LogItems.FindAll(l => l.ItemType == LogItem.LogItemTypes.Error).Count);
+         sbtnStatus.Text = string.Format("{0} ({1})", sbtnStatus.Text, LogItems.CountByType(LogItem.LogItemTypes.Status));
+         sbtnExclusions.Text = string.Format("{0} ({1})", sbtnExclusions.Text, LogItems.CountByType(LogItem.LogItemTypes.Exclusion));
+         sbtnError.Text = string.Format("{0} ({1})", sbtnError.Text, LogItems.CountByType(LogItem.LogItemTypes.Error));
 
          if (DefaultFilterType.HasValue)
          {
@@ -303,57 +305,57 @@ namespace AstroGrep.Windows.Forms
       /// [Curtis_Beard]	   12/06/2012	ADD: 1741735, initial dialog for filterable log items viewer.
       /// [Curtis_Beard]	   11/11/2014	CHG: format details display for exclusions
       /// [Curtis_Beard]	   03/02/2015	CHG: set sort to null before add
+      /// [Curtis_Beard]	   08/15/2017	FIX: 100, performance changes
       /// </history>
       private void AddLogItemType(LogItem.LogItemTypes type)
       {
          lstLog.BeginUpdate();
          lstLog.ListViewItemSorter = null;
 
-         foreach (LogItem item in LogItems)
+         var items = LogItems.GetItemsByType(type);
+
+         foreach (LogItem item in items)
          {
-            if (item.ItemType == type)
+            string typeText = Language.GetGenericText(string.Format("LogDisplay.{0}", type), type.ToString());
+            string valueText = item.Value;
+            string detailsText = item.Details;
+            if (item.ItemType == LogItem.LogItemTypes.Exclusion)
             {
-               string typeText = Language.GetGenericText(string.Format("LogDisplay.{0}", type), type.ToString());
-               string valueText = item.Value;
-               string detailsText = item.Details;
-               if (item.ItemType == LogItem.LogItemTypes.Exclusion)
+               // convert details from format FilterItem~~FilterValue
+               string[] values = Utils.SplitByString(detailsText, "~~");
+               var filterItem = FilterItem.FromString(values[0]);
+               detailsText = string.Format("{0} -> {1}{2}{3}{4}", 
+                  Language.GetGenericText(string.Format("Exclusions.{0}", filterItem.FilterType.Category), filterItem.FilterType.Category.ToString()), 
+                  Language.GetGenericText(string.Format("Exclusions.{0}", filterItem.FilterType.SubCategory), filterItem.FilterType.SubCategory.ToString()),
+                  !string.IsNullOrEmpty(filterItem.Value) && filterItem.FilterType.SubCategory != FilterType.SubCategories.Extension ? ", " + values[1] : string.Empty,
+                  filterItem.ValueOption != FilterType.ValueOptions.None ? " " + Language.GetGenericText(string.Format("Exclusions.{0}", filterItem.ValueOption), filterItem.ValueOption.ToString()) : string.Empty,
+                  !string.IsNullOrEmpty(filterItem.Value) && filterItem.FilterType.SubCategory != FilterType.SubCategories.Extension ? " " + filterItem.Value : string.Empty
+                  );
+            }
+            else if (item.ItemType == LogItem.LogItemTypes.Status)
+            {
+               // Value = Language lookup text (e.g. SearchFinished,SearchCancelled)
+               // Details = 0||1 replacement arguments where 0 is file name or error message, 1 is details
+               string[] values = Utils.SplitByString(detailsText, "||");
+               valueText = string.Format(Language.GetGenericText(valueText), values);
+               detailsText = string.Empty;
+               if (values.Length > 1)
                {
-                  // convert details from format FilterItem~~FilterValue
-                  string[] values = Utils.SplitByString(detailsText, "~~");
-                  var filterItem = FilterItem.FromString(values[0]);
-                  detailsText = string.Format("{0} -> {1}{2}{3}{4}", 
-                     Language.GetGenericText(string.Format("Exclusions.{0}", filterItem.FilterType.Category), filterItem.FilterType.Category.ToString()), 
-                     Language.GetGenericText(string.Format("Exclusions.{0}", filterItem.FilterType.SubCategory), filterItem.FilterType.SubCategory.ToString()),
-                     !string.IsNullOrEmpty(filterItem.Value) && filterItem.FilterType.SubCategory != FilterType.SubCategories.Extension ? ", " + values[1] : string.Empty,
-                     filterItem.ValueOption != FilterType.ValueOptions.None ? " " + Language.GetGenericText(string.Format("Exclusions.{0}", filterItem.ValueOption), filterItem.ValueOption.ToString()) : string.Empty,
-                     !string.IsNullOrEmpty(filterItem.Value) && filterItem.FilterType.SubCategory != FilterType.SubCategories.Extension ? " " + filterItem.Value : string.Empty
-                     );
-               }
-               else if (item.ItemType == LogItem.LogItemTypes.Status)
-               {
-                  // Value = Language lookup text (e.g. SearchFinished,SearchCancelled)
-                  // Details = 0||1 replacement arguments where 0 is file name or error message, 1 is details
-                  string[] values = Utils.SplitByString(detailsText, "||");
-                  valueText = string.Format(Language.GetGenericText(valueText), values);
-                  detailsText = string.Empty;
-                  if (values.Length > 1)
-                  {
-                     detailsText = values[1];
-                  }
-               }
-               else if (item.ItemType == LogItem.LogItemTypes.Error)
-               {
-                  // Value = Language lookup text (e.g. SearchGenericError, SearchFileError)
-                  // Details = 0||1 replacement arguments where 0 = file or empty string, 1 = details (error text)
-                  string[] values = Utils.SplitByString(detailsText, "||");
-                  valueText = string.Format(Language.GetGenericText(valueText), values[0]);
                   detailsText = values[1];
                }
-
-               ListViewItem lstItem = new ListViewItem(new string[4] { item.Date.ToShortDateString() + " " + item.Date.ToString("hh:mm:ss.ff tt"), typeText, valueText, detailsText });
-               lstItem.Tag = item;
-               lstLog.Items.Add(lstItem);
             }
+            else if (item.ItemType == LogItem.LogItemTypes.Error)
+            {
+               // Value = Language lookup text (e.g. SearchGenericError, SearchFileError)
+               // Details = 0||1 replacement arguments where 0 = file or empty string, 1 = details (error text)
+               string[] values = Utils.SplitByString(detailsText, "||");
+               valueText = string.Format(Language.GetGenericText(valueText), values[0]);
+               detailsText = values[1];
+            }
+
+            ListViewItem lstItem = new ListViewItem(new string[4] { item.Date.ToShortDateString() + " " + item.Date.ToString("hh:mm:ss.ff tt"), typeText, valueText, detailsText });
+            lstItem.Tag = item;
+            lstLog.Items.Add(lstItem);
          }
 
          lstLog.ListViewItemSorter = new LogItemComparer();

@@ -143,6 +143,7 @@ namespace libAstroGrep
       /// <param name="subCategory">Selected sub category</param>
       /// <history>
       /// [Curtis_Beard]	   10/31/2014	ADD: exclusions update
+      /// [Curtis_Beard]	   01/10/2019	CHG: 110, Strings should allow not equals
       /// </history>
       public FilterType(Categories category, SubCategories subCategory)
       {
@@ -154,7 +155,7 @@ namespace libAstroGrep
             case SubCategories.Name:
             case SubCategories.Path:
                valuetype = ValueTypes.String;
-               supportedValueOptions = new List<ValueOptions>() { ValueOptions.Equals, ValueOptions.Contains, ValueOptions.StartsWith, ValueOptions.EndsWith };
+               supportedValueOptions = new List<ValueOptions>() { ValueOptions.Equals, ValueOptions.NotEquals, ValueOptions.Contains, ValueOptions.StartsWith, ValueOptions.EndsWith };
                supportsIgnoreCase = true;
                supportsMulitpleItems = true;
                break;

@@ -51,6 +51,8 @@ namespace AstroGrep.Windows.Forms
          this.cboPathMRUCount = new System.Windows.Forms.ComboBox();
          this.lblStoredPaths = new System.Windows.Forms.Label();
          this.tabFileEncoding = new System.Windows.Forms.TabPage();
+         this.cboForceEncoding = new System.Windows.Forms.ComboBox();
+         this.lblForceEncoding = new System.Windows.Forms.Label();
          this.btnCacheClear = new System.Windows.Forms.Button();
          this.chkUseEncodingCache = new System.Windows.Forms.CheckBox();
          this.cboPerformance = new System.Windows.Forms.ComboBox();
@@ -80,6 +82,10 @@ namespace AstroGrep.Windows.Forms
          this.lblFileCurrentFont = new System.Windows.Forms.Label();
          this.btnFileFindFont = new System.Windows.Forms.Button();
          this.grpResultWindow = new System.Windows.Forms.GroupBox();
+         this.lblResultsBeforeAfterCount = new System.Windows.Forms.Label();
+         this.lblResultsLongLineCount = new System.Windows.Forms.Label();
+         this.numResultsBeforeAfterCount = new System.Windows.Forms.NumericUpDown();
+         this.numResultsLongLineCount = new System.Windows.Forms.NumericUpDown();
          this.btnResultsContextForeColor = new AstroGrep.Windows.Controls.ColorButton();
          this.lblResultsContextForeColor = new System.Windows.Forms.Label();
          this.lblCurrentFont = new System.Windows.Forms.Label();
@@ -120,6 +126,8 @@ namespace AstroGrep.Windows.Forms
          this.pnlResultsPreview.SuspendLayout();
          this.grpFileList.SuspendLayout();
          this.grpResultWindow.SuspendLayout();
+         ((System.ComponentModel.ISupportInitialize)(this.numResultsBeforeAfterCount)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.numResultsLongLineCount)).BeginInit();
          this.grpResultMatch.SuspendLayout();
          this.tabPlugins.SuspendLayout();
          this.PluginDetailsGroup.SuspendLayout();
@@ -329,6 +337,8 @@ namespace AstroGrep.Windows.Forms
          // 
          // tabFileEncoding
          // 
+         this.tabFileEncoding.Controls.Add(this.cboForceEncoding);
+         this.tabFileEncoding.Controls.Add(this.lblForceEncoding);
          this.tabFileEncoding.Controls.Add(this.btnCacheClear);
          this.tabFileEncoding.Controls.Add(this.chkUseEncodingCache);
          this.tabFileEncoding.Controls.Add(this.cboPerformance);
@@ -344,6 +354,26 @@ namespace AstroGrep.Windows.Forms
          this.tabFileEncoding.TabIndex = 4;
          this.tabFileEncoding.Text = "File Encoding";
          this.tabFileEncoding.UseVisualStyleBackColor = true;
+         // 
+         // cboForceEncoding
+         // 
+         this.cboForceEncoding.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+         this.cboForceEncoding.FlatStyle = System.Windows.Forms.FlatStyle.System;
+         this.cboForceEncoding.FormattingEnabled = true;
+         this.cboForceEncoding.Location = new System.Drawing.Point(144, 92);
+         this.cboForceEncoding.Name = "cboForceEncoding";
+         this.cboForceEncoding.Size = new System.Drawing.Size(254, 23);
+         this.cboForceEncoding.TabIndex = 45;
+         this.cboForceEncoding.DropDown += new System.EventHandler(this.cboForceEncoding_DropDown);
+         // 
+         // lblForceEncoding
+         // 
+         this.lblForceEncoding.AutoSize = true;
+         this.lblForceEncoding.Location = new System.Drawing.Point(5, 95);
+         this.lblForceEncoding.Name = "lblForceEncoding";
+         this.lblForceEncoding.Size = new System.Drawing.Size(93, 15);
+         this.lblForceEncoding.TabIndex = 44;
+         this.lblForceEncoding.Text = "Force Encoding";
          // 
          // btnCacheClear
          // 
@@ -372,7 +402,7 @@ namespace AstroGrep.Windows.Forms
          this.cboPerformance.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
          this.cboPerformance.FlatStyle = System.Windows.Forms.FlatStyle.System;
          this.cboPerformance.FormattingEnabled = true;
-         this.cboPerformance.Location = new System.Drawing.Point(101, 36);
+         this.cboPerformance.Location = new System.Drawing.Point(144, 36);
          this.cboPerformance.Name = "cboPerformance";
          this.cboPerformance.Size = new System.Drawing.Size(121, 23);
          this.cboPerformance.TabIndex = 41;
@@ -441,9 +471,9 @@ namespace AstroGrep.Windows.Forms
             this.clhEncoding});
          this.lstFiles.FullRowSelect = true;
          this.lstFiles.HideSelection = false;
-         this.lstFiles.Location = new System.Drawing.Point(8, 98);
+         this.lstFiles.Location = new System.Drawing.Point(8, 121);
          this.lstFiles.Name = "lstFiles";
-         this.lstFiles.Size = new System.Drawing.Size(537, 212);
+         this.lstFiles.Size = new System.Drawing.Size(537, 189);
          this.lstFiles.TabIndex = 1;
          this.lstFiles.UseCompatibleStateImageBehavior = false;
          this.lstFiles.View = System.Windows.Forms.View.Details;
@@ -638,6 +668,10 @@ namespace AstroGrep.Windows.Forms
          // 
          this.grpResultWindow.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+         this.grpResultWindow.Controls.Add(this.lblResultsBeforeAfterCount);
+         this.grpResultWindow.Controls.Add(this.lblResultsLongLineCount);
+         this.grpResultWindow.Controls.Add(this.numResultsBeforeAfterCount);
+         this.grpResultWindow.Controls.Add(this.numResultsLongLineCount);
          this.grpResultWindow.Controls.Add(this.btnResultsContextForeColor);
          this.grpResultWindow.Controls.Add(this.lblResultsContextForeColor);
          this.grpResultWindow.Controls.Add(this.lblCurrentFont);
@@ -653,10 +687,66 @@ namespace AstroGrep.Windows.Forms
          this.grpResultWindow.TabStop = false;
          this.grpResultWindow.Text = "Results Window";
          // 
+         // lblResultsBeforeAfterCount
+         // 
+         this.lblResultsBeforeAfterCount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+         this.lblResultsBeforeAfterCount.Location = new System.Drawing.Point(305, 75);
+         this.lblResultsBeforeAfterCount.Name = "lblResultsBeforeAfterCount";
+         this.lblResultsBeforeAfterCount.Size = new System.Drawing.Size(136, 27);
+         this.lblResultsBeforeAfterCount.TabIndex = 30;
+         this.lblResultsBeforeAfterCount.Text = "Before/After Count";
+         this.lblResultsBeforeAfterCount.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+         // 
+         // lblResultsLongLineCount
+         // 
+         this.lblResultsLongLineCount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+         this.lblResultsLongLineCount.Location = new System.Drawing.Point(305, 49);
+         this.lblResultsLongLineCount.Name = "lblResultsLongLineCount";
+         this.lblResultsLongLineCount.Size = new System.Drawing.Size(136, 27);
+         this.lblResultsLongLineCount.TabIndex = 29;
+         this.lblResultsLongLineCount.Text = "Long Line Count";
+         this.lblResultsLongLineCount.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+         // 
+         // numResultsBeforeAfterCount
+         // 
+         this.numResultsBeforeAfterCount.Location = new System.Drawing.Point(442, 78);
+         this.numResultsBeforeAfterCount.Maximum = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+         this.numResultsBeforeAfterCount.Name = "numResultsBeforeAfterCount";
+         this.numResultsBeforeAfterCount.Size = new System.Drawing.Size(74, 21);
+         this.numResultsBeforeAfterCount.TabIndex = 28;
+         this.numResultsBeforeAfterCount.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+         // 
+         // numResultsLongLineCount
+         // 
+         this.numResultsLongLineCount.Location = new System.Drawing.Point(442, 53);
+         this.numResultsLongLineCount.Maximum = new decimal(new int[] {
+            50000,
+            0,
+            0,
+            0});
+         this.numResultsLongLineCount.Name = "numResultsLongLineCount";
+         this.numResultsLongLineCount.Size = new System.Drawing.Size(74, 21);
+         this.numResultsLongLineCount.TabIndex = 27;
+         this.numResultsLongLineCount.Value = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+         // 
          // btnResultsContextForeColor
          // 
          this.btnResultsContextForeColor.ForeColor = System.Drawing.Color.Silver;
-         this.btnResultsContextForeColor.Location = new System.Drawing.Point(144, 66);
+         this.btnResultsContextForeColor.Location = new System.Drawing.Point(144, 53);
          this.btnResultsContextForeColor.Name = "btnResultsContextForeColor";
          this.btnResultsContextForeColor.SelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
          this.btnResultsContextForeColor.Size = new System.Drawing.Size(75, 23);
@@ -666,7 +756,7 @@ namespace AstroGrep.Windows.Forms
          // 
          this.lblResultsContextForeColor.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-         this.lblResultsContextForeColor.Location = new System.Drawing.Point(8, 64);
+         this.lblResultsContextForeColor.Location = new System.Drawing.Point(8, 49);
          this.lblResultsContextForeColor.Name = "lblResultsContextForeColor";
          this.lblResultsContextForeColor.Size = new System.Drawing.Size(136, 27);
          this.lblResultsContextForeColor.TabIndex = 25;
@@ -993,6 +1083,8 @@ namespace AstroGrep.Windows.Forms
          this.grpFileList.PerformLayout();
          this.grpResultWindow.ResumeLayout(false);
          this.grpResultWindow.PerformLayout();
+         ((System.ComponentModel.ISupportInitialize)(this.numResultsBeforeAfterCount)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.numResultsLongLineCount)).EndInit();
          this.grpResultMatch.ResumeLayout(false);
          this.tabPlugins.ResumeLayout(false);
          this.PluginDetailsGroup.ResumeLayout(false);
@@ -1076,5 +1168,11 @@ namespace AstroGrep.Windows.Forms
       private Panel pnlResultsPreview;
       private Label lblResultPreview;
       private RichTextBox rtxtResultsPreview;
+      private ComboBox cboForceEncoding;
+      private Label lblForceEncoding;
+      private Label lblResultsBeforeAfterCount;
+      private Label lblResultsLongLineCount;
+      private NumericUpDown numResultsBeforeAfterCount;
+      private NumericUpDown numResultsLongLineCount;
    }
 }

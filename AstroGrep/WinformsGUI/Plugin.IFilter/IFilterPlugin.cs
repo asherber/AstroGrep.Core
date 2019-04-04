@@ -182,6 +182,7 @@ namespace Plugin.IFilter
       /// <history>
       /// [Curtis_Beard]      10/17/2012  Created
       /// [Curtis_Beard]      03/31/2015	CHG: rework Grep/Matches
+      /// [Curtis_Beard]      01/16/2019	FIX: 103, CHG: 122, trim long lines support
       /// </history>
       public MatchResult Grep(FileInfo file, ISearchSpec searchSpec, ref Exception ex)
       {
@@ -249,7 +250,7 @@ namespace Plugin.IFilter
                         }
                      }
 
-                     var matchLineFound = new MatchResultLine() { Line = line, LineNumber = -1, HasMatch = true };
+                     var matchLineFound = new MatchResultLine() { Line = line, LineNumber = -1, HasMatch = true, LongLineCharCount = searchSpec.LongLineCharCount, BeforeAfterCharCount = searchSpec.BeforeAfterCharCount };
 
                      if (searchSpec.UseRegularExpressions)
                      {

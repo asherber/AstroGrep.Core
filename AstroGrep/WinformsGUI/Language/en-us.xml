@@ -17,7 +17,7 @@
       <control name="chkAllResultsAfterSearch" value="Show &amp;all results after search" tooltip="Shows all the results together in the preview after a search" />
       <control name="chkSearchInResults" value="Search &amp;in results" tooltip="Perform search within currently displayed results file list" />
       <control name="lblSearchOptions" value="Search Options" />
-      <control name="picBrowse" tooltip="Browse..." />
+      <control name="picBrowse" tooltip="Browse...(Shift-Click to append)" />
       <control name="lnkExclusions" value="Exclusions" />
       <control name="lstFileNames">
          <menuitem index="0" value="Copy All" />
@@ -95,7 +95,7 @@
       
       <!-- status bar items default state-->
       <control name="sbTotalCountPanel" value="Total: 0"/>
-      <control name="sbFileCountPanel" value="File: 0"/>
+      <control name="sbFileCountPanel" value="File: 0 / 0"/>
       <control name="sbFilterCountPanel" value="Exclusions: 0" tooltip="Double click to display exclusions"/>
       <control name="sbErrorCountPanel" value="Error: 0" tooltip="Double click to display errors"/>
    </screen>
@@ -133,6 +133,8 @@
       <control name="lblResultsWindowBack" value="Back Color" />
       <control name="lblResultsWindowFore" value="Fore Color" />
       <control name="lblResultsContextForeColor" value="Context Fore Color" />
+      <control name="lblResultsLongLineCount" value="Long Line Count" />
+      <control name="lblResultsBeforeAfterCount" value="Before/After Count" />
       <control name="grpResultWindow" value="Results Window" />
       <control name="BackColorLabel" value="Back Color" />
       <control name="ForeColorLabel" value="Fore Color" />
@@ -168,6 +170,7 @@
       <control name="lblPerformance" value="Performance"/>
       <control name="chkUseEncodingCache" value="Enable cache for detected encodings"/>
       <control name="btnCacheClear" value="Clear Cache"/>
+      <control name="lblForceEncoding" value="Force Encoding"/>
    </screen>
    
    <screen name="frmPrint" value="Print">
@@ -284,8 +287,8 @@
       <text name="ResultsColumnSize" value="Size"/>
       <text name="ResultsColumnFileExt" value="File Extension"/>
       
-      <text name="ResultsStatusTotalCount" value="Total: {0}"/>
-      <text name="ResultsStatusFileCount" value="File: {0}"/>
+      <text name="ResultsStatusTotalCount" value="Total: {0} / {1}"/>
+      <text name="ResultsStatusFileCount" value="File: {0} / {1}"/>
       <text name="ResultsStatusFilterCount" value="Exclusions: {0}"/>
       <text name="ResultsStatusErrorCount" value="Error: {0}"/>
 

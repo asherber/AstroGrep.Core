@@ -68,7 +68,7 @@ namespace AstroGrep.Windows.Forms
          lstArguments.Items.Add(new ListViewItem(new string[] { "/spath=\"value\"", "Start Path" }));
          lstArguments.Items.Add(new ListViewItem(new string[] { "/stypes=\"value\"", "File Types" }));
          lstArguments.Items.Add(new ListViewItem(new string[] { "/stext=\"value\"", "Search Text" }));
-         lstArguments.Items.Add(new ListViewItem(new string[] { "/local", "Store config files in local directory" }));
+         //lstArguments.Items.Add(new ListViewItem(new string[] { "/local", "Store config files in local directory" }));
          lstArguments.Items.Add(new ListViewItem(new string[] { "/e", "Use regular expressions" }));
          lstArguments.Items.Add(new ListViewItem(new string[] { "/c", "Case sensitive" }));
          lstArguments.Items.Add(new ListViewItem(new string[] { "/w", "Whole Word" }));

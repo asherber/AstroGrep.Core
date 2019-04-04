@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 using AstroGrep.Common;
@@ -123,6 +124,8 @@ namespace AstroGrep.Windows.Forms
       /// [Curtis_Beard]		06/15/2015	CHG: 57, support external language files
       /// [LinkNet]				04/29/2017  ADD: column widths scaled in accordance with windows DPI% setting
       /// [Curtis_Beard]	   05/19/2017	CHG: 120, add option to use accent color
+      /// [Curtis_Beard]	   01/10/2019  CHG: 136, add option to force encoding for all
+      /// [Curtis_Beard]      01/16/2019	FIX: 103, CHG: 122, trim long lines support
       /// </history>
       private void frmOptions_Load(object sender, System.EventArgs e)
       {
@@ -160,6 +163,10 @@ namespace AstroGrep.Windows.Forms
          // file list font
          DisplayFont(__FileFont, lblFileCurrentFont);
 
+         // character counts
+         numResultsLongLineCount.Value = GeneralSettings.LongLineCharCount;
+         numResultsBeforeAfterCount.Value = GeneralSettings.BeforeAfterCharCount;
+
          tbcOptions.SelectedTab = tabGeneral;
 
          LoadEditors(TextEditors.GetAll());
@@ -196,6 +203,14 @@ namespace AstroGrep.Windows.Forms
          cboPerformance.DataSource = performanceValues;
          cboPerformance.SelectedValue = GeneralSettings.EncodingPerformance;
          chkDetectFileEncoding_CheckedChanged(null, null);
+
+         // setup the force encoding
+         var encodings = System.Text.Encoding.GetEncodings().Select(ec => new Tuple<int,string>(ec.CodePage, ec.DisplayName)).ToList();
+         encodings.Insert(0, new Tuple<int, string>(-1, ""));
+         cboForceEncoding.DisplayMember = "Item2";
+         cboForceEncoding.ValueMember = "Item1";
+         cboForceEncoding.DataSource = encodings;
+         cboForceEncoding.SelectedValue = GeneralSettings.ForcedEncoding;
 
          // set column text
          TextEditorsList.Columns[0].Text = Language.GetGenericText("TextEditorsColumnFileType");
@@ -434,6 +449,7 @@ namespace AstroGrep.Windows.Forms
       /// <returns>String array of file types</returns>
       /// <history>
       /// [Curtis_Beard]		08/13/2014	FIX: better detection of file types
+      /// [Curtis_Beard]	   08/21/2017	FIX: get each definition and check it in frmAddEditTextEditor.cs instead
       /// </history>
       private List<string> GetExistingFileTypes()
       {
@@ -441,18 +457,7 @@ namespace AstroGrep.Windows.Forms
 
          for (int i = 0; i < TextEditorsList.Items.Count; i++)
          {
-            string value = TextEditorsList.Items[i].Text;
-            if (value.Contains(Constants.TEXT_EDITOR_TYPE_SEPARATOR))
-            {
-               foreach (string val in value.Split(Constants.TEXT_EDITOR_TYPE_SEPARATOR.ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
-               {
-                  types.Add(val.ToLower());
-               }
-            }
-            else
-            {
-               types.Add(value.ToLower());
-            }
+            types.Add(TextEditorsList.Items[i].Text);
          }
 
          return types;
@@ -501,6 +506,8 @@ namespace AstroGrep.Windows.Forms
       /// [Curtis_Beard]	   04/15/2015	CHG: add content forecolor
       /// [Curtis_Beard]	   05/26/2015	FIX: 69, add performance setting for file detection
       /// [Curtis_Beard]	   05/19/2017	CHG: 120, add option to use accent color
+      /// [Curtis_Beard]	   01/10/2019  CHG: 136, add option to force encoding for all
+      /// [Curtis_Beard]      01/16/2019	FIX: 103, CHG: 122, trim long lines support
       /// </history>
       private void btnOK_Click(object sender, System.EventArgs e)
       {
@@ -518,9 +525,12 @@ namespace AstroGrep.Windows.Forms
          GeneralSettings.DetectFileEncoding = chkDetectFileEncoding.Checked;
          GeneralSettings.EncodingPerformance = (int)cboPerformance.SelectedValue;
          GeneralSettings.UseEncodingCache = chkUseEncodingCache.Checked;
+         GeneralSettings.ForcedEncoding = (int)cboForceEncoding.SelectedValue;
          GeneralSettings.LogDisplaySavePosition = chkSaveMessagesPosition.Checked;
          GeneralSettings.ExclusionsDisplaySavePosition = chkSaveExclusionsPosition.Checked;
          GeneralSettings.UseAstroGrepAccentColor = chkLabelColor.Checked;
+         GeneralSettings.LongLineCharCount = (int)numResultsLongLineCount.Value;
+         GeneralSettings.BeforeAfterCharCount = (int)numResultsBeforeAfterCount.Value;
 
          // set default log display positions if save position is disabled
          if (!GeneralSettings.LogDisplaySavePosition)
@@ -1246,7 +1256,7 @@ namespace AstroGrep.Windows.Forms
       /// </history>
       private void chkDetectFileEncoding_CheckedChanged(object sender, EventArgs e)
       {
-         lblPerformance.Enabled = cboPerformance.Enabled = chkUseEncodingCache.Enabled = btnCacheClear.Enabled = chkDetectFileEncoding.Checked;
+         lblPerformance.Enabled = cboPerformance.Enabled = chkUseEncodingCache.Enabled = btnCacheClear.Enabled = lblForceEncoding.Enabled = cboForceEncoding.Enabled = chkDetectFileEncoding.Checked;
       }
 
       /// <summary>
@@ -1262,6 +1272,19 @@ namespace AstroGrep.Windows.Forms
          libAstroGrep.EncodingDetection.Caching.EncodingCache.Instance.Clear(true);
 
          MessageBox.Show(this, Language.GetGenericText("FileEncoding.CacheCleared", "Cache cleared successfully."), ProductInformation.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+      }
+
+      /// <summary>
+      /// Resize drop down list if necessary
+      /// </summary>
+      /// <param name="sender">system parm</param>
+      /// <param name="e">system parm</param>
+      /// <history>
+      /// [Curtis_Beard]	   01/10/2019  CHG: 136, initial
+      /// </history>
+      private void cboForceEncoding_DropDown(object sender, EventArgs e)
+      {
+         cboForceEncoding.DropDownWidth = Convertors.CalculateDropDownWidth(cboForceEncoding);
       }
 
       /// <summary>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Media;
 
+using AstroGrep.Common;
 using libAstroGrep;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Rendering;
@@ -34,7 +35,8 @@ namespace AstroGrep.Windows.Controls
    ///   ted@astrocomma.com or curtismbeard@gmail.com
    /// </remarks>
    /// <history>
-   /// [Curtis_Beard]	   04/08/2015	ADD: switch from Rich Text Box to AvalonEdit
+   /// [Curtis_Beard]      04/08/2015  ADD: switch from Rich Text Box to AvalonEdit
+   /// [LinkNet]           08/01/2017  FIX: Resolved problem searching for spaces with "remove leading white space" option selected
    /// </history>
    public class AllResultHighlighter : DocumentColorizingTransformer
    {
@@ -115,9 +117,17 @@ namespace AstroGrep.Windows.Controls
                foreach (var matchResultLine in result.Matches)
                {
                   string lineText = matchResultLine.Line;
-                  if(removeWhiteSpace)
+
+                  if (removeWhiteSpace)
                   {
-                     lineText = lineText.TrimStart();
+                     if (matchResultLine.HasMatch)
+                     {
+                        lineText = lineText.Substring(Utils.GetValidLeadingSpaces(lineText, matchResultLine.Matches[0].StartPosition));
+                     }
+                     else
+                     {
+                        lineText = lineText.TrimStart();
+                     }
                   }
 
                   if (lineText.Equals(text))
@@ -149,9 +159,10 @@ namespace AstroGrep.Windows.Controls
                if (matchLine != null && matchLine.HasMatch)
                {
                   int trimOffset = 0;
+
                   if (removeWhiteSpace)
                   {
-                     trimOffset = matchLine.Line.Length - matchLine.Line.TrimStart().Length;
+                     trimOffset = Utils.GetValidLeadingSpaces(matchLine.Line, matchLine.Matches[0].StartPosition);
                   }
 
                   for (int i = 0; i < matchLine.Matches.Count; i++)

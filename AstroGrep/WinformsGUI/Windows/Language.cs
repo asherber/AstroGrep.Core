@@ -42,7 +42,7 @@ namespace AstroGrep.Windows
       #region Declarations
       private static XmlDocument __XmlDoc = null;
       private static XmlNode __RootNode = null;
-      private static XmlNode __XmlGenericNode = null;
+      private static Dictionary<string, string> genericTextDictionary = new Dictionary<string, string>();
       private static List<LanguageItem> internalLanguages = null;
       #endregion
 
@@ -403,15 +403,13 @@ namespace AstroGrep.Windows
       /// <returns>string containing text or given default value if not found</returns>
       /// <history>
       /// [Curtis_Beard]		07/31/2006	Created
+      /// [Curtis_Beard]		08/15/2017	PAT: 5, use dictionary instead of xpath for generic text
       /// </history>
       public static string GetGenericText(string name, string defaultValue)
       {
-         if (__XmlGenericNode != null)
+         if (genericTextDictionary != null && genericTextDictionary.ContainsKey(name))
          {
-            XmlNode node = __XmlGenericNode.SelectSingleNode("text[@name='" + name + "']");
-
-            if (node != null && node.Attributes["value"] != null)
-               return node.Attributes["value"].Value;
+            return genericTextDictionary[name];
          }
 
          return defaultValue;
@@ -1028,6 +1026,7 @@ namespace AstroGrep.Windows
       /// <returns>true on success, false otherwise</returns>
       /// <history>
       /// [Curtis_Beard]		06/15/2015	CHG: 57, support external language files
+      /// [Curtis_Beard]		08/15/2017	PAT: 5, use dictionary instead of xpath for generic text
       /// </history>
       private static bool LoadInternal(string culture)
       {
@@ -1058,10 +1057,17 @@ namespace AstroGrep.Windows
 
                      if (__RootNode != null)
                      {
-                        __XmlGenericNode = __RootNode.SelectSingleNode("generic");
+                        var genericNode = __RootNode.SelectSingleNode("generic");
 
-                        if (__XmlGenericNode != null)
+                        if (genericNode != null)
                         {
+                           genericTextDictionary.Clear();
+                           var textNodes = genericNode.SelectNodes("text");
+                           foreach (XmlNode node in textNodes)
+                           {
+                              genericTextDictionary.Add(node.Attributes["name"].Value, node.Attributes["value"].Value);
+                           }
+                           
                            return true;
                         }
                      }
@@ -1084,6 +1090,7 @@ namespace AstroGrep.Windows
       /// <returns>true on success, false otherwise</returns>
       /// <history>
       /// [Curtis_Beard]		06/15/2015	CHG: 57, support external language files
+      /// [Curtis_Beard]		08/15/2017	PAT: 5, use dictionary instead of xpath for generic text
       /// </history>
       private static bool LoadExternal(string culture)
       {
@@ -1109,10 +1116,17 @@ namespace AstroGrep.Windows
 
                         if (__RootNode != null)
                         {
-                           __XmlGenericNode = __RootNode.SelectSingleNode("generic");
+                           var genericNode = __RootNode.SelectSingleNode("generic");
 
-                           if (__XmlGenericNode != null)
+                           if (genericNode != null)
                            {
+                              genericTextDictionary.Clear();
+                              var textNodes = genericNode.SelectNodes("text");
+                              foreach (XmlNode node in textNodes)
+                              {
+                                 genericTextDictionary.Add(node.Attributes["name"].Value, node.Attributes["value"].Value);
+                              }
+
                               return true;
                            }
                         }

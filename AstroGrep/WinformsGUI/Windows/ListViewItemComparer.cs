@@ -73,6 +73,7 @@ namespace AstroGrep.Windows
       /// <history>
       /// [Curtis_Beard]		07/21/2006	Created
       /// [Curtis_Beard]		02/17/2012	CHG: update listview sorting
+      /// [Curtis_Beard]		01/08/2019	CHG: 119, add line hit count
       /// </history>
       public int Compare(object x, object y)
       {
@@ -86,8 +87,8 @@ namespace AstroGrep.Windows
             if (col == Constants.COLUMN_INDEX_COUNT)
             {
                // Parse the two objects passed as a parameter as a int.
-               int firstInt = int.Parse(((ListViewItem)x).SubItems[col].Text);
-               int secondInt = int.Parse(((ListViewItem)y).SubItems[col].Text);
+               int firstInt = Core.Convertors.GetHitCountFromCountDisplay(((ListViewItem)x).SubItems[col].Text);
+               int secondInt = Core.Convertors.GetHitCountFromCountDisplay(((ListViewItem)y).SubItems[col].Text);
 
                // Compare the two integers.
                if (firstInt < secondInt)

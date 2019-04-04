@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows.Media;
 
+using AstroGrep.Common;
 using libAstroGrep;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Rendering;
@@ -33,7 +34,8 @@ namespace AstroGrep.Windows.Controls
    ///   ted@astrocomma.com or curtismbeard@gmail.com
    /// </remarks>
    /// <history>
-   /// [Curtis_Beard]	   04/08/2015	ADD: switch from Rich Text Box to AvalonEdit
+   /// [Curtis_Beard]     04/08/2015  ADD: switch from Rich Text Box to AvalonEdit
+   /// [LinkNet]          08/01/2017  FIX: Resolved problem searching for spaces with "remove leading white space" option selected
    /// </history>
    public class ResultHighlighter : DocumentColorizingTransformer
    {
@@ -135,10 +137,18 @@ namespace AstroGrep.Windows.Controls
             if (isHit && !string.IsNullOrEmpty(contents))
             {
                int trimOffset = 0;
+
                if (removeWhiteSpace)
-               {
-                  trimOffset = contents.Length - contents.TrimStart().Length;
-               }
+			   {
+                  if (matchLine.HasMatch)
+                  {
+                     trimOffset = Utils.GetValidLeadingSpaces(contents, matchLine.Matches[0].StartPosition);
+                  }
+                  else
+                  {
+                     trimOffset = contents.Length - contents.TrimStart().Length;
+                  }
+			   }
 
                for (int i = 0; i < matchLine.Matches.Count; i++)
                {

@@ -17,7 +17,7 @@
       <control name="chkAllResultsAfterSearch" value="&amp;Mostrar todos los resultados" tooltip="Muestra todos los resultados juntos en la vista previa después de la búsqueda." />
       <control name="chkSearchInResults" value="Buscar en los resultados" tooltip="Efectuar la búsqueda en la lista de archivos que se muestran actualmente en los resultados" />
       <control name="lblSearchOptions" value="Opciones de búsqueda" />
-      <control name="picBrowse" tooltip="Navegar..." />
+      <control name="picBrowse" tooltip="Navegar...(Shift-Click para añadir)" />
       <control name="lnkExclusions" value="Exclusiones" />
       <control name="lstFileNames">
          <menuitem index="0" value="Copiar todo" />
@@ -95,7 +95,7 @@
 
       <!-- status bar items default state-->
       <control name="sbTotalCountPanel" value="Total: 0"/>
-      <control name="sbFileCountPanel" value="Archivos: 0"/>
+      <control name="sbFileCountPanel" value="Archivos: 0 / 0"/>
       <control name="sbFilterCountPanel" value="Exclusiones: 0" tooltip="Haga doble clic para mostrar exclusiones."/>
       <control name="sbErrorCountPanel" value="Errores: 0" tooltip="Haga doble clic para mostrar errores."/>
    </screen>
@@ -133,6 +133,8 @@
       <control name="lblResultsWindowBack" value="Color de fondo" />
       <control name="lblResultsWindowFore" value="Color de primer plano" />
       <control name="lblResultsContextForeColor" value="Color de líneas adyacetes" />
+      <control name="lblResultsLongLineCount" value="Cuenta de línea larga" />
+      <control name="lblResultsBeforeAfterCount" value="Antes/Después de la cuenta" />
       <control name="grpResultWindow" value="Ventana de resultados" />
       <control name="BackColorLabel" value="Color de fondo" />
       <control name="ForeColorLabel" value="Color de primer plano" />
@@ -168,6 +170,7 @@
       <control name="lblPerformance" value="Rendimiento"/>
       <control name="chkUseEncodingCache" value="Habilitar caché para las codificaciones detectadas."/>
       <control name="btnCacheClear" value="Limpiar caché"/>
+      <control name="lblForceEncoding" value="Codificación de fuerza"/>
    </screen>
    
    <screen name="frmPrint" value="Impresión">
@@ -285,8 +288,8 @@
       <text name="ResultsColumnSize" value="Tamaño"/>
       <text name="ResultsColumnFileExt" value="Extensión de archivo"/>
       
-      <text name="ResultsStatusTotalCount" value="Total: {0}"/>
-      <text name="ResultsStatusFileCount" value="Archivo: {0}"/>
+      <text name="ResultsStatusTotalCount" value="Total: {0} / {1}"/>
+      <text name="ResultsStatusFileCount" value="Archivo: {0} / {1}"/>
       <text name="ResultsStatusFilterCount" value="Exclusiones: {0}"/>
       <text name="ResultsStatusErrorCount" value="Error: {0}"/>
 
@@ -306,7 +309,7 @@
       <text name="Exclusions.Enabled" value="Activado"/>
       <text name="Exclusions.Category" value="Categoría"/>
       <text name="Exclusions.Type" value="Tipo"/>
-      <text name="Exclusions.Type" value="Valor"/>
+      <text name="Exclusions.Value" value="Valor"/>
       <text name="Exclusions.Option" value="Opciones"/>
 
       <text name="Exclusions.File" value="Archivo"/>

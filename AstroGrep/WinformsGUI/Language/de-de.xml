@@ -17,7 +17,7 @@
       <control name="chkAllResultsAfterSearch" value="Alle Ergebn&amp;isse anzeigen Suche nach" tooltip="Einen Überblick über die Ergebnisse zusammen in der Vorschau nach einer Suche" />
       <control name="chkSearchInResults" value="Suche in den &amp;Ergebnissen" tooltip="Suche starten innerhalb aktuell angezeigten Ergebnisse Dateiliste" />
       <control name="lblSearchOptions" value="Such-Einstellungen" />
-      <control name="picBrowse" tooltip="Durchsuchen..." />
+      <control name="picBrowse" tooltip="Durchsuchen...(Umschalt-Klicken zum Anhängen)" />
       <control name="lnkExclusions" value="Ausschlüsse" />
       <control name="lstFileNames">
          <menuitem index="0" value="kopieren Sie alle" />
@@ -95,7 +95,7 @@
 
       <!-- status bar items default state-->
       <control name="sbTotalCountPanel" value="Gesamtmenge: 0"/>
-      <control name="sbFileCountPanel" value="Datei: 0"/>
+      <control name="sbFileCountPanel" value="Datei: 0 / 0"/>
       <control name="sbFilterCountPanel" value="Ausschlüsse: 0" tooltip="Doppelklicken Sie auf Ausschlüsse anzuzeigen"/>
       <control name="sbErrorCountPanel" value="Störung: 0" tooltip="Doppelklicken Sie auf die Anzeige von Fehlern"/>
    </screen>
@@ -133,6 +133,8 @@
       <control name="lblResultsWindowBack" value="Hintergrundfarbe" />
       <control name="lblResultsWindowFore" value="Vordergrundfarbe" />
       <control name="lblResultsContextForeColor" value="Kontext Vordergrund" />
+      <control name="lblResultsLongLineCount" value="Lange Zeile zählen" />
+      <control name="lblResultsBeforeAfterCount" value="Vorher/nachher zählen" />
       <control name="grpResultWindow" value="Ergebnisfenster" />
       <control name="BackColorLabel" value="Hintergrundfarbe" />
       <control name="ForeColorLabel" value="Vordergrundfarbe" />
@@ -168,6 +170,7 @@
       <control name="lblPerformance" value="Leistung"/>
       <control name="chkUseEncodingCache" value="Aktivieren Sie Cache erkannt Kodierungen"/>
       <control name="btnCacheClear" value="Cache Leeren"/>
+      <control name="lblForceEncoding" value="Kodierung erzwingen"/>
    </screen>
 
    <screen name="frmPrint" value="Drucken">
@@ -285,8 +288,8 @@
       <text name="ResultsColumnSize" value="Größe"/>
       <text name="ResultsColumnFileExt" value="Dateierweiterung"/>
 
-      <text name="ResultsStatusTotalCount" value="Gesamtmenge: {0}"/>
-      <text name="ResultsStatusFileCount" value="Datei: {0}"/>
+      <text name="ResultsStatusTotalCount" value="Gesamtmenge: {0} / {1}"/>
+      <text name="ResultsStatusFileCount" value="Datei: {0} / {1}"/>
       <text name="ResultsStatusFilterCount" value="Ausschlüsse: {0}"/>
       <text name="ResultsStatusErrorCount" value="Störung: {0}"/>
 

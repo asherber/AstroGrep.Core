@@ -69,6 +69,26 @@ namespace libAstroGrep
       public int HitCount { get; private set; }
 
       /// <summary>
+      /// Gets the total number of lines that contain a hit.
+      /// </summary>
+      public int LineHitCount
+      {
+         get
+         {
+            int count = 0;
+            foreach (MatchResultLine match in matches)
+            {
+               if (match.HasMatch)
+               {
+                  count++;
+               }
+            }
+
+            return count;
+         }
+      }
+
+      /// <summary>
       /// Gets/Sets the detected file encoding.
       /// </summary>
       /// <history>

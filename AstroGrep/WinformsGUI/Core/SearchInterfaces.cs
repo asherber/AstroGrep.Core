@@ -50,6 +50,7 @@ namespace AstroGrep.Core
       /// [Curtis_Beard]      04/07/2015	CHG: remove line numbers
       /// [Curtis_Beard]	   05/26/2015	FIX: 69, add performance setting for file detection
       /// [Curtis_Beard]	   09/29/2016	CHG: 24/115, use one interface for search in prep for saving to file
+      /// [Curtis_Beard]      01/16/2019	FIX: 103, CHG: 122, trim long lines support
       /// </history>
       public class SearchSpec : ISearchSpec
       {
@@ -91,6 +92,12 @@ namespace AstroGrep.Core
 
          /// <summary>List of file filters used when retrieving files from a directory (multiples separated by , or ; )</summary>
          public string FileFilter { get; set; }
+
+         /// <summary>The number of characters to include before and after a match (0 is disabled)</summary>
+         public int BeforeAfterCharCount { get; set; }
+
+         /// <summary>The number of characters to indicate a long line</summary>
+         public int LongLineCharCount { get; set; }
 
          /// <summary>List of FilterItems that can be used to filter out files/directories based on certain features of said file/directory.</summary>
          public List<FilterItem> FilterItems { get; set; }

@@ -13,8 +13,8 @@
 
 !define MUI_COMPONENTSPAGE_SMALLDESC
 !define MUI_LANGDLL_ALLLANGUAGES
-!define INS_VERSION 4.4.6.0
-!define APP_VERSION "4.4.6"
+!define INS_VERSION 4.4.7.0
+!define APP_VERSION "4.4.7"
 
 ;--------------------------------
 ;Variables
@@ -65,7 +65,7 @@
 	!define MUI_LANGDLL_REGISTRY_ROOT "HKCU" 
 	!define MUI_LANGDLL_REGISTRY_KEY "Software\AstroGrep" 
 	!define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
-  
+	
 	;Start Menu Folder Page Configuration
 	!define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU" 
 	!define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\AstroGrep" 
@@ -226,6 +226,10 @@
 ; v4.0, aborts install if not found
 ;--------------------------------
 Function .onInit
+	; when silent, write out a default language
+	IfSilent 0 +2
+	WriteRegStr HKCU "Software\AstroGrep" "Installer Language" "English"
+
 	!insertmacro MUI_LANGDLL_DISPLAY
 	
 	;Call IsDotNETVersion4Installed

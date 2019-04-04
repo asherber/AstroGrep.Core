@@ -116,9 +116,10 @@ namespace libAstroGrep
       /// <summary>Directory being filtered</summary>
       public event DirectoryFilteredOut DirectoryFiltered;
 
-      /// <summary>The current file is being searched by a plugin</summary>
+      /// <summary>The file is being searched by a plugin</summary>
+      /// <param name="file">FileInfo object of file currently being searched</param>
       /// <param name="pluginName">Name of plugin</param>
-      public delegate void SearchingFileByPluginHandler(string pluginName);
+      public delegate void SearchingFileByPluginHandler(FileInfo file, string pluginName);
       /// <summary>File being searched by a plugin</summary>
       public event SearchingFileByPluginHandler SearchingFileByPlugin;
 
@@ -141,6 +142,9 @@ namespace libAstroGrep
 
       /// <summary>The Search specification.</summary>
       public ISearchSpec SearchSpec { get; private set; }
+
+      /// <summary>The total number of files searched</summary>
+      public long TotalFilesSearched { get; private set; }
 
       #endregion      
 
@@ -223,6 +227,9 @@ namespace libAstroGrep
       /// </history>
       public void Execute()
       {
+         // reset count
+         TotalFilesSearched = 0;
+
          // search only specified file paths (usually used for search in results)
          if (SearchSpec.StartFilePaths != null && SearchSpec.StartFilePaths.Length > 0)
          {
@@ -419,6 +426,7 @@ namespace libAstroGrep
       /// <param name="SourceFile">FileInfo object to be searched</param>
       /// <history>
       /// [Curtis_Beard]	   09/29/2016	CHG: 24/115, use one interface for search in prep for saving to file
+      /// [Curtis_Beard]      01/16/2019	FIX: 103, CHG: 122, trim long lines support
       /// </history>
       private void SearchFile(FileInfo SourceFile)
       {
@@ -435,14 +443,20 @@ namespace libAstroGrep
             {
                // return a 'file hit' if the search text is empty
                var match = new MatchResult(SourceFile) { Index = MatchResults.Count };
-               var matchLine = new MatchResultLine();
+               var matchLine = new MatchResultLine
+               {
+                  BeforeAfterCharCount = SearchSpec.BeforeAfterCharCount,
+                  LongLineCharCount = SearchSpec.LongLineCharCount,
+               };
                match.Matches.Add(matchLine);
                MatchResults.Add(match);
-
+               
+               TotalFilesSearched++;
                OnFileHit(SourceFile, match.Index);
             }
             else
             {
+               TotalFilesSearched++;
                SearchFileContents(SourceFile);
             }
          }
@@ -527,6 +541,11 @@ namespace libAstroGrep
       /// [theblackbunny]		06/25/2015	FIX: 39, remove context lines that intersect with each other in different MatchResults
       /// [Curtis_Beard]	   08/18/2016	CHG: 109, adjust context lines to support max instead of hard coded
       /// [Curtis_Beard]		05/26/2017	FIX: 97, detect file size change to read encoding again
+      /// [Curtis_Beard]      08/15/2017  FIX: 101/85, don't call plugin's unload for each file
+      /// [LinkNet]           08/21/2017  FIX: 102, fix issue with context lines
+      /// [Curtis_Beard]      08/21/2017  CHG: pass FileInfo to plugin event
+      /// [Curtis_Beard]	   01/10/2019  CHG: 136, check option to force encoding for all
+      /// [Curtis_Beard]      01/16/2019	FIX: 103, CHG: 122, trim long lines support
       /// </history>
       private void SearchFileContents(FileInfo file)
       {
@@ -570,15 +589,13 @@ namespace libAstroGrep
                      // load plugin and perform grep
                      if (Plugins[i].Plugin.Load())
                      {
-                        OnSearchingFileByPlugin(Plugins[i].Plugin.Name);
+                        OnSearchingFileByPlugin(file, Plugins[i].Plugin.Name);
                         match = Plugins[i].Plugin.Grep(file, SearchSpec, ref pluginEx);
                      }
                      else
                      {
                         OnSearchError(file, new Exception(string.Format("Plugin {0} failed to load.", Plugins[i].Plugin.Name)));
                      }
-
-                     Plugins[i].Plugin.Unload();
 
                      // if the plugin processed successfully
                      if (pluginEx == null)
@@ -638,7 +655,16 @@ namespace libAstroGrep
             FileEncoding fileEncoding = SearchSpec.FileEncodings != null && SearchSpec.FileEncodings.Count > 0 ? 
                (from f in SearchSpec.FileEncodings where f.FilePath.Equals(file.FullName, StringComparison.InvariantCultureIgnoreCase) && f.Enabled select f).ToList().FirstOrDefault()
                :  null;
-            if (fileEncoding != null)
+
+            //
+            // Forced Encoding
+            //
+            if (SearchSpec.EncodingDetectionOptions.DetectFileEncoding && SearchSpec.EncodingDetectionOptions.ForcedEncoding != -1)
+            {
+               usedEncoder = "Forced";
+               encoding = System.Text.Encoding.GetEncoding(SearchSpec.EncodingDetectionOptions.ForcedEncoding);
+            }
+            else if (fileEncoding != null)
             {
                usedEncoder = "User";
                encoding = System.Text.Encoding.GetEncoding(fileEncoding.CodePage);
@@ -852,10 +878,10 @@ namespace libAstroGrep
                      // Display context lines if applicable.
                      if (SearchSpec.ContextLines > 0 && _lastHit <= 0)
                      {
-                        if (match.Matches.Count > 0 && _lastHit < -_maxContextLines)
+                        if (match.Matches.Count > 0 && _lastHit <= -_maxContextLines)
                         {
                            // Insert a blank space before the context lines.
-                           var matchLine = new MatchResultLine() { Line = string.Empty, LineNumber = -1 };
+                           var matchLine = new MatchResultLine() { Line = string.Empty, LineNumber = -1, LongLineCharCount = SearchSpec.LongLineCharCount, BeforeAfterCharCount = SearchSpec.BeforeAfterCharCount };
                            match.Matches.Add(matchLine);
                            int _pos = match.Matches.Count - 1;
 
@@ -868,7 +894,7 @@ namespace libAstroGrep
                         // Display preceding n context lines before the hit.
                         int tempContextLines = SearchSpec.ContextLines;
                         // But only output the context lines which are not part of the previous context
-                        if(_lastHit >= -_maxContextLines)
+                        if(_lastHit > -_maxContextLines)
                         {
                            tempContextLines = -_lastHit;
                         }
@@ -889,7 +915,7 @@ namespace libAstroGrep
                            if (_lineNumber > tempPosInStr)
                            {
                               // Add the context line.
-                              var matchLine = new MatchResultLine() { Line = _context[_contextIndex], LineNumber = _lineNumber - tempPosInStr };
+                              var matchLine = new MatchResultLine() { Line = _context[_contextIndex], LineNumber = _lineNumber - tempPosInStr, LongLineCharCount = SearchSpec.LongLineCharCount, BeforeAfterCharCount = SearchSpec.BeforeAfterCharCount };
                               match.Matches.Add(matchLine);
                               int _pos = match.Matches.Count - 1;
 
@@ -906,7 +932,7 @@ namespace libAstroGrep
                      //
                      // Add the actual "hit".
                      //
-                     var matchLineFound = new MatchResultLine() { Line = textLine, LineNumber = _lineNumber, HasMatch = true };
+                     var matchLineFound = new MatchResultLine() { Line = textLine, LineNumber = _lineNumber, HasMatch = true, LongLineCharCount = SearchSpec.LongLineCharCount, BeforeAfterCharCount = SearchSpec.BeforeAfterCharCount };
 
                      if (SearchSpec.UseRegularExpressions)
                      {
@@ -941,7 +967,7 @@ namespace libAstroGrep
                         // We didn't find a hit, but since lastHit is > 0, we
                         // need to display this context line.
                         //***************************************************
-                        var matchLine = new MatchResultLine() { Line = textLine, LineNumber = _lineNumber };
+                        var matchLine = new MatchResultLine() { Line = textLine, LineNumber = _lineNumber, LongLineCharCount = SearchSpec.LongLineCharCount, BeforeAfterCharCount = SearchSpec.BeforeAfterCharCount };
                         match.Matches.Add(matchLine);
                         int _index = match.Matches.Count - 1;
 
@@ -1153,6 +1179,7 @@ namespace libAstroGrep
       /// <history>
       /// [Curtis_Beard]      09/17/2013    FIX: 45, check against a specific extension when only 3 characters is defined (*.txt can return things like *.txtabc due to .net GetFiles)
       /// [Curtis_Beard]      05/08/2014    FIX: 55, handle when no . in searchPattern (e.g. *)
+      /// [Curtis_Beard]      04/01/2019    FIX: 10, (Support Request) handle no file extension
       /// </history>
       private bool StriktMatch(string fileExtension, string searchPattern)
       {
@@ -1161,7 +1188,7 @@ namespace libAstroGrep
          int index = searchPattern.LastIndexOf('.');
          string extension = index > -1 ? searchPattern.Substring(index) : searchPattern;
 
-         if (String.IsNullOrEmpty(extension))
+         if (string.IsNullOrEmpty(extension) || string.IsNullOrEmpty(fileExtension))
          {
             isStriktMatch = true;
          }
@@ -1169,7 +1196,7 @@ namespace libAstroGrep
          {
             isStriktMatch = true;
          }
-         else if (String.Compare(fileExtension, extension, true) == 0)
+         else if (string.Compare(fileExtension, extension, true) == 0)
          {
             isStriktMatch = true;
          }
@@ -1314,15 +1341,17 @@ namespace libAstroGrep
       /// <summary>
       /// Raise searching file by plugin event.
       /// </summary>
+      /// <param name="file">Current FileInfo</param>
       /// <param name="pluginName">Name of plugin</param>
       /// <history>
       /// [Curtis_Beard]	   10/16/2012	Initial
+      /// [Curtis_Beard]      08/21/2017  CHG: pass FileInfo to plugin event
       /// </history>
-      protected virtual void OnSearchingFileByPlugin(string pluginName)
+      protected virtual void OnSearchingFileByPlugin(FileInfo file, string pluginName)
       {
          if (SearchingFileByPlugin != null)
          {
-            SearchingFileByPlugin(pluginName);
+            SearchingFileByPlugin(file, pluginName);
          }
       }
 

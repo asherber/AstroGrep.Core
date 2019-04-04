@@ -17,7 +17,7 @@
       <control name="chkAllResultsAfterSearch" value="&amp;Vis alle resultater efter søgning" tooltip="Viser alle resultaterne sammen i preview efter en søgning" />
       <control name="chkSearchInResults" value="Søg i resultater" tooltip="Udfør søg inden aktuelt viste resultater filliste" />
       <control name="lblSearchOptions" value="Søgeparametre" />
-      <control name="picBrowse" tooltip="Gennemse..." />
+      <control name="picBrowse" tooltip="Gennemse...(Skift-klik for at tilføje)" />
       <control name="lnkExclusions" value="udelukkelser" />
       <control name="lstFileNames">
          <menuitem index="0" value="kopier alle" />
@@ -95,7 +95,7 @@
 
       <!-- status bar items default state-->
       <control name="sbTotalCountPanel" value="Total: 0"/>
-      <control name="sbFileCountPanel" value="Fil: 0"/>
+      <control name="sbFileCountPanel" value="Fil: 0 / 0"/>
       <control name="sbFilterCountPanel" value="Udelukkelser: 0" tooltip="Dobbeltklik for at vise undtagelser"/>
       <control name="sbErrorCountPanel" value="Fejl: 0" tooltip="Dobbeltklik for at vise fejl"/>
    </screen>
@@ -133,6 +133,8 @@
       <control name="lblResultsWindowBack" value="Baggrundsfarve" />
       <control name="lblResultsWindowFore" value="Forgrundsfarve" />
       <control name="lblResultsContextForeColor" value="Kontekst forgrunden" />
+      <control name="lblResultsLongLineCount" value="Long Line Count" />
+      <control name="lblResultsBeforeAfterCount" value="Før / Eftertælling" />
       <control name="grpResultWindow" value="Resultat Vindue" />
       <control name="BackColorLabel" value="Baggrundsfarve" />
       <control name="ForeColorLabel" value="Forgrundsfarve" />
@@ -168,6 +170,7 @@
       <control name="lblPerformance" value="ydeevne"/>
       <control name="chkUseEncodingCache" value="Aktiver cache for fundne kodninger"/>
       <control name="btnCacheClear" value="Ryd cache"/>
+      <control name="lblForceEncoding" value="Force Encoding"/>
    </screen>
    
    <screen name="frmPrint" value="Print">
@@ -285,8 +288,8 @@
       <text name="ResultsColumnSize" value="Størrelse"/>
       <text name="ResultsColumnFileExt" value="Filtypenavn"/>
 
-      <text name="ResultsStatusTotalCount" value="Total: {0}"/>
-      <text name="ResultsStatusFileCount" value="Fil: {0}"/>
+      <text name="ResultsStatusTotalCount" value="Total: {0} / {1}"/>
+      <text name="ResultsStatusFileCount" value="Fil: {0} / {1}"/>
       <text name="ResultsStatusFilterCount" value="Udelukkelser: {0}"/>
       <text name="ResultsStatusErrorCount" value="Fejl: {0}"/>
 

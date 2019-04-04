@@ -17,7 +17,7 @@
       <control name="chkAllResultsAfterSearch" value="Pokaż wszystkie wyniki &amp;wyszukiwania" tooltip="Wyświetla wszystkie wyniki wyszukiwania w jednym wspólnym poglądzie" />
       <control name="chkSearchInResults" value="Szukaj w wynikach" tooltip="Wykonaj wyszukiwanie w obrębie aktualnie wyświetlanej listy plików Wyniki" />
       <control name="lblSearchOptions" value="Opcje wyszukiwania" />
-      <control name="picBrowse" tooltip="Przeglądaj..." />
+      <control name="picBrowse" tooltip="Przeglądaj...(Shift-Kliknij, aby dołączyć)" />
       <control name="lnkExclusions" value="Wyjątki" />
       <control name="lstFileNames">
          <menuitem index="0" value="Skopiuj wszystko" />
@@ -95,7 +95,7 @@
       
       <!-- status bar items default state-->
       <control name="sbTotalCountPanel" value="Łącznie: 0"/>
-      <control name="sbFileCountPanel" value="Pliki: 0"/>
+      <control name="sbFileCountPanel" value="Pliki: 0 / 0"/>
       <control name="sbFilterCountPanel" value="Wyjątki: 0" tooltip="Naciśnij podwójnie, aby wyświetlić wyjątki"/>
       <control name="sbErrorCountPanel" value="Błędy: 0" tooltip="Naciśnij podwójnie, aby wyświetlić błędy"/>
    </screen>
@@ -133,6 +133,8 @@
       <control name="lblResultsWindowBack" value="Kolor tła" />
       <control name="lblResultsWindowFore" value="Kolor tekstu" />
       <control name="lblResultsContextForeColor" value="Kolor linii kontekstu" />
+      <control name="lblResultsLongLineCount" value="Long Line Count" />
+      <control name="lblResultsBeforeAfterCount" value="Przed / po Zliczeniu" />
       <control name="grpResultWindow" value="Okno wyników" />
       <control name="BackColorLabel" value="Kolor tła" />
       <control name="ForeColorLabel" value="Kolor tekstu" />
@@ -168,6 +170,7 @@
       <control name="lblPerformance" value="Wydajność"/>
       <control name="chkUseEncodingCache" value="Włącz pamięć podręczną dla wykrytych kodowań"/>
       <control name="btnCacheClear" value="Wyczyść podręczną"/>
+      <control name="lblForceEncoding" value="Wymuś kodowanie"/>
    </screen>
    
    <screen name="frmPrint" value="Drukuj">
@@ -284,8 +287,8 @@
       <text name="ResultsColumnSize" value="Rozmiar"/>
       <text name="ResultsColumnFileExt" value="Rozszerzenie pliku"/>
       
-      <text name="ResultsStatusTotalCount" value="Łącznie: {0}"/>
-      <text name="ResultsStatusFileCount" value="Pliki: {0}"/>
+      <text name="ResultsStatusTotalCount" value="Łącznie: {0} / {1}"/>
+      <text name="ResultsStatusFileCount" value="Pliki: {0} / {1}"/>
       <text name="ResultsStatusFilterCount" value="Wyjątki: {0}"/>
       <text name="ResultsStatusErrorCount" value="Błędy: {0}"/>
 
