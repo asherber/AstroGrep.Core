@@ -171,7 +171,7 @@ namespace AstroGrep.Core.EncodingDetection.Caching
                }
             }
          }
-         catch (Exception ex)
+         catch
          {         
          }
       }
@@ -226,7 +226,7 @@ namespace AstroGrep.Core.EncodingDetection.Caching
                }
             }
          }
-         catch (Exception ex)
+         catch
          {
          }
       }
@@ -258,7 +258,7 @@ namespace AstroGrep.Core.EncodingDetection.Caching
                      fInfo.Delete();
                   }
                }
-               catch (Exception ex)
+               catch
                {
                }
             }
