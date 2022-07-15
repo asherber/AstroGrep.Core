@@ -45,16 +45,21 @@ namespace AstroGrep.Windows.Controls
       private SolidColorBrush matchForeground = new SolidColorBrush(Colors.White);
       private SolidColorBrush matchBackground = new SolidColorBrush(Color.FromRgb(251, 127, 6));
       private SolidColorBrush nonmatchForeground = new SolidColorBrush(Color.FromRgb(192, 192, 192));
+      private int beforeContextLines = 0;
+      private int afterContextLines = 0;
 
       /// <summary>
       /// Creates an instance of this class.
       /// </summary>
       /// <param name="matches">List of all matches</param>
       /// <param name="removeWhiteSpace">Determines if leading white space was removed</param>
+      /// <param name="beforeContextLines">Number of context lines before match</param>
+      /// <param name="afterContextLines">Number of context lines after match</param>
       /// <history>
       /// [Curtis_Beard]	   04/08/2015	ADD: switch from Rich Text Box to AvalonEdit
+      /// [Curtis_Beard]	   08/20/2019	CHG: 142, dynamically display context lines
       /// </history>
-      public AllResultHighlighter(IList<MatchResult> matches, bool removeWhiteSpace)
+      public AllResultHighlighter(IList<MatchResult> matches, bool removeWhiteSpace, int beforeContextLines, int afterContextLines)
       {
          this.matches = matches;
          this.removeWhiteSpace = removeWhiteSpace;
@@ -93,6 +98,7 @@ namespace AstroGrep.Windows.Controls
       /// <param name="line">Current DocumentLine from AvalonEdit</param>
       /// <history>
       /// [Curtis_Beard]	   04/08/2015	ADD: switch from Rich Text Box to AvalonEdit
+      /// [Curtis_Beard]	   08/20/2019	CHG: 142, dynamically display context lines
       /// </history>
       protected override void ColorizeLine(DocumentLine line)
       {
@@ -114,7 +120,7 @@ namespace AstroGrep.Windows.Controls
             }
             else
             {
-               foreach (var matchResultLine in result.Matches)
+               foreach (var matchResultLine in result.GetDisplayMatches(beforeContextLines, afterContextLines))
                {
                   string lineText = matchResultLine.Line;
 

@@ -41,7 +41,7 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -66,6 +66,7 @@
     <WarningLevel>4</WarningLevel>
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -88,6 +89,7 @@
     <WarningLevel>4</WarningLevel>
     <DebugType>none</DebugType>
     <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Portable|AnyCPU'">
     <OutputPath>bin\Portable\</OutputPath>
@@ -99,16 +101,31 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup />
   <ItemGroup>
-    <Reference Include="ICSharpCode.AvalonEdit, Version=5.0.3.0, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
-      <HintPath>..\packages\AvalonEdit.5.0.4\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="CommandLine, Version=2.7.82.0, Culture=neutral, PublicKeyToken=5a870481e358d379, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommandLineParser.2.7.82\lib\net45\CommandLine.dll</HintPath>
+    </Reference>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.10.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocumentFormat.OpenXml.2.10.1\lib\net40\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
+    <Reference Include="ExcelDataReader, Version=3.6.0.0, Culture=neutral, PublicKeyToken=93517dbe6a4012fa, processorArchitecture=MSIL">
+      <HintPath>..\packages\ExcelDataReader.3.6.0\lib\net45\ExcelDataReader.dll</HintPath>
+    </Reference>
+    <Reference Include="ExcelNumberFormat, Version=1.0.8.0, Culture=neutral, PublicKeyToken=23c6f5d73be07eca, processorArchitecture=MSIL">
+      <HintPath>..\packages\ExcelNumberFormat.1.0.8\lib\net20\ExcelNumberFormat.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.AvalonEdit, Version=6.0.1.278, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
+      <HintPath>..\packages\AvalonEdit.6.0.1\lib\net45\ICSharpCode.AvalonEdit.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=1.2.0.246, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.1.2.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.6.2\lib\net40-client\NLog.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\NLog.4.6.8\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -122,6 +139,7 @@
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
@@ -132,12 +150,38 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="TagLibSharp, Version=2.2.0.0, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=MSIL">
+      <HintPath>..\packages\TagLibSharp.2.2.0\lib\net45\TagLibSharp.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\GeneralSettingsReset.cs" />
     <Compile Include="Core\LogItems.cs" />
+    <Compile Include="Output\MatchResultsExportSettings.cs" />
+    <Compile Include="Plugins\FileHandlers\COMTypeDef\Constants.cs" />
+    <Compile Include="Plugins\FileHandlers\COMTypeDef\Enums.cs" />
+    <Compile Include="Plugins\FileHandlers\COMTypeDef\IClassFactory.cs" />
+    <Compile Include="Plugins\FileHandlers\COMTypeDef\IEnumSTATPROPSETSTG.cs" />
+    <Compile Include="Plugins\FileHandlers\COMTypeDef\IEnumSTATPROPSTG.cs" />
+    <Compile Include="Plugins\FileHandlers\COMTypeDef\IEnumSTATSTG.cs" />
+    <Compile Include="Plugins\FileHandlers\COMTypeDef\IFilter.cs" />
+    <Compile Include="Plugins\FileHandlers\COMTypeDef\ILockBytes.cs" />
+    <Compile Include="Plugins\FileHandlers\COMTypeDef\IPersistStorage.cs" />
+    <Compile Include="Plugins\FileHandlers\COMTypeDef\IPersistStream.cs" />
+    <Compile Include="Plugins\FileHandlers\COMTypeDef\IPropertySetStorage.cs" />
+    <Compile Include="Plugins\FileHandlers\COMTypeDef\IPropertyStorage.cs" />
+    <Compile Include="Plugins\FileHandlers\COMTypeDef\IStorage.cs" />
+    <Compile Include="Plugins\FileHandlers\COMTypeDef\Structs.cs" />
+    <Compile Include="Plugins\FileHandlers\FilterLoader.cs" />
+    <Compile Include="Plugins\FileHandlers\FilterReader.cs" />
+    <Compile Include="Plugins\MediaTag\MediaTagsPlugin.cs" />
+    <Compile Include="Plugins\MicrosoftWord\ListManager.cs" />
+    <Compile Include="Plugins\MicrosoftWord\MicrosoftWordOpenXMLPlugin.cs" />
+    <Compile Include="Plugins\MicrosoftExcel\MicrosoftExcelPlugin.cs" />
+    <Compile Include="Plugins\PDF\PDFPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -179,9 +223,8 @@
     </Compile>
     <Compile Include="Output\JSONHelper.cs" />
     <Compile Include="Output\MatchResultsExport.cs" />
-    <Compile Include="Plugin.IFilter\IFilter.Win32.cs" />
-    <Compile Include="Plugin.IFilter\IFilterPlugin.cs" />
-    <Compile Include="Plugin.MicrosoftWord\MicrosoftWordPlugin.cs">
+    <Compile Include="Plugins\FileHandlers\IFilterPlugin.cs" />
+    <Compile Include="Plugins\MicrosoftWord\MicrosoftWordPlugin.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
@@ -189,6 +232,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Windows\CLOptions.cs" />
     <Compile Include="Windows\CommandLineProcessing.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -200,6 +244,10 @@
     <Compile Include="Windows\Controls\ColorButton.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Windows\Controls\ComboBoxEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Windows\Controls\CustomToolStripProfessionalRender.cs" />
     <Compile Include="Windows\Controls\FilterValueType.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -209,12 +257,17 @@
     <Compile Include="Windows\Controls\PictureButton.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Windows\Controls\PrintRichTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Windows\Controls\SplitButton.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Windows\Controls\VistaFolderBrowserDialog.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Windows\ComboBoxExEntry.cs" />
+    <Compile Include="Windows\ComboBoxExHelper.cs" />
     <Compile Include="Windows\Forms\BaseForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -284,11 +337,23 @@
     <Compile Include="Windows\Forms\frmOptions.Designer.cs">
       <DependentUpon>frmOptions.cs</DependentUpon>
     </Compile>
+    <Compile Include="Windows\Forms\frmPlugins.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Windows\Forms\frmPlugins.Designer.cs">
+      <DependentUpon>frmPlugins.cs</DependentUpon>
+    </Compile>
     <Compile Include="Windows\Forms\frmPrint.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Windows\Forms\frmPrint.Designer.cs">
       <DependentUpon>frmPrint.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Forms\UnhandledExceptionDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Windows\Forms\UnhandledExceptionDialog.Designer.cs">
+      <DependentUpon>UnhandledExceptionDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Windows\Language.cs">
       <SubType>Code</SubType>
@@ -310,15 +375,39 @@
     <Compile Include="Windows\Win32.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Content Include="astrogrep.VisualElementsManifest.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Images\ascending-arrow-gray.gif" />
     <Content Include="Images\AstroGrep_256x256.png" />
     <Content Include="Images\AstroGrep_Icon.ico" />
     <Content Include="Images\AstroGrep_Icon_256x256.ico" />
+    <Content Include="Images\cancel.png" />
     <Content Include="Images\descending-arrow-gray.gif" />
     <Content Include="Images\folder-open.png" />
+    <None Include="Resources\zoom_out_16.png" />
+    <None Include="Resources\zoom_in_16.png" />
+    <None Include="Resources\zoom_16.png" />
+    <None Include="Resources\word_wrap_16.png" />
+    <None Include="Resources\text_resize_16.png" />
+    <None Include="Resources\text_indent_remove_16.png" />
+    <None Include="Resources\preview_results_16.png" />
+    <None Include="Resources\pilcrow_16.png" />
+    <None Include="Resources\line_numbers_16.png" />
+    <None Include="Resources\cog_16.png" />
+    <None Include="Resources\cog.png" />
+    <EmbeddedResource Include="Windows\Forms\UnhandledExceptionDialog.resx">
+      <DependentUpon>UnhandledExceptionDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="Resources\bullet_arrow_down.png" />
+    <None Include="Resources\bullet_arrow_up.png" />
+    <None Include="Resources\pilcrow.png" />
+    <None Include="Resources\pdftotext.exe" />
+    <None Include="Resources\preview_results.png" />
+    <None Include="Resources\text_indent_remove.png" />
+    <None Include="Resources\text_resize.png" />
+    <None Include="Resources\word_wrap.png" />
+    <None Include="Resources\line_numbers.png" />
+    <None Include="Resources\zoom.png" />
+    <None Include="Resources\zoom_out.png" />
+    <None Include="Resources\zoom_in.png" />
     <EmbeddedResource Include="Language\pl-pl.xml" />
     <EmbeddedResource Include="Language\da-dk.xml" />
     <EmbeddedResource Include="Language\de-de.xml" />
@@ -381,6 +470,9 @@
       <DependentUpon>frmOptions.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Windows\Forms\frmPlugins.resx">
+      <DependentUpon>frmPlugins.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Windows\Forms\frmPrint.resx">
       <DependentUpon>frmPrint.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -415,7 +507,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="Mono\Bundle.bat" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
@@ -423,6 +514,6 @@
   <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>
-    <PostBuildEvent>copy $(ProjectDir)Images\AstroGrep_256x256.png $(TargetDir) /y</PostBuildEvent>
+    <PostBuildEvent>copy "$(ProjectDir)Images\AstroGrep_256x256.png" "$(TargetDir)" /y</PostBuildEvent>
   </PropertyGroup>
 </Project>

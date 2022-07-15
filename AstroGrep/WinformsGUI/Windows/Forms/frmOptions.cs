@@ -5,10 +5,11 @@ using System.Linq;
 using System.Windows.Forms;
 
 using AstroGrep.Common;
+using AstroGrep.Common.Logging;
 using AstroGrep.Core;
 using libAstroGrep;
 using libAstroGrep.EncodingDetection;
-using libAstroGrep.Plugin;
+
 
 namespace AstroGrep.Windows.Forms
 {
@@ -70,22 +71,8 @@ namespace AstroGrep.Windows.Forms
          btnResultsContextForeColor.ColorChange += new AstroGrep.Windows.Controls.ColorButton.ColorChangeHandler(NewColor);
          chkRightClickOption.CheckedChanged += new EventHandler(chkRightClickOption_CheckedChanged);
 
-         // get mainform's image list to use here for up/down buttons
-         System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
-         System.Windows.Forms.ImageList ListViewImageList = new ImageList();
-         ListViewImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("ListViewImageList.ImageStream")));
-         ListViewImageList.TransparentColor = System.Drawing.Color.Transparent;
-         ListViewImageList.Images.SetKeyName(0, "");
-         ListViewImageList.Images.SetKeyName(1, "");
-
-         btnUp.ImageList = ListViewImageList;
-         btnUp.ImageIndex = 0;
-         btnDown.ImageList = ListViewImageList;
-         btnDown.ImageIndex = 1;
-
          API.ListViewExtensions.SetTheme(lstFiles);
          API.ListViewExtensions.SetTheme(TextEditorsList);
-         API.ListViewExtensions.SetTheme(PluginsList);
       }
 
       /// <summary>
@@ -170,7 +157,6 @@ namespace AstroGrep.Windows.Forms
          tbcOptions.SelectedTab = tabGeneral;
 
          LoadEditors(TextEditors.GetAll());
-         LoadPlugins();
          LoadFileEncodings();
 
          //Language.GenerateXml(this, Application.StartupPath + "\\" + this.Name + ".xml");
@@ -217,9 +203,6 @@ namespace AstroGrep.Windows.Forms
          TextEditorsList.Columns[1].Text = Language.GetGenericText("TextEditorsColumnLocation");
          TextEditorsList.Columns[2].Text = Language.GetGenericText("TextEditorsColumnCmdLine");
          TextEditorsList.Columns[3].Text = Language.GetGenericText("TextEditorsColumnTabSize");
-         PluginsList.Columns[0].Text = Language.GetGenericText("PluginsColumnEnabled");
-         PluginsList.Columns[1].Text = Language.GetGenericText("PluginsColumnName");
-         PluginsList.Columns[2].Text = Language.GetGenericText("PluginsColumnExtensions");
          lstFiles.Columns[0].Text = Language.GetGenericText("FileEncoding.Enabled", "Enabled");
          lstFiles.Columns[1].Text = Language.GetGenericText("FileEncoding.FilePath", "File Path");
          lstFiles.Columns[2].Text = Language.GetGenericText("FileEncoding.Encoding", "Encoding");
@@ -229,9 +212,6 @@ namespace AstroGrep.Windows.Forms
          TextEditorsList.Columns[1].Width = Constants.OPTIONS_TEXT_EDITOR_COLUMN_1_WIDTH * GeneralSettings.WindowsDPIPerCentSetting / 100;
          TextEditorsList.Columns[2].Width = Constants.OPTIONS_TEXT_EDITOR_COLUMN_2_WIDTH * GeneralSettings.WindowsDPIPerCentSetting / 100;
          TextEditorsList.Columns[3].Width = Constants.OPTIONS_TEXT_EDITOR_COLUMN_3_WIDTH * GeneralSettings.WindowsDPIPerCentSetting / 100;
-         PluginsList.Columns[0].Width = Constants.OPTIONS_PLUGINS_COLUMN_0_WIDTH * GeneralSettings.WindowsDPIPerCentSetting / 100;
-         PluginsList.Columns[1].Width = Constants.OPTIONS_PLUGINS_COLUMN_1_WIDTH * GeneralSettings.WindowsDPIPerCentSetting / 100;
-         PluginsList.Columns[2].Width = Constants.OPTIONS_PLUGINS_COLUMN_2_WIDTH * GeneralSettings.WindowsDPIPerCentSetting / 100;
          lstFiles.Columns[0].Width = Constants.OPTIONS_FILES_COLUMN_0_WIDTH * GeneralSettings.WindowsDPIPerCentSetting / 100;
          lstFiles.Columns[1].Width = Constants.OPTIONS_FILES_COLUMN_1_WIDTH * GeneralSettings.WindowsDPIPerCentSetting / 100;
          lstFiles.Columns[2].Width = Constants.OPTIONS_FILES_COLUMN_2_WIDTH * GeneralSettings.WindowsDPIPerCentSetting / 100;
@@ -582,8 +562,7 @@ namespace AstroGrep.Windows.Forms
             }
             catch (Exception ex)
             {
-               // TODO
-               System.Diagnostics.Debug.WriteLine(ex.Message);
+               LogClient.Instance.Logger.Error(ex, "An error occurred trying to call the privilege escaltion to set the right click search option.");               
             }
          }
 
@@ -751,13 +730,6 @@ namespace AstroGrep.Windows.Forms
          {
             UpdateResultsPreview();
          }
-         else if (tbcOptions.SelectedTab == tabPlugins)
-         {
-            if (PluginsList.Items.Count > 0)
-            {
-               PluginsList.Items[0].Selected = true;
-            }
-         }
       }
 
 
@@ -854,141 +826,6 @@ namespace AstroGrep.Windows.Forms
          UpdateResultsPreview();
       }
 
-      private void btnGeneralFindFont_Click(object sender, EventArgs e)
-      {
-         
-      }
-
-      #endregion
-
-      #region Plugin Methods
-      /// <summary>
-      /// Load the plugins from the manager to the listview.
-      /// </summary>
-      /// <param name="selectedIndex">Set to index to show selected</param>
-      /// <history>
-      /// [Curtis_Beard]		07/28/2006	Created
-      /// [Curtis_Beard]		05/10/2017	Allow selectedIndex parameter to be specified
-      /// </history>
-      private void LoadPlugins(int selectedIndex = -1)
-      {
-         PluginsList.Items.Clear();
-         ListViewItem item;
-
-         for (int i = 0; i < Core.PluginManager.Items.Count; i++)
-         {
-            item = new ListViewItem();
-            item.Checked = Core.PluginManager.Items[i].Enabled;
-            item.SubItems.Add(Core.PluginManager.Items[i].Plugin.Name);
-            item.SubItems.Add(Core.PluginManager.Items[i].Plugin.Extensions);
-            if (selectedIndex > -1 && selectedIndex == i)
-            {
-               item.Selected = true;
-            }
-            PluginsList.Items.Add(item);
-         }
-      }
-
-      /// <summary>
-      /// Display the selected plugin details.
-      /// </summary>
-      /// <param name="sender">system parameter</param>
-      /// <param name="e">system parameter</param>
-      /// <history>
-      /// [Curtis_Beard]		09/05/2006	Created
-      /// </history>
-      private void PluginsList_SelectedIndexChanged(object sender, System.EventArgs e)
-      {
-         if (PluginsList.SelectedItems.Count > 0)
-            LoadPluginDetails(Core.PluginManager.Items[PluginsList.SelectedItems[0].Index].Plugin);
-         else
-            ClearPluginDetails();
-      }
-
-      /// <summary>
-      /// Enable or disable the selected plugin.
-      /// </summary>
-      /// <param name="sender">system parameter</param>
-      /// <param name="e">system parameter</param>
-      /// <history>
-      /// [Curtis_Beard]		09/05/2006	Created
-      /// </history>
-      private void PluginsList_ItemCheck(object sender, System.Windows.Forms.ItemCheckEventArgs e)
-      {
-         if (e.Index > -1 && e.Index < PluginsList.Items.Count)
-         {
-            PluginsList.Items[e.Index].Selected = true;
-            if (e.NewValue == CheckState.Checked)
-               Core.PluginManager.Items[e.Index].Enabled = true;
-            else
-               Core.PluginManager.Items[e.Index].Enabled = false;
-         }
-      }
-
-      /// <summary>
-      /// Clear the plugin details.
-      /// </summary>
-      /// <history>
-      /// [Curtis_Beard]		09/05/2006	Created
-      /// </history>
-      private void ClearPluginDetails()
-      {
-         lblPluginName.Text = string.Empty;
-         lblPluginVersion.Text = string.Empty;
-         lblPluginAuthor.Text = string.Empty;
-         lblPluginDescription.Text = string.Empty;
-      }
-
-      /// <summary>
-      /// Display the plugin details.
-      /// </summary>
-      /// <param name="plugin">IAstroGrepPlugin to load</param>
-      /// <history>
-      /// [Curtis_Beard]		09/05/2006	Created
-      /// </history>
-      private void LoadPluginDetails(IAstroGrepPlugin plugin)
-      {
-         lblPluginName.Text = plugin.Name;
-         lblPluginVersion.Text = plugin.Version;
-         lblPluginAuthor.Text = plugin.Author;
-         lblPluginDescription.Text = plugin.Description;
-      }
-
-      /// <summary>
-      /// Moves the selected plugin up in the list.
-      /// </summary>
-      /// <param name="sender">system parameter</param>
-      /// <param name="e">system parameter</param>
-      /// <history>
-      /// [Curtis_Beard]		05/10/2017	Pass new index to LoadPlugins
-      /// </history>
-      private void btnUp_Click(object sender, EventArgs e)
-      {
-         // move selected plugin up in list
-         if (PluginsList.SelectedItems.Count > 0 && PluginsList.SelectedItems[0].Index != 0)
-         {
-            Core.PluginManager.Items.Reverse(PluginsList.SelectedItems[0].Index - 1, 2);
-            LoadPlugins(PluginsList.SelectedItems[0].Index - 1);
-         }
-      }
-
-      /// <summary>
-      /// Moves the selected plugin down in the list.
-      /// </summary>
-      /// <param name="sender">system parameter</param>
-      /// <param name="e">system parameter</param>
-      /// <history>
-      /// [Curtis_Beard]		05/10/2017	Pass new index to LoadPlugins
-      /// </history>
-      private void btnDown_Click(object sender, EventArgs e)
-      {
-         // move selected plugin down in list
-         if (PluginsList.SelectedItems.Count > 0 && PluginsList.SelectedItems[0].Index != (PluginsList.Items.Count - 1))
-         {
-            Core.PluginManager.Items.Reverse(PluginsList.SelectedItems[0].Index, 2);
-            LoadPlugins(PluginsList.SelectedItems[0].Index + 1);
-         }
-      }
       #endregion
 
       #region File Encoding Methods

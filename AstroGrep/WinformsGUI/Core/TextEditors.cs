@@ -57,16 +57,18 @@ namespace AstroGrep.Core
       /// [Curtis_Beard]	   08/20/2015	FIX: 81, use associated app instead of displaying message
       /// [Curtis_Beard]	   08/16/2016	CHG: use common class for parameters, rename from EditFile -> Open
       /// [Curtis_Beard]	   01/31/2019	FIX: 113, pass search text to method
+      /// [Curtis_Beard]      09/04/2019  FIX: 111, Open File from search results fails for some menu selections (add more logging information)
       /// </history>
       public static void Open(TextEditorOpener opener)
       {
          if (opener != null && opener.HasValue())
          {
+            TextEditor editorToUse = null;
+
             try
             {
                // pick the correct editor to use
                System.IO.FileInfo file = new System.IO.FileInfo(opener.Path);
-               TextEditor editorToUse = null;
 
                // find extension match
                if (__TextEditors != null)
@@ -144,7 +146,7 @@ namespace AstroGrep.Core
             }
             catch (Exception ex)
             {
-               LogClient.Instance.Logger.Error("Unable to open text editor for file {0} at line {1}, column {2}, with text {3}, search text {4}, and message {5}", opener.Path, opener.LineNumber, opener.ColumnNumber, opener.LineText, opener.SearchText, ex.Message);
+               LogClient.Instance.Logger.Error("Unable to open text editor {0} for file {1} at line {2}, column {3}, with text {4}, search text {5}, and message {6}", editorToUse != null ?  editorToUse.Editor : "N/A", opener.Path, opener.LineNumber, opener.ColumnNumber, opener.LineText, opener.SearchText, ex.Message);
 
                MessageBox.Show(String.Format(Language.GetGenericText("TextEditorsErrorGeneric"), opener.Path, ex.Message),
                      ProductInformation.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);

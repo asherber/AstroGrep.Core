@@ -54,6 +54,7 @@ namespace AstroGrep.Core
    /// [Curtis_Beard]	   05/19/2017	CHG: 120, add option to use accent color
    /// [Curtis_Beard]	   01/10/2019  CHG: 136, add option to force encoding for all
    /// [Curtis_Beard]      01/16/2019	FIX: 103, CHG: 122, trim long lines support
+   /// [Curtis_Beard]      09/09/2019  ADD: Show editor characters
    /// </history>
    public sealed class GeneralSettings
    {
@@ -121,6 +122,7 @@ namespace AstroGrep.Core
 
       private string searchStartPaths = string.Empty;
       private string searchFilters = string.Format("*.*{0}*.txt{0}*.java{0}*.htm, *.html{0}*.jsp, *.asp{0}*.js, *.inc{0}*.htm, *.html, *.jsp, *.asp{0}*.sql{0}*.bas, *.cls, *.vb{0}*.cs{0}*.cpp, *.c, *.h{0}*.asm", Constants.SEARCH_ENTRIES_SEPARATOR);
+      private int searchFiltersIndex = 0;
       private string searchTexts = string.Empty;
 
       private string textEditors = (new TextEditor("*", "notepad", "%1", 0)).ToString();
@@ -148,6 +150,8 @@ namespace AstroGrep.Core
 
       private int longLineCharCount = 10000;
       private int beforeAfterCharCount = 100;
+
+      private bool showEditorCharacters = false;
       #endregion
       
       /// <summary>
@@ -571,6 +575,15 @@ namespace AstroGrep.Core
       }
 
       /// <summary>
+      /// Gets/Sets the search file filters selected index.
+      /// </summary>
+      static public int SearchFiltersIndex
+      {
+         get { return MySettings.searchFiltersIndex; }
+         set { MySettings.searchFiltersIndex = value; }
+      }
+
+      /// <summary>
       /// Gets/Sets the search's search texts.
       /// </summary>
       static public string SearchTexts
@@ -755,6 +768,15 @@ namespace AstroGrep.Core
       {
          get { return MySettings.beforeAfterCharCount; }
          set { MySettings.beforeAfterCharCount = value; }
+      }
+
+      /// <summary>
+      /// Gets/sets whether to shown tabs/spaces/new lines within results display window.
+      /// </summary>
+      static public bool ShowEditorCharacters
+      {
+         get { return MySettings.showEditorCharacters; }
+         set { MySettings.showEditorCharacters = value; }
       }
    }
 }

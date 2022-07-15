@@ -77,6 +77,8 @@ namespace AstroGrep.Windows.Forms
          lstArguments.Items.Add(new ListViewItem(new string[] { "/l", "Line numbers" }));
          lstArguments.Items.Add(new ListViewItem(new string[] { "/f", "File names only" }));
          lstArguments.Items.Add(new ListViewItem(new string[] { "/cl=\"value\"", "Number of context lines" }));
+         lstArguments.Items.Add(new ListViewItem(new string[] { "/clb=\"value\"", "Number of context lines before" }));
+         lstArguments.Items.Add(new ListViewItem(new string[] { "/cla=\"value\"", "Number of context lines after" }));
          lstArguments.Items.Add(new ListViewItem(new string[] { "/sh", "Skip hidden files and folders" }));
          lstArguments.Items.Add(new ListViewItem(new string[] { "/ss", "Skip system files and folders" }));
          lstArguments.Items.Add(new ListViewItem(new string[] { "/shf", "Skip hidden files" }));

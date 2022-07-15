@@ -6,8 +6,6 @@
       <control name="lblFileTypes" value="Fil Typer" />
       <control name="btnCancel" value="&amp;Annuller" />
       <control name="lblSearchPath" value="Søge Sti" />
-      <control name="lblContextLines" value="Kontekst Linier" tooltip="Vis linerne over og under fundne match" />
-      <control name="txtContextLines" tooltip="Vis linerne over og under fundne match" />
       <control name="chkNegation" value="&amp;Negering" tooltip="Find alle filer der IKKE indeholder søge teksten" />
       <control name="chkFileNamesOnly" value="Vis kun filnavne" tooltip="Vis kun filnavnet og ikke indholdet af søgeresultatet (hurtigere for store filer)" />
       <control name="chkRecurse" value="&amp;Medtag undermapper" tooltip="Søg også i undermapper" />
@@ -19,6 +17,7 @@
       <control name="lblSearchOptions" value="Søgeparametre" />
       <control name="picBrowse" tooltip="Gennemse...(Skift-klik for at tilføje)" />
       <control name="lnkExclusions" value="udelukkelser" />
+      <control name="lnkPlugins" value="Udvidelser" />
       <control name="lstFileNames">
          <menuitem index="0" value="kopier alle" />
          <menuitem index="1" value="kopiere navn" />
@@ -47,6 +46,7 @@
          <menuitem index="5" value="&amp;Print Resultater..." />
          <menuitem index="6" value="-" />
          <menuitem index="7" value="Afslut" />
+         <menuitem index="8" value="Afslut alle" />
       </menu>
       <menu index="1" value="&amp;Rediger">
          <menuitem index="0" value="Vælg &amp;Alle Filer..." />
@@ -67,8 +67,9 @@
          <menuitem index="7" value="Tekstombrydning" />
          <menuitem index="8" value="&amp;Fjern Førende White Space"/>
          <menuitem index="9" value="Hele filen" />
-         <menuitem index="10" value="-" />
-         <menuitem index="11" value="Alle resultater" />
+         <menuitem index="10" value="Vis alle tegn" />
+         <menuitem index="11" value="-" />
+         <menuitem index="12" value="Alle resultater" />
       </menu>
       <menu index="3" value="&amp;Indstillinger">
          <menuitem index="0" value="&amp;Nulstil Listen Med Seneste Søgninger">
@@ -94,10 +95,26 @@
       </menu>
 
       <!-- status bar items default state-->
-      <control name="sbTotalCountPanel" value="Total: 0"/>
+      <control name="sbTotalCountPanel" value="Total: 0 / 0"/>
       <control name="sbFileCountPanel" value="Fil: 0 / 0"/>
       <control name="sbFilterCountPanel" value="Udelukkelser: 0" tooltip="Dobbeltklik for at vise undtagelser"/>
       <control name="sbErrorCountPanel" value="Fejl: 0" tooltip="Dobbeltklik for at vise fejl"/>
+
+      <!-- Results Toolstrip -->
+      <control name="ResultsZoomInButton" tooltip="zoome ind (Ctrl+Mouse Wheel Up)" />
+      <control name="ResultsZoomOutButton" tooltip="zoome ud (Ctrl+Mouse Wheel Down)" />
+      <control name="ResultsZoomResetButton" tooltip="gendanne standard-zoom" />
+      <control name="ResultsViewLineNumbersButton" tooltip="Linjenumre" />
+      <control name="ResultsViewWordWrapButton" tooltip="Tekstombrydning" />
+      <control name="ResultsViewRemovingLeadingButton" tooltip="Fjern Førende White Space" />
+      <control name="ResultsViewEntireFileButton" tooltip="Hele filen" />
+      <control name="ResultsViewShowCharactersButton" tooltip="Vis alle tegn" />
+      <control name="ResultsViewAllResultsButton" tooltip="Alle resultater" />
+      <control name="ResultsContextLinesLabel" value="Kontekst Linier" />
+      <control name="ResultsContextLinesBeforeCombo" tooltip="Vis linerne over fundne match" />
+      <control name="ResultsContextLinesAfterCombo" tooltip="Vis linerne under fundne match" />
+      <control name="ResultsNavPrevButton" tooltip="Gå til den forrige kamp" />
+      <control name="ResultsNavNextButton" tooltip="Gå til næste kamp" />
    </screen>
    
    <screen name="frmAbout" value="Om {0}">
@@ -145,14 +162,9 @@
       <control name="tabGeneral" value="Generelt" />
       <control name="tabTextEditors" value="Tekst Editorer" />
       <control name="LanguageGroup" value="Sprog" />
-      <control name="tabPlugins" value="Udvidelser" />
       <control name="chkDesktopShortcut" value="Skrivebords &amp;Genvej" />
       <control name="chkStartMenuShortcut" value="Start &amp;Menu Genvej" />
       <control name="ShortcutGroup" value="Genvej" />
-      <control name="PluginDetailsGroup" value="Udvidelsesdetaljer" />
-      <control name="lblPluginDetailName" value="Navn:" />
-      <control name="lblPluginDetailVersion" value="Version:" />
-      <control name="lblPluginDetailAuthor" value="Forfatter:" />
       <control name="btnFindFont" value="&amp;Find skrift..."/>
       <control name="chkShowExclusionErrorMessage" value="&amp;Vis en meddelelse, når en søgning udbytter poster bliver udelukket eller der opstår en fejl"/>
       <control name="chkSaveSearchOptions" value="Gem &amp;søgeindstillinger på exit"/>
@@ -179,6 +191,10 @@
       <control name="cmdPageSetup" value="SideOpsætning" />
       <control name="cmdPrint" value="&amp;udskrive" />
       <control name="cmdPreview" value="&amp;forhåndsvisning" />
+      <control name="lblResultsMatch" value="Resultat Match:" />
+      <control name="rdbNone" value="&amp;Ingen" />
+      <control name="rdbBold" value="&amp;Fremhævet" />
+      <control name="rdbColor" value="Fa&amp;rve" />
    </screen>
 
    <screen name="frmExclusions" value="udelukkelser">
@@ -221,6 +237,15 @@
       <control name="btnCancel" value="&amp;Annuller" />
       <control name="lblFilePath" value="Fil sti" />
       <control name="lblEncoding" value="Kodning" />
+   </screen>
+
+   <screen name="frmPlugins" value="Udvidelser">
+      <control name="btnOK" value="&amp;OK" />
+      <control name="btnCancel" value="&amp;Annuller" />
+      <control name="PluginDetailsGroup" value="Udvidelsesdetaljer" />
+      <control name="lblPluginDetailName" value="Navn:" />
+      <control name="lblPluginDetailVersion" value="Version:" />
+      <control name="lblPluginDetailAuthor" value="Forfatter:" />
    </screen>
    
    <generic>
@@ -330,6 +355,7 @@
       <text name="Exclusions.None" value=""/>
       <text name="Exclusions.Equals" value="lig"/>
       <text name="Exclusions.Contains" value="indeholder"/>
+      <text name="Exclusions.NotContains" value="Indeholder ikke"/>
       <text name="Exclusions.StartsWith" value="begynder med"/>
       <text name="Exclusions.EndsWith" value="ender med"/>
       <text name="Exclusions.NotEquals" value="-relationsoperatoren"/>
@@ -363,5 +389,10 @@
       <text name="FileEncoding.Performance.Default" value="standard"/>
       <text name="FileEncoding.Performance.Accuracy" value="nøjagtighed"/>
       <text name="FileEncoding.CacheCleared" value="Cache ryddet succes."/>
+
+      <text name="All" value="Alle"/>
+      <text name="Documents" value="Dokumenter"/>
+      <text name="Code" value="Kode"/>
+      <text name="Media" value="Medier"/>
    </generic>
 </language>

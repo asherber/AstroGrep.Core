@@ -39,38 +39,50 @@ namespace AstroGrep.Output
    public class MatchResultsExport
    {
       /// <summary>
-      /// All export settings.
+      /// The export result for printing.
       /// </summary>
-      public class ExportSettings
+      public class PrintExportResult
       {
-         /// <summary>File path</summary>
-         public string Path { get; set; }
+         /// <summary>The full text to print</summary>
+         public string PrintText { get; set; }
 
-         /// <summary>Grep object containing settings and all results</summary>
-         public Grep Grep { get; set; }
+         /// <summary>The list of highlight indexes and length within the <see cref="PrintText"/></summary>
+         public List<PrintExportHighlightIndex> HighlightIndexes { get; set; }
 
-         /// <summary>The indexes of the grep's MatchResults to export</summary>
-         public List<int> GrepIndexes { get; set; }
+         /// <summary>
+         /// Initialize the class.
+         /// </summary>
+         public PrintExportResult()
+         {
+            PrintText = string.Empty;
+            HighlightIndexes = new List<PrintExportHighlightIndex>();
+         }
+      }
 
-         /// <summary>Determines whether to show line numbers</summary>
-         public bool ShowLineNumbers { get; set; }
+      /// <summary>
+      /// The print export highlight index and length.
+      /// </summary>
+      public class PrintExportHighlightIndex
+      {
+         /// <summary>The starting index of the highlight</summary>
+         public int StartIndex { get; set; }
 
-         /// <summary>Determines whether to trim leading white space</summary>
-         public bool RemoveLeadingWhiteSpace { get; set; }
+         /// <summary>The length of the highlight</summary>
+         public int Length { get; set; }
       }
 
       /// <summary>
       /// Delegate for saving to file method.
       /// </summary>
       /// <param name="settings">Export settings</param>
-      public delegate void FileDelegate(ExportSettings settings);
+      public delegate void FileDelegate(MatchResultsExportSettings settings);
 
       /// <summary>
       /// Delegate for printing method.
       /// </summary>
       /// <param name="settings">Export settings</param>
-      /// <returns>the print document contents</returns>
-      public delegate string PrintDelegate(ExportSettings settings);
+      /// <returns>the print document contents and highlight indexes</returns>
+      public delegate PrintExportResult PrintDelegate(MatchResultsExportSettings settings);
 
       #region File Saving Methods
 
@@ -90,7 +102,7 @@ namespace AstroGrep.Output
       /// [Curtis_Beard]      06/01/2016	FIX: 89, check start directories and start paths
       /// [Curtis_Beard]	   09/29/2016	CHG: 24/115, use one interface for search in prep for saving to file
       /// </history>
-      public static void SaveResultsAsText(ExportSettings settings)
+      public static void SaveResultsAsText(MatchResultsExportSettings settings)
       {
          // Open the file
          using (var writer = new StreamWriter(settings.Path, false, System.Text.Encoding.UTF8))
@@ -116,17 +128,19 @@ namespace AstroGrep.Output
                   builder.AppendLine(new string('-', _hit.File.FullName.Length));
                   builder.AppendLine(_hit.File.FullName);
                   builder.AppendLine(new string('-', _hit.File.FullName.Length));
-                  for (int j = 0; j < _hit.Matches.Count; j++)
+
+                  var matches = _hit.GetDisplayMatches(settings.ContextLinesBefore, settings.ContextLinesAfter);
+                  for (int j = 0; j < matches.Count; j++)
                   {
-                     string line = _hit.Matches[j].Line;
+                     string line = matches[j].Line;
                      if (settings.RemoveLeadingWhiteSpace)
                      {
                         line = line.TrimStart();
                      }
 
-                     if (settings.ShowLineNumbers && _hit.Matches[j].LineNumber > -1)
+                     if (settings.ShowLineNumbers && matches[j].LineNumber > -1)
                      {
-                        line = string.Format("{0}: {1}", _hit.Matches[j].LineNumber, line);
+                        line = string.Format("{0}: {1}", matches[j].LineNumber, line);
                      }
 
                      builder.AppendLine(line);
@@ -148,7 +162,6 @@ namespace AstroGrep.Output
                   settings.Grep.MatchResults.Count > 1 ? "s" : ""));
 
                writer.WriteLine("");
-
             }
 
             writer.WriteLine("");
@@ -175,7 +188,8 @@ namespace AstroGrep.Output
             writer.WriteLine("Negation: {0}", settings.Grep.SearchSpec.UseNegation.ToString());
             writer.WriteLine("Line Numbers: {0}", settings.ShowLineNumbers.ToString());
             writer.WriteLine("Remove Leading White Space: {0}", settings.RemoveLeadingWhiteSpace.ToString());
-            writer.WriteLine("Context Lines: {0}", settings.Grep.SearchSpec.ContextLines.ToString());
+            writer.WriteLine("Context Lines Before: {0}", settings.ContextLinesBefore.ToString());
+            writer.WriteLine("Context Lines After: {0}", settings.ContextLinesAfter.ToString());
 
             // filter items
             if (settings.Grep.SearchSpec.FilterItems != null)
@@ -220,7 +234,7 @@ namespace AstroGrep.Output
       /// [Curtis_Beard]      12/03/2014	CHG: use grepIndexes instead of ListView
       /// [Curtis_Beard]      04/08/2015	CHG: update export delegate with settings class
       /// </history>
-      public static void SaveResultsAsHTML(ExportSettings settings)
+      public static void SaveResultsAsHTML(MatchResultsExportSettings settings)
       {
          using (var writer = new StreamWriter(settings.Path, false, System.Text.Encoding.UTF8))
          {
@@ -259,17 +273,18 @@ namespace AstroGrep.Output
                repeater = repeater.Replace("%%filesep%%", new string('-', fileLine.Length));
                totalHits += hitObject.HitCount;
 
-               for (int j = 0; j < hitObject.Matches.Count; j++)
+               var matches = hitObject.GetDisplayMatches(settings.ContextLinesBefore, settings.ContextLinesAfter);
+               for (int j = 0; j < matches.Count; j++)
                {
-                  string line = hitObject.Matches[j].Line;
+                  string line = matches[j].Line;
                   if (settings.RemoveLeadingWhiteSpace)
                   {
                      line = line.TrimStart();
                   }
 
-                  if (settings.ShowLineNumbers && hitObject.Matches[j].LineNumber > -1)
+                  if (settings.ShowLineNumbers && matches[j].LineNumber > -1)
                   {
-                     line = string.Format("{0}: {1}", hitObject.Matches[j].LineNumber, line);
+                     line = string.Format("{0}: {1}", matches[j].LineNumber, line);
                   }
 
                   lines.Append(HTMLHelper.GetHighlightLine(line, settings.Grep));
@@ -281,7 +296,7 @@ namespace AstroGrep.Output
             }
 
             template = template.Replace(repeat, allSections.ToString());
-            template = HTMLHelper.ReplaceSearchOptions(template, settings.Grep, totalHits, settings.ShowLineNumbers, settings.RemoveLeadingWhiteSpace);
+            template = HTMLHelper.ReplaceSearchOptions(template, settings.Grep, totalHits, settings);
 
             // write out template to the file
             writer.WriteLine(template);
@@ -305,7 +320,7 @@ namespace AstroGrep.Output
       /// [Curtis_Beard]      06/01/2016	FIX: 89, check start directories and start paths
       /// [Curtis_Beard]	   09/29/2016	CHG: 24/115, use one interface for search in prep for saving to file
       /// </history>
-      public static void SaveResultsAsXML(ExportSettings settings)
+      public static void SaveResultsAsXML(MatchResultsExportSettings settings)
       {
          using (var writer = new XmlTextWriter(settings.Path, Encoding.UTF8))
          {
@@ -339,7 +354,9 @@ namespace AstroGrep.Output
             writer.WriteElementString("negation", settings.Grep.SearchSpec.UseNegation.ToString());
             writer.WriteElementString("lineNumbers", settings.ShowLineNumbers.ToString());
             writer.WriteElementString("removeLeadingWhiteSpace", settings.RemoveLeadingWhiteSpace.ToString());
-            writer.WriteElementString("contextLines", settings.Grep.SearchSpec.ContextLines.ToString());
+            writer.WriteElementString("contextLinesBefore", settings.ContextLinesBefore.ToString());
+            writer.WriteElementString("contextLinesAfter", settings.ContextLinesAfter.ToString());
+
             // filter items
             if (settings.Grep.SearchSpec.FilterItems != null)
             {
@@ -388,17 +405,19 @@ namespace AstroGrep.Output
                // write out lines
                if (!isFileSearch && !settings.Grep.SearchSpec.ReturnOnlyFileNames)
                {
-                  for (int j = 0; j < _hit.Matches.Count; j++)
+                  var matches = _hit.GetDisplayMatches(settings.ContextLinesBefore, settings.ContextLinesAfter);
+
+                  for (int j = 0; j < matches.Count; j++)
                   {
-                     string line = _hit.Matches[j].Line;
+                     string line = matches[j].Line;
                      if (settings.RemoveLeadingWhiteSpace)
                      {
                         line = line.TrimStart();
                      }
 
-                     if (settings.ShowLineNumbers && _hit.Matches[j].LineNumber > -1)
+                     if (settings.ShowLineNumbers && matches[j].LineNumber > -1)
                      {
-                        line = string.Format("{0}: {1}", _hit.Matches[j].LineNumber, line);
+                        line = string.Format("{0}: {1}", matches[j].LineNumber, line);
                      }
 
                      writer.WriteElementString("line", line);
@@ -426,7 +445,7 @@ namespace AstroGrep.Output
       /// [Curtis_Beard]      06/01/2016	FIX: 89, check start directories and start paths
       /// [Curtis_Beard]	   09/29/2016	CHG: 24/115, use one interface for search in prep for saving to file
       /// </history>
-      public static void SaveResultsAsJSON(ExportSettings settings)
+      public static void SaveResultsAsJSON(MatchResultsExportSettings settings)
       {
          // Open the file
          using (var writer = new StreamWriter(settings.Path, false, System.Text.Encoding.UTF8))
@@ -457,7 +476,9 @@ namespace AstroGrep.Output
             writer.WriteLine(string.Format("\t\t\"negation\":{0},", JSONHelper.ToJSONString(settings.Grep.SearchSpec.UseNegation)));
             writer.WriteLine(string.Format("\t\t\"lineNumbers\":{0},", JSONHelper.ToJSONString(settings.ShowLineNumbers)));
             writer.WriteLine(string.Format("\t\t\"removeLeadingWhiteSpace\":{0},", JSONHelper.ToJSONString(settings.RemoveLeadingWhiteSpace)));
-            writer.WriteLine(string.Format("\t\t\"contextLines\":{0},", JSONHelper.ToJSONString(settings.Grep.SearchSpec.ContextLines)));
+            writer.WriteLine(string.Format("\t\t\"contextLinesBefore\":{0},", JSONHelper.ToJSONString(settings.ContextLinesBefore)));
+            writer.WriteLine(string.Format("\t\t\"contextLinesAfter\":{0},", JSONHelper.ToJSONString(settings.ContextLinesAfter)));
+
             // filter items
             if (settings.Grep.SearchSpec.FilterItems != null)
             {
@@ -516,22 +537,24 @@ namespace AstroGrep.Output
                if (!isFileSearch && !settings.Grep.SearchSpec.ReturnOnlyFileNames)
                {
                   writer.Write("\t\t\t\t\t\"lines\":[");
-                  for (int j = 0; j < _hit.Matches.Count; j++)
+                  var matches = _hit.GetDisplayMatches(settings.ContextLinesBefore, settings.ContextLinesAfter);
+
+                  for (int j = 0; j < matches.Count; j++)
                   {
                      if (j > 0)
                      {
                         writer.Write(",");
                      }
 
-                     string line = _hit.Matches[j].Line;
+                     string line = matches[j].Line;
                      if (settings.RemoveLeadingWhiteSpace)
                      {
                         line = line.TrimStart();
                      }
 
-                     if (settings.ShowLineNumbers && _hit.Matches[j].LineNumber > -1)
+                     if (settings.ShowLineNumbers && matches[j].LineNumber > -1)
                      {
-                        line = string.Format("{0}: {1}", _hit.Matches[j].LineNumber, line);
+                        line = string.Format("{0}: {1}", matches[j].LineNumber, line);
                      }
 
                      writer.Write(JSONHelper.ToJSONString(line));
@@ -563,9 +586,11 @@ namespace AstroGrep.Output
       /// [Curtis_Beard]      04/10/2015	CHG: move printing exporting here
       /// [Curtis_Beard]      05/19/2016	FIX: 90, always output line text
       /// </history>
-      public static string PrintSelected(ExportSettings settings)
+      public static PrintExportResult PrintSelected(MatchResultsExportSettings settings)
       {
+         PrintExportResult result = new PrintExportResult();
          StringBuilder document = new StringBuilder();
+         int currentIndex = 0;
 
          MatchResult match = null;
 
@@ -573,32 +598,59 @@ namespace AstroGrep.Output
          {
             match = settings.Grep.MatchResults[settings.GrepIndexes[i]];
 
-            document.AppendLine("----------------------------------------------------------------------");
+            string lineSep = new string('-', match.File.FullName.Length);
+            document.AppendLine(lineSep);
             document.AppendLine(match.File.FullName);
-            document.AppendLine("----------------------------------------------------------------------");
+            document.AppendLine(lineSep);
 
-            for (int j = 0; j < match.Matches.Count; j++)
+            currentIndex += lineSep.Length + match.File.FullName.Length + lineSep.Length + 3;
+
+            var matches = match.GetDisplayMatches(settings.ContextLinesBefore, settings.ContextLinesAfter);
+            for (int j = 0; j < matches.Count; j++)
             {
-               var matchLine = match.Matches[j];
+               var matchLine = matches[j];
+               int removeLength = 0;
+               int addLength = 0;
 
                string line = matchLine.Line;
                if (settings.RemoveLeadingWhiteSpace)
                {
+                  int lineLength = line.Length;
                   line = line.TrimStart();
+
+                  removeLength = lineLength - line.Length;
                }
 
                if (settings.ShowLineNumbers && matchLine.LineNumber > -1)
                {
                   line = string.Format("{0}: {1}", matchLine.LineNumber, line);
+                  addLength = matchLine.LineNumber.ToString().Length + 2;
                }
 
                document.AppendLine(line);
+
+               if (matchLine.HasMatch)
+               {
+                  foreach (var mrlm in matchLine.Matches)
+                  {
+                     var index = new PrintExportHighlightIndex
+                     {
+                        StartIndex = currentIndex + mrlm.StartPosition + addLength - removeLength,
+                        Length = mrlm.Length
+                     };
+                     result.HighlightIndexes.Add(index);
+                  }
+               }
+               currentIndex += line.Length + 1;
             }
 
             document.AppendLine(string.Empty);
+            currentIndex += 1;
          }
 
-         return document.ToString();
+         result.PrintText = document.ToString();
+
+         return result;
       }
 
       /// <summary>
@@ -610,38 +662,68 @@ namespace AstroGrep.Output
       /// [Curtis_Beard]      04/10/2015	CHG: move printing exporting here
       /// [Curtis_Beard]      05/19/2016	FIX: 90, always output line text
       /// </history>
-      public static string PrintAll(ExportSettings settings)
+      public static PrintExportResult PrintAll(MatchResultsExportSettings settings)
       {
+         PrintExportResult result = new PrintExportResult();
          StringBuilder document = new StringBuilder();
+         int currentIndex = 0;
 
          foreach (var match in settings.Grep.MatchResults)
          {
-            document.AppendLine("----------------------------------------------------------------------");
+            string lineSep = new string('-', match.File.FullName.Length);
+            document.AppendLine(lineSep);
             document.AppendLine(match.File.FullName);
-            document.AppendLine("----------------------------------------------------------------------");
+            document.AppendLine(lineSep);
 
-            for (int i = 0; i < match.Matches.Count; i++)
+            currentIndex += lineSep.Length + match.File.FullName.Length + lineSep.Length + 3;
+
+            var matches = match.GetDisplayMatches(settings.ContextLinesBefore, settings.ContextLinesAfter);
+            for (int i = 0; i < matches.Count; i++)
             {
-               var matchLine = match.Matches[i];
+               var matchLine = matches[i];
 
                string line = matchLine.Line;
+               int removeLength = 0;
+               int addLength = 0;
+
                if (settings.RemoveLeadingWhiteSpace)
                {
+                  int lineLength = line.Length;
                   line = line.TrimStart();
+
+                  removeLength = lineLength - line.Length;
                }
 
                if (settings.ShowLineNumbers && matchLine.LineNumber > -1)
                {
                   line = string.Format("{0}: {1}", matchLine.LineNumber, line);
+                  addLength = matchLine.LineNumber.ToString().Length + 2;
                }
 
                document.AppendLine(line);
+
+               if (matchLine.HasMatch)
+               {
+                  foreach (var mrlm in  matchLine.Matches)
+                  {
+                     var index = new PrintExportHighlightIndex
+                     {
+                        StartIndex = currentIndex + mrlm.StartPosition + addLength - removeLength,
+                        Length = mrlm.Length
+                     };
+                     result.HighlightIndexes.Add(index);
+                  }
+               }
+               currentIndex += line.Length + 1;
             }
 
             document.AppendLine(string.Empty);
+            currentIndex += 1;
          }
 
-         return document.ToString();
+         result.PrintText = document.ToString();
+
+         return result;
       }
 
       /// <summary>
@@ -652,18 +734,24 @@ namespace AstroGrep.Output
       /// <history>
       /// [Curtis_Beard]      04/10/2015	CHG: move printing exporting here
       /// </history>
-      public static string PrintFileList(ExportSettings settings)
+      public static PrintExportResult PrintFileList(MatchResultsExportSettings settings)
       {
+         PrintExportResult result = new PrintExportResult();
          StringBuilder document = new StringBuilder();
-         document.AppendLine("----------------------------------------------------------------------");
+         if (settings.Grep.MatchResults.Count > 0)
+         {
+            document.AppendLine(new string('-', settings.Grep.MatchResults[0].File.FullName.Length));
+         }
 
          foreach (var match in settings.Grep.MatchResults)
          {
             document.AppendLine(match.File.FullName);
-            document.AppendLine("----------------------------------------------------------------------");
+            document.AppendLine(new string('-', match.File.FullName.Length));
          }
 
-         return document.ToString();
+         result.PrintText = document.ToString();
+
+         return result;
       }
 
       #endregion

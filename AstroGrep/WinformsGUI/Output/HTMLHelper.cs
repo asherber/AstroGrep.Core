@@ -132,8 +132,7 @@ namespace AstroGrep.Output
       /// <param name="text">Text containing holders</param>
       /// <param name="grep">Grep object containing settings</param>
       /// <param name="totalHits">Number of total hits</param>
-      /// <param name="showLineNumbers">Determines whether to show line numbers</param>
-      /// <param name="removeLeadingWhiteSpace">Determines whether to remove leading white space</param>
+      /// <param name="settings">ExportSettings</param>
       /// <returns>Text with holders replaced</returns>
       /// <history>
       /// [Curtis_Beard]		09/05/2006	Created
@@ -145,7 +144,7 @@ namespace AstroGrep.Output
       /// [Curtis_Beard]      06/01/2016	FIX: 89, check start directories and start paths
       /// [Curtis_Beard]	   09/29/2016	CHG: 24/115, use one interface for search in prep for saving to file
       /// </history>
-      public static string ReplaceSearchOptions(string text, Grep grep, int totalHits, bool showLineNumbers, bool removeLeadingWhiteSpace)
+      public static string ReplaceSearchOptions(string text, Grep grep, int totalHits, MatchResultsExportSettings settings)
       {
          var spec = grep.SearchSpec;
 
@@ -169,9 +168,10 @@ namespace AstroGrep.Output
          text = text.Replace("%%recurse%%", "Subfolders: " + spec.SearchInSubfolders);
          text = text.Replace("%%filenameonly%%", "Show File Names Only: " + spec.ReturnOnlyFileNames);
          text = text.Replace("%%negation%%", "Negation: " + spec.UseNegation);
-         text = text.Replace("%%linenumbers%%", "Line Numbers: " + showLineNumbers);
-         text = text.Replace("%%removeleadingwhitespace%%", "Remove Leading White Space: " + removeLeadingWhiteSpace);
-         text = text.Replace("%%contextlines%%", "Context Lines: " + spec.ContextLines);
+         text = text.Replace("%%linenumbers%%", "Line Numbers: " + settings.ShowLineNumbers);
+         text = text.Replace("%%removeleadingwhitespace%%", "Remove Leading White Space: " + settings.RemoveLeadingWhiteSpace);
+         text = text.Replace("%%contextlines_before%%", "Context Lines Before: " + settings.ContextLinesBefore);
+         text = text.Replace("%%contextlines_after%%", "Context Lines After: " + settings.ContextLinesBefore);
 
          // filter items
          StringBuilder filterBuilder = new StringBuilder();

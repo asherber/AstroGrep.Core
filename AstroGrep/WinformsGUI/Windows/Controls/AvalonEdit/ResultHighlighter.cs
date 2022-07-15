@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Media;
 
@@ -45,19 +46,26 @@ namespace AstroGrep.Windows.Controls
       private SolidColorBrush matchForeground = new SolidColorBrush(Colors.White);
       private SolidColorBrush matchBackground = new SolidColorBrush(Color.FromRgb(251, 127, 6));
       private SolidColorBrush nonmatchForeground = new SolidColorBrush(Color.FromRgb(192, 192, 192));
+      private int beforeContextLines = 0;
+      private int afterContextLines = 0;
 
       /// <summary>
       /// Creates an instance of this class.
       /// </summary>
       /// <param name="match">The current MatchResult</param>
       /// <param name="removeWhiteSpace">Determines if leading white space was removed</param>
+      /// <param name="beforeContextLines">Number of context lines before match</param>
+      /// <param name="afterContextLines">Number of context lines after match</param>
       /// <history>
       /// [Curtis_Beard]	   04/08/2015	ADD: switch from Rich Text Box to AvalonEdit
+      /// [Curtis_Beard]	   08/20/2019	CHG: 142, dynamically display context lines
       /// </history>
-      public ResultHighlighter(MatchResult match, bool removeWhiteSpace)
+      public ResultHighlighter(MatchResult match, bool removeWhiteSpace, int beforeContextLines, int afterContextLines)
       {
          this.match = match;
          this.removeWhiteSpace = removeWhiteSpace;
+         this.beforeContextLines = beforeContextLines;
+         this.afterContextLines = afterContextLines;
       }
 
       /// <summary>
@@ -65,12 +73,15 @@ namespace AstroGrep.Windows.Controls
       /// </summary>
       /// <param name="match">The current MatchResult</param>
       /// <param name="removeWhiteSpace">Determines if leading white space was removed</param>
+      /// <param name="beforeContextLines">Number of context lines before match</param>
+      /// <param name="afterContextLines">Number of context lines after match</param>
       /// <param name="showingFullFile">Determines if showing full file contents or just matches</param>
       /// <history>
       /// [Curtis_Beard]	   04/08/2015	ADD: switch from Rich Text Box to AvalonEdit
+      /// [Curtis_Beard]	   08/20/2019	CHG: 142, dynamically display context lines
       /// </history>
-      public ResultHighlighter(MatchResult match, bool removeWhiteSpace, bool showingFullFile)
-         : this(match, removeWhiteSpace)
+      public ResultHighlighter(MatchResult match, bool removeWhiteSpace,int beforeContextLines, int afterContextLines, bool showingFullFile)
+         : this(match, removeWhiteSpace, beforeContextLines, afterContextLines)
       {
          this.showingFullFile = showingFullFile;
       }
@@ -108,12 +119,14 @@ namespace AstroGrep.Windows.Controls
       /// <param name="line">Current DocumentLine from AvalonEdit</param>
       /// <history>
       /// [Curtis_Beard]	   04/08/2015	ADD: switch from Rich Text Box to AvalonEdit
+      /// [Curtis_Beard]	   08/20/2019	CHG: 142, dynamically display context lines
       /// </history>
       protected override void ColorizeLine(DocumentLine line)
       {
          int lineStartOffset = line.Offset;
          string text = CurrentContext.Document.GetText(line);
-         if (match == null || match.Matches == null || match.Matches.Count == 0 || string.IsNullOrEmpty(text))
+         var matches = match == null ? null : match.GetDisplayMatches(beforeContextLines, afterContextLines);
+         if (matches == null || matches.Count == 0 || string.IsNullOrEmpty(text))
             return;
 
          int lineNumber = line.LineNumber; // 1 based
@@ -122,11 +135,11 @@ namespace AstroGrep.Windows.Controls
          MatchResultLine matchLine = null;
          if (showingFullFile)
          {
-            matchLine = (from m in match.Matches where m.LineNumber == lineNumber select m).FirstOrDefault();
+            matchLine = (from m in matches where m.LineNumber == lineNumber select m).FirstOrDefault();
          }
          else
          {
-            matchLine = lineNumber - 1 < match.Matches.Count ? match.Matches[lineNumber - 1] : null;
+            matchLine = lineNumber - 1 < matches.Count ? matches[lineNumber - 1] : null;
          }
 
          string contents = matchLine != null ? matchLine.Line : string.Empty;
@@ -139,16 +152,16 @@ namespace AstroGrep.Windows.Controls
                int trimOffset = 0;
 
                if (removeWhiteSpace)
-			   {
-                  if (matchLine.HasMatch)
-                  {
-                     trimOffset = Utils.GetValidLeadingSpaces(contents, matchLine.Matches[0].StartPosition);
-                  }
-                  else
-                  {
-                     trimOffset = contents.Length - contents.TrimStart().Length;
-                  }
-			   }
+			      {
+                     if (matchLine.HasMatch)
+                     {
+                        trimOffset = Utils.GetValidLeadingSpaces(contents, matchLine.Matches[0].StartPosition);
+                     }
+                     else
+                     {
+                        trimOffset = contents.Length - contents.TrimStart().Length;
+                     }
+			      }
 
                for (int i = 0; i < matchLine.Matches.Count; i++)
                {

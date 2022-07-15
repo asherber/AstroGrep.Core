@@ -99,21 +99,6 @@ namespace AstroGrep.Windows.Forms
          this.ForeColorButton = new AstroGrep.Windows.Controls.ColorButton();
          this.BackColorLabel = new System.Windows.Forms.Label();
          this.ForeColorLabel = new System.Windows.Forms.Label();
-         this.tabPlugins = new System.Windows.Forms.TabPage();
-         this.btnDown = new System.Windows.Forms.Button();
-         this.btnUp = new System.Windows.Forms.Button();
-         this.PluginDetailsGroup = new System.Windows.Forms.GroupBox();
-         this.lblPluginDescription = new System.Windows.Forms.Label();
-         this.lblPluginAuthor = new System.Windows.Forms.Label();
-         this.lblPluginVersion = new System.Windows.Forms.Label();
-         this.lblPluginName = new System.Windows.Forms.Label();
-         this.lblPluginDetailAuthor = new System.Windows.Forms.Label();
-         this.lblPluginDetailVersion = new System.Windows.Forms.Label();
-         this.lblPluginDetailName = new System.Windows.Forms.Label();
-         this.PluginsList = new System.Windows.Forms.ListView();
-         this.PluginsColumnEnabled = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-         this.PluginsColumnName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-         this.PluginsColumnExt = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
          this.btnOK = new System.Windows.Forms.Button();
          this.btnCancel = new System.Windows.Forms.Button();
          this.tbcOptions.SuspendLayout();
@@ -129,8 +114,6 @@ namespace AstroGrep.Windows.Forms
          ((System.ComponentModel.ISupportInitialize)(this.numResultsBeforeAfterCount)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.numResultsLongLineCount)).BeginInit();
          this.grpResultMatch.SuspendLayout();
-         this.tabPlugins.SuspendLayout();
-         this.PluginDetailsGroup.SuspendLayout();
          this.SuspendLayout();
          // 
          // tbcOptions
@@ -142,7 +125,6 @@ namespace AstroGrep.Windows.Forms
          this.tbcOptions.Controls.Add(this.tabFileEncoding);
          this.tbcOptions.Controls.Add(this.tabTextEditors);
          this.tbcOptions.Controls.Add(this.tabResults);
-         this.tbcOptions.Controls.Add(this.tabPlugins);
          this.tbcOptions.Location = new System.Drawing.Point(8, 8);
          this.tbcOptions.Name = "tbcOptions";
          this.tbcOptions.SelectedIndex = 0;
@@ -174,7 +156,7 @@ namespace AstroGrep.Windows.Forms
          this.chkLabelColor.Location = new System.Drawing.Point(8, 300);
          this.chkLabelColor.Name = "chkLabelColor";
          this.chkLabelColor.Size = new System.Drawing.Size(191, 19);
-         this.chkLabelColor.TabIndex = 40;
+         this.chkLabelColor.TabIndex = 13;
          this.chkLabelColor.Text = "Use accent color on &headings.";
          this.chkLabelColor.UseVisualStyleBackColor = true;
          // 
@@ -184,7 +166,7 @@ namespace AstroGrep.Windows.Forms
          this.chkSaveExclusionsPosition.Location = new System.Drawing.Point(8, 276);
          this.chkSaveExclusionsPosition.Name = "chkSaveExclusionsPosition";
          this.chkSaveExclusionsPosition.Size = new System.Drawing.Size(205, 19);
-         this.chkSaveExclusionsPosition.TabIndex = 39;
+         this.chkSaveExclusionsPosition.TabIndex = 12;
          this.chkSaveExclusionsPosition.Text = "Save exclusions window position";
          this.chkSaveExclusionsPosition.UseVisualStyleBackColor = true;
          // 
@@ -194,7 +176,7 @@ namespace AstroGrep.Windows.Forms
          this.chkSaveMessagesPosition.Location = new System.Drawing.Point(8, 252);
          this.chkSaveMessagesPosition.Name = "chkSaveMessagesPosition";
          this.chkSaveMessagesPosition.Size = new System.Drawing.Size(204, 19);
-         this.chkSaveMessagesPosition.TabIndex = 38;
+         this.chkSaveMessagesPosition.TabIndex = 11;
          this.chkSaveMessagesPosition.Text = "Save messages window position";
          this.chkSaveMessagesPosition.UseVisualStyleBackColor = true;
          // 
@@ -204,7 +186,7 @@ namespace AstroGrep.Windows.Forms
          this.chkSaveSearchOptions.Location = new System.Drawing.Point(8, 228);
          this.chkSaveSearchOptions.Name = "chkSaveSearchOptions";
          this.chkSaveSearchOptions.Size = new System.Drawing.Size(175, 19);
-         this.chkSaveSearchOptions.TabIndex = 37;
+         this.chkSaveSearchOptions.TabIndex = 10;
          this.chkSaveSearchOptions.Text = "Save search options on exit";
          this.chkSaveSearchOptions.UseVisualStyleBackColor = true;
          // 
@@ -214,7 +196,7 @@ namespace AstroGrep.Windows.Forms
          this.chkShowExclusionErrorMessage.Location = new System.Drawing.Point(8, 324);
          this.chkShowExclusionErrorMessage.Name = "chkShowExclusionErrorMessage";
          this.chkShowExclusionErrorMessage.Size = new System.Drawing.Size(537, 36);
-         this.chkShowExclusionErrorMessage.TabIndex = 36;
+         this.chkShowExclusionErrorMessage.TabIndex = 14;
          this.chkShowExclusionErrorMessage.Text = "Show a &prompt when a search yields items being excluded or an error occurs";
          this.chkShowExclusionErrorMessage.TextAlign = System.Drawing.ContentAlignment.TopLeft;
          this.chkShowExclusionErrorMessage.UseVisualStyleBackColor = true;
@@ -229,7 +211,7 @@ namespace AstroGrep.Windows.Forms
          this.ShortcutGroup.Location = new System.Drawing.Point(8, 44);
          this.ShortcutGroup.Name = "ShortcutGroup";
          this.ShortcutGroup.Size = new System.Drawing.Size(537, 104);
-         this.ShortcutGroup.TabIndex = 35;
+         this.ShortcutGroup.TabIndex = 4;
          this.ShortcutGroup.TabStop = false;
          this.ShortcutGroup.Text = "Shortcuts";
          // 
@@ -240,7 +222,7 @@ namespace AstroGrep.Windows.Forms
          this.chkStartMenuShortcut.Location = new System.Drawing.Point(6, 72);
          this.chkStartMenuShortcut.Name = "chkStartMenuShortcut";
          this.chkStartMenuShortcut.Size = new System.Drawing.Size(134, 19);
-         this.chkStartMenuShortcut.TabIndex = 29;
+         this.chkStartMenuShortcut.TabIndex = 7;
          this.chkStartMenuShortcut.Text = "Start Menu Shortcut";
          this.chkStartMenuShortcut.UseVisualStyleBackColor = false;
          // 
@@ -251,7 +233,7 @@ namespace AstroGrep.Windows.Forms
          this.chkDesktopShortcut.Location = new System.Drawing.Point(6, 48);
          this.chkDesktopShortcut.Name = "chkDesktopShortcut";
          this.chkDesktopShortcut.Size = new System.Drawing.Size(119, 19);
-         this.chkDesktopShortcut.TabIndex = 28;
+         this.chkDesktopShortcut.TabIndex = 6;
          this.chkDesktopShortcut.Text = "Desktop Shortcut";
          this.chkDesktopShortcut.UseVisualStyleBackColor = false;
          // 
@@ -262,7 +244,7 @@ namespace AstroGrep.Windows.Forms
          this.chkRightClickOption.Location = new System.Drawing.Point(6, 24);
          this.chkRightClickOption.Name = "chkRightClickOption";
          this.chkRightClickOption.Size = new System.Drawing.Size(193, 19);
-         this.chkRightClickOption.TabIndex = 20;
+         this.chkRightClickOption.TabIndex = 5;
          this.chkRightClickOption.Text = "Set right-click option on folders";
          this.chkRightClickOption.UseVisualStyleBackColor = false;
          // 
@@ -274,7 +256,7 @@ namespace AstroGrep.Windows.Forms
          this.LanguageGroup.Location = new System.Drawing.Point(8, 154);
          this.LanguageGroup.Name = "LanguageGroup";
          this.LanguageGroup.Size = new System.Drawing.Size(537, 60);
-         this.LanguageGroup.TabIndex = 33;
+         this.LanguageGroup.TabIndex = 8;
          this.LanguageGroup.TabStop = false;
          this.LanguageGroup.Text = "Language";
          // 
@@ -284,7 +266,7 @@ namespace AstroGrep.Windows.Forms
          this.cboLanguage.Location = new System.Drawing.Point(16, 24);
          this.cboLanguage.Name = "cboLanguage";
          this.cboLanguage.Size = new System.Drawing.Size(144, 23);
-         this.cboLanguage.TabIndex = 23;
+         this.cboLanguage.TabIndex = 9;
          // 
          // cboPathMRUCount
          // 
@@ -318,7 +300,7 @@ namespace AstroGrep.Windows.Forms
          this.cboPathMRUCount.Location = new System.Drawing.Point(8, 12);
          this.cboPathMRUCount.Name = "cboPathMRUCount";
          this.cboPathMRUCount.Size = new System.Drawing.Size(56, 23);
-         this.cboPathMRUCount.TabIndex = 31;
+         this.cboPathMRUCount.TabIndex = 3;
          // 
          // lblStoredPaths
          // 
@@ -363,7 +345,7 @@ namespace AstroGrep.Windows.Forms
          this.cboForceEncoding.Location = new System.Drawing.Point(144, 92);
          this.cboForceEncoding.Name = "cboForceEncoding";
          this.cboForceEncoding.Size = new System.Drawing.Size(254, 23);
-         this.cboForceEncoding.TabIndex = 45;
+         this.cboForceEncoding.TabIndex = 5;
          this.cboForceEncoding.DropDown += new System.EventHandler(this.cboForceEncoding_DropDown);
          // 
          // lblForceEncoding
@@ -382,7 +364,7 @@ namespace AstroGrep.Windows.Forms
          this.btnCacheClear.Location = new System.Drawing.Point(415, 63);
          this.btnCacheClear.Name = "btnCacheClear";
          this.btnCacheClear.Size = new System.Drawing.Size(130, 25);
-         this.btnCacheClear.TabIndex = 43;
+         this.btnCacheClear.TabIndex = 4;
          this.btnCacheClear.Text = "Clear Cache";
          this.btnCacheClear.UseVisualStyleBackColor = true;
          this.btnCacheClear.Click += new System.EventHandler(this.btnCacheClear_Click);
@@ -393,7 +375,7 @@ namespace AstroGrep.Windows.Forms
          this.chkUseEncodingCache.Location = new System.Drawing.Point(8, 67);
          this.chkUseEncodingCache.Name = "chkUseEncodingCache";
          this.chkUseEncodingCache.Size = new System.Drawing.Size(231, 19);
-         this.chkUseEncodingCache.TabIndex = 42;
+         this.chkUseEncodingCache.TabIndex = 3;
          this.chkUseEncodingCache.Text = "Enable cache for detected encodings.";
          this.chkUseEncodingCache.UseVisualStyleBackColor = true;
          // 
@@ -405,7 +387,7 @@ namespace AstroGrep.Windows.Forms
          this.cboPerformance.Location = new System.Drawing.Point(144, 36);
          this.cboPerformance.Name = "cboPerformance";
          this.cboPerformance.Size = new System.Drawing.Size(121, 23);
-         this.cboPerformance.TabIndex = 41;
+         this.cboPerformance.TabIndex = 2;
          // 
          // lblPerformance
          // 
@@ -422,7 +404,7 @@ namespace AstroGrep.Windows.Forms
          this.chkDetectFileEncoding.Location = new System.Drawing.Point(8, 10);
          this.chkDetectFileEncoding.Name = "chkDetectFileEncoding";
          this.chkDetectFileEncoding.Size = new System.Drawing.Size(137, 19);
-         this.chkDetectFileEncoding.TabIndex = 39;
+         this.chkDetectFileEncoding.TabIndex = 1;
          this.chkDetectFileEncoding.Text = "Detect file encoding.";
          this.chkDetectFileEncoding.UseVisualStyleBackColor = true;
          this.chkDetectFileEncoding.CheckedChanged += new System.EventHandler(this.chkDetectFileEncoding_CheckedChanged);
@@ -433,7 +415,7 @@ namespace AstroGrep.Windows.Forms
          this.btnFileEncodingDelete.Location = new System.Drawing.Point(200, 322);
          this.btnFileEncodingDelete.Name = "btnFileEncodingDelete";
          this.btnFileEncodingDelete.Size = new System.Drawing.Size(90, 25);
-         this.btnFileEncodingDelete.TabIndex = 4;
+         this.btnFileEncodingDelete.TabIndex = 9;
          this.btnFileEncodingDelete.Text = "&Delete";
          this.btnFileEncodingDelete.UseVisualStyleBackColor = true;
          this.btnFileEncodingDelete.Click += new System.EventHandler(this.btnFileEncodingDelete_Click);
@@ -444,7 +426,7 @@ namespace AstroGrep.Windows.Forms
          this.btnFileEncodingEdit.Location = new System.Drawing.Point(104, 322);
          this.btnFileEncodingEdit.Name = "btnFileEncodingEdit";
          this.btnFileEncodingEdit.Size = new System.Drawing.Size(90, 25);
-         this.btnFileEncodingEdit.TabIndex = 3;
+         this.btnFileEncodingEdit.TabIndex = 8;
          this.btnFileEncodingEdit.Text = "&Edit...";
          this.btnFileEncodingEdit.UseVisualStyleBackColor = true;
          this.btnFileEncodingEdit.Click += new System.EventHandler(this.btnFileEncodingEdit_Click);
@@ -455,7 +437,7 @@ namespace AstroGrep.Windows.Forms
          this.btnFileEncodingAdd.Location = new System.Drawing.Point(8, 322);
          this.btnFileEncodingAdd.Name = "btnFileEncodingAdd";
          this.btnFileEncodingAdd.Size = new System.Drawing.Size(90, 25);
-         this.btnFileEncodingAdd.TabIndex = 2;
+         this.btnFileEncodingAdd.TabIndex = 7;
          this.btnFileEncodingAdd.Text = "&Add...";
          this.btnFileEncodingAdd.UseVisualStyleBackColor = true;
          this.btnFileEncodingAdd.Click += new System.EventHandler(this.btnFileEncodingAdd_Click);
@@ -474,7 +456,7 @@ namespace AstroGrep.Windows.Forms
          this.lstFiles.Location = new System.Drawing.Point(8, 121);
          this.lstFiles.Name = "lstFiles";
          this.lstFiles.Size = new System.Drawing.Size(537, 189);
-         this.lstFiles.TabIndex = 1;
+         this.lstFiles.TabIndex = 6;
          this.lstFiles.UseCompatibleStateImageBehavior = false;
          this.lstFiles.View = System.Windows.Forms.View.Details;
          this.lstFiles.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lstFiles_ColumnClick);
@@ -519,7 +501,7 @@ namespace AstroGrep.Windows.Forms
          this.btnEdit.Location = new System.Drawing.Point(104, 322);
          this.btnEdit.Name = "btnEdit";
          this.btnEdit.Size = new System.Drawing.Size(90, 25);
-         this.btnEdit.TabIndex = 16;
+         this.btnEdit.TabIndex = 3;
          this.btnEdit.Text = "&Edit...";
          this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
          // 
@@ -529,7 +511,7 @@ namespace AstroGrep.Windows.Forms
          this.btnRemove.Location = new System.Drawing.Point(200, 322);
          this.btnRemove.Name = "btnRemove";
          this.btnRemove.Size = new System.Drawing.Size(90, 25);
-         this.btnRemove.TabIndex = 15;
+         this.btnRemove.TabIndex = 4;
          this.btnRemove.Text = "&Delete";
          this.btnRemove.Click += new System.EventHandler(this.btnRemove_Click);
          // 
@@ -539,7 +521,7 @@ namespace AstroGrep.Windows.Forms
          this.btnAdd.Location = new System.Drawing.Point(8, 322);
          this.btnAdd.Name = "btnAdd";
          this.btnAdd.Size = new System.Drawing.Size(90, 25);
-         this.btnAdd.TabIndex = 14;
+         this.btnAdd.TabIndex = 2;
          this.btnAdd.Text = "&Add...";
          this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
          // 
@@ -559,7 +541,7 @@ namespace AstroGrep.Windows.Forms
          this.TextEditorsList.MultiSelect = false;
          this.TextEditorsList.Name = "TextEditorsList";
          this.TextEditorsList.Size = new System.Drawing.Size(537, 302);
-         this.TextEditorsList.TabIndex = 13;
+         this.TextEditorsList.TabIndex = 1;
          this.TextEditorsList.UseCompatibleStateImageBehavior = false;
          this.TextEditorsList.View = System.Windows.Forms.View.Details;
          this.TextEditorsList.SelectedIndexChanged += new System.EventHandler(this.TextEditorsList_SelectedIndexChanged);
@@ -628,6 +610,7 @@ namespace AstroGrep.Windows.Forms
          this.rtxtResultsPreview.ReadOnly = true;
          this.rtxtResultsPreview.Size = new System.Drawing.Size(537, 40);
          this.rtxtResultsPreview.TabIndex = 27;
+         this.rtxtResultsPreview.TabStop = false;
          this.rtxtResultsPreview.Text = "(21)  Example results line and, match, displayed";
          // 
          // grpFileList
@@ -639,7 +622,7 @@ namespace AstroGrep.Windows.Forms
          this.grpFileList.Location = new System.Drawing.Point(8, 3);
          this.grpFileList.Name = "grpFileList";
          this.grpFileList.Size = new System.Drawing.Size(537, 66);
-         this.grpFileList.TabIndex = 27;
+         this.grpFileList.TabIndex = 1;
          this.grpFileList.TabStop = false;
          this.grpFileList.Text = "File List";
          // 
@@ -659,7 +642,7 @@ namespace AstroGrep.Windows.Forms
          this.btnFileFindFont.Location = new System.Drawing.Point(396, 29);
          this.btnFileFindFont.Name = "btnFileFindFont";
          this.btnFileFindFont.Size = new System.Drawing.Size(120, 25);
-         this.btnFileFindFont.TabIndex = 0;
+         this.btnFileFindFont.TabIndex = 2;
          this.btnFileFindFont.Text = "Find Font";
          this.btnFileFindFont.UseVisualStyleBackColor = true;
          this.btnFileFindFont.Click += new System.EventHandler(this.btnFileFindFont_Click);
@@ -683,7 +666,7 @@ namespace AstroGrep.Windows.Forms
          this.grpResultWindow.Location = new System.Drawing.Point(8, 140);
          this.grpResultWindow.Name = "grpResultWindow";
          this.grpResultWindow.Size = new System.Drawing.Size(537, 142);
-         this.grpResultWindow.TabIndex = 24;
+         this.grpResultWindow.TabIndex = 6;
          this.grpResultWindow.TabStop = false;
          this.grpResultWindow.Text = "Results Window";
          // 
@@ -719,7 +702,7 @@ namespace AstroGrep.Windows.Forms
             0});
          this.numResultsBeforeAfterCount.Name = "numResultsBeforeAfterCount";
          this.numResultsBeforeAfterCount.Size = new System.Drawing.Size(74, 21);
-         this.numResultsBeforeAfterCount.TabIndex = 28;
+         this.numResultsBeforeAfterCount.TabIndex = 11;
          this.numResultsBeforeAfterCount.Value = new decimal(new int[] {
             100,
             0,
@@ -736,7 +719,7 @@ namespace AstroGrep.Windows.Forms
             0});
          this.numResultsLongLineCount.Name = "numResultsLongLineCount";
          this.numResultsLongLineCount.Size = new System.Drawing.Size(74, 21);
-         this.numResultsLongLineCount.TabIndex = 27;
+         this.numResultsLongLineCount.TabIndex = 10;
          this.numResultsLongLineCount.Value = new decimal(new int[] {
             10000,
             0,
@@ -750,7 +733,7 @@ namespace AstroGrep.Windows.Forms
          this.btnResultsContextForeColor.Name = "btnResultsContextForeColor";
          this.btnResultsContextForeColor.SelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
          this.btnResultsContextForeColor.Size = new System.Drawing.Size(75, 23);
-         this.btnResultsContextForeColor.TabIndex = 26;
+         this.btnResultsContextForeColor.TabIndex = 9;
          // 
          // lblResultsContextForeColor
          // 
@@ -779,7 +762,7 @@ namespace AstroGrep.Windows.Forms
          this.btnFindFont.Location = new System.Drawing.Point(396, 105);
          this.btnFindFont.Name = "btnFindFont";
          this.btnFindFont.Size = new System.Drawing.Size(120, 25);
-         this.btnFindFont.TabIndex = 23;
+         this.btnFindFont.TabIndex = 12;
          this.btnFindFont.Text = "&Find Font";
          this.btnFindFont.UseVisualStyleBackColor = true;
          this.btnFindFont.Click += new System.EventHandler(this.btnFindFont_Click);
@@ -790,7 +773,7 @@ namespace AstroGrep.Windows.Forms
          this.btnResultsWindowBackColor.Name = "btnResultsWindowBackColor";
          this.btnResultsWindowBackColor.SelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
          this.btnResultsWindowBackColor.Size = new System.Drawing.Size(75, 23);
-         this.btnResultsWindowBackColor.TabIndex = 22;
+         this.btnResultsWindowBackColor.TabIndex = 8;
          // 
          // btnResultsWindowForeColor
          // 
@@ -798,7 +781,7 @@ namespace AstroGrep.Windows.Forms
          this.btnResultsWindowForeColor.Name = "btnResultsWindowForeColor";
          this.btnResultsWindowForeColor.SelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
          this.btnResultsWindowForeColor.Size = new System.Drawing.Size(75, 23);
-         this.btnResultsWindowForeColor.TabIndex = 21;
+         this.btnResultsWindowForeColor.TabIndex = 7;
          // 
          // lblResultsWindowBack
          // 
@@ -833,7 +816,7 @@ namespace AstroGrep.Windows.Forms
          this.grpResultMatch.Location = new System.Drawing.Point(8, 78);
          this.grpResultMatch.Name = "grpResultMatch";
          this.grpResultMatch.Size = new System.Drawing.Size(537, 56);
-         this.grpResultMatch.TabIndex = 23;
+         this.grpResultMatch.TabIndex = 3;
          this.grpResultMatch.TabStop = false;
          this.grpResultMatch.Text = "Results Match";
          // 
@@ -843,7 +826,7 @@ namespace AstroGrep.Windows.Forms
          this.BackColorButton.Name = "BackColorButton";
          this.BackColorButton.SelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
          this.BackColorButton.Size = new System.Drawing.Size(75, 23);
-         this.BackColorButton.TabIndex = 18;
+         this.BackColorButton.TabIndex = 5;
          // 
          // ForeColorButton
          // 
@@ -851,7 +834,7 @@ namespace AstroGrep.Windows.Forms
          this.ForeColorButton.Name = "ForeColorButton";
          this.ForeColorButton.SelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
          this.ForeColorButton.Size = new System.Drawing.Size(75, 23);
-         this.ForeColorButton.TabIndex = 17;
+         this.ForeColorButton.TabIndex = 4;
          // 
          // BackColorLabel
          // 
@@ -874,156 +857,6 @@ namespace AstroGrep.Windows.Forms
          this.ForeColorLabel.TabIndex = 15;
          this.ForeColorLabel.Text = "Fore Color";
          this.ForeColorLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-         // 
-         // tabPlugins
-         // 
-         this.tabPlugins.Controls.Add(this.btnDown);
-         this.tabPlugins.Controls.Add(this.btnUp);
-         this.tabPlugins.Controls.Add(this.PluginDetailsGroup);
-         this.tabPlugins.Controls.Add(this.PluginsList);
-         this.tabPlugins.Location = new System.Drawing.Point(4, 24);
-         this.tabPlugins.Name = "tabPlugins";
-         this.tabPlugins.Size = new System.Drawing.Size(553, 362);
-         this.tabPlugins.TabIndex = 3;
-         this.tabPlugins.Text = "Plugins";
-         this.tabPlugins.UseVisualStyleBackColor = true;
-         // 
-         // btnDown
-         // 
-         this.btnDown.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-         this.btnDown.Location = new System.Drawing.Point(511, 124);
-         this.btnDown.Name = "btnDown";
-         this.btnDown.Padding = new System.Windows.Forms.Padding(0, 4, 0, 0);
-         this.btnDown.Size = new System.Drawing.Size(34, 28);
-         this.btnDown.TabIndex = 5;
-         this.btnDown.Text = "▼";
-         this.btnDown.Click += new System.EventHandler(this.btnDown_Click);
-         // 
-         // btnUp
-         // 
-         this.btnUp.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-         this.btnUp.Location = new System.Drawing.Point(511, 74);
-         this.btnUp.Name = "btnUp";
-         this.btnUp.Padding = new System.Windows.Forms.Padding(0, 2, 0, 0);
-         this.btnUp.Size = new System.Drawing.Size(34, 28);
-         this.btnUp.TabIndex = 4;
-         this.btnUp.Text = "▲";
-         this.btnUp.Click += new System.EventHandler(this.btnUp_Click);
-         // 
-         // PluginDetailsGroup
-         // 
-         this.PluginDetailsGroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-         this.PluginDetailsGroup.Controls.Add(this.lblPluginDescription);
-         this.PluginDetailsGroup.Controls.Add(this.lblPluginAuthor);
-         this.PluginDetailsGroup.Controls.Add(this.lblPluginVersion);
-         this.PluginDetailsGroup.Controls.Add(this.lblPluginName);
-         this.PluginDetailsGroup.Controls.Add(this.lblPluginDetailAuthor);
-         this.PluginDetailsGroup.Controls.Add(this.lblPluginDetailVersion);
-         this.PluginDetailsGroup.Controls.Add(this.lblPluginDetailName);
-         this.PluginDetailsGroup.Location = new System.Drawing.Point(8, 232);
-         this.PluginDetailsGroup.Name = "PluginDetailsGroup";
-         this.PluginDetailsGroup.Size = new System.Drawing.Size(537, 120);
-         this.PluginDetailsGroup.TabIndex = 3;
-         this.PluginDetailsGroup.TabStop = false;
-         this.PluginDetailsGroup.Text = "Plugin Details";
-         // 
-         // lblPluginDescription
-         // 
-         this.lblPluginDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-         this.lblPluginDescription.Location = new System.Drawing.Point(272, 24);
-         this.lblPluginDescription.Name = "lblPluginDescription";
-         this.lblPluginDescription.Size = new System.Drawing.Size(257, 88);
-         this.lblPluginDescription.TabIndex = 3;
-         // 
-         // lblPluginAuthor
-         // 
-         this.lblPluginAuthor.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-         this.lblPluginAuthor.Location = new System.Drawing.Point(96, 88);
-         this.lblPluginAuthor.Name = "lblPluginAuthor";
-         this.lblPluginAuthor.Size = new System.Drawing.Size(168, 23);
-         this.lblPluginAuthor.TabIndex = 2;
-         // 
-         // lblPluginVersion
-         // 
-         this.lblPluginVersion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-         this.lblPluginVersion.Location = new System.Drawing.Point(96, 56);
-         this.lblPluginVersion.Name = "lblPluginVersion";
-         this.lblPluginVersion.Size = new System.Drawing.Size(168, 23);
-         this.lblPluginVersion.TabIndex = 6;
-         // 
-         // lblPluginName
-         // 
-         this.lblPluginName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-         this.lblPluginName.Location = new System.Drawing.Point(96, 24);
-         this.lblPluginName.Name = "lblPluginName";
-         this.lblPluginName.Size = new System.Drawing.Size(168, 23);
-         this.lblPluginName.TabIndex = 5;
-         // 
-         // lblPluginDetailAuthor
-         // 
-         this.lblPluginDetailAuthor.Location = new System.Drawing.Point(16, 88);
-         this.lblPluginDetailAuthor.Name = "lblPluginDetailAuthor";
-         this.lblPluginDetailAuthor.Size = new System.Drawing.Size(80, 23);
-         this.lblPluginDetailAuthor.TabIndex = 7;
-         this.lblPluginDetailAuthor.Text = "Author:";
-         // 
-         // lblPluginDetailVersion
-         // 
-         this.lblPluginDetailVersion.Location = new System.Drawing.Point(16, 56);
-         this.lblPluginDetailVersion.Name = "lblPluginDetailVersion";
-         this.lblPluginDetailVersion.Size = new System.Drawing.Size(80, 23);
-         this.lblPluginDetailVersion.TabIndex = 1;
-         this.lblPluginDetailVersion.Text = "Version:";
-         // 
-         // lblPluginDetailName
-         // 
-         this.lblPluginDetailName.Location = new System.Drawing.Point(16, 24);
-         this.lblPluginDetailName.Name = "lblPluginDetailName";
-         this.lblPluginDetailName.Size = new System.Drawing.Size(80, 23);
-         this.lblPluginDetailName.TabIndex = 0;
-         this.lblPluginDetailName.Text = "Name:";
-         // 
-         // PluginsList
-         // 
-         this.PluginsList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-         this.PluginsList.CheckBoxes = true;
-         this.PluginsList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.PluginsColumnEnabled,
-            this.PluginsColumnName,
-            this.PluginsColumnExt});
-         this.PluginsList.FullRowSelect = true;
-         this.PluginsList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-         this.PluginsList.HideSelection = false;
-         this.PluginsList.Location = new System.Drawing.Point(8, 8);
-         this.PluginsList.MultiSelect = false;
-         this.PluginsList.Name = "PluginsList";
-         this.PluginsList.Size = new System.Drawing.Size(492, 216);
-         this.PluginsList.TabIndex = 2;
-         this.PluginsList.UseCompatibleStateImageBehavior = false;
-         this.PluginsList.View = System.Windows.Forms.View.Details;
-         this.PluginsList.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.PluginsList_ItemCheck);
-         this.PluginsList.SelectedIndexChanged += new System.EventHandler(this.PluginsList_SelectedIndexChanged);
-         // 
-         // PluginsColumnEnabled
-         // 
-         this.PluginsColumnEnabled.Text = "Enabled";
-         this.PluginsColumnEnabled.Width = 72;
-         // 
-         // PluginsColumnName
-         // 
-         this.PluginsColumnName.Text = "Name";
-         this.PluginsColumnName.Width = 246;
-         // 
-         // PluginsColumnExt
-         // 
-         this.PluginsColumnExt.Text = "Extensions";
-         this.PluginsColumnExt.Width = 134;
          // 
          // btnOK
          // 
@@ -1086,8 +919,6 @@ namespace AstroGrep.Windows.Forms
          ((System.ComponentModel.ISupportInitialize)(this.numResultsBeforeAfterCount)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.numResultsLongLineCount)).EndInit();
          this.grpResultMatch.ResumeLayout(false);
-         this.tabPlugins.ResumeLayout(false);
-         this.PluginDetailsGroup.ResumeLayout(false);
          this.ResumeLayout(false);
 
       }
@@ -1099,7 +930,6 @@ namespace AstroGrep.Windows.Forms
       private System.Windows.Forms.TabPage tabGeneral;
       private System.Windows.Forms.TabPage tabTextEditors;
       private System.Windows.Forms.TabPage tabResults;
-      private System.Windows.Forms.TabPage tabPlugins;
       private System.Windows.Forms.GroupBox grpResultWindow;
       private AstroGrep.Windows.Controls.ColorButton btnResultsWindowBackColor;
       private AstroGrep.Windows.Controls.ColorButton btnResultsWindowForeColor;
@@ -1114,18 +944,6 @@ namespace AstroGrep.Windows.Forms
       private System.Windows.Forms.ComboBox cboLanguage;
       private System.Windows.Forms.ComboBox cboPathMRUCount;
       private System.Windows.Forms.Label lblStoredPaths;
-      private System.Windows.Forms.GroupBox PluginDetailsGroup;
-      private System.Windows.Forms.Label lblPluginDetailAuthor;
-      private System.Windows.Forms.Label lblPluginVersion;
-      private System.Windows.Forms.Label lblPluginName;
-      private System.Windows.Forms.Label lblPluginDescription;
-      private System.Windows.Forms.Label lblPluginAuthor;
-      private System.Windows.Forms.Label lblPluginDetailVersion;
-      private System.Windows.Forms.Label lblPluginDetailName;
-      private System.Windows.Forms.ListView PluginsList;
-      private System.Windows.Forms.ColumnHeader PluginsColumnEnabled;
-      private System.Windows.Forms.ColumnHeader PluginsColumnName;
-      private System.Windows.Forms.ColumnHeader PluginsColumnExt;
       private System.Windows.Forms.Button btnEdit;
       private System.Windows.Forms.Button btnRemove;
       private System.Windows.Forms.Button btnAdd;
@@ -1145,8 +963,6 @@ namespace AstroGrep.Windows.Forms
       private Label lblFileCurrentFont;
       private Button btnFileFindFont;
       private ColumnHeader ColumnTabSize;
-      private Button btnDown;
-      private Button btnUp;
       private TabPage tabFileEncoding;
       private Button btnFileEncodingDelete;
       private Button btnFileEncodingEdit;

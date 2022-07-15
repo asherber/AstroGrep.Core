@@ -133,6 +133,7 @@ namespace AstroGrep.Core
       /// [Curtis_Beard]      07/28/2006	Created
       /// [Curtis_Beard]      08/07/2007	CHG: remove check against version
       /// [Curtis_Beard]      10/16/2012	ADD: iFilter plugin, load any external plugins
+      /// [Curtis_Beard]      09/09/2019	ADD: PDF plugin, Word OpenXML plugin, Excel plugin, Media Tags plugin
       /// </history>
       public static void Load()
       {
@@ -140,13 +141,29 @@ namespace AstroGrep.Core
          // Mono2.4 doesn't like the internal plugins.
          if (Type.GetType("System.MonoType") == null)
          {
-            Plugin.MicrosoftWord.MicrosoftWordPlugin wordPlugin = new Plugin.MicrosoftWord.MicrosoftWordPlugin();
+            Plugins.MicrosoftWord.MicrosoftWordPlugin wordPlugin = new Plugins.MicrosoftWord.MicrosoftWordPlugin();
             PluginWrapper wrapper = new PluginWrapper(wordPlugin, string.Empty, wordPlugin.Name, true, true, 0);
             Add(wrapper);
 
-            Plugin.IFilter.IFilterPlugin iFilterPlugin = new Plugin.IFilter.IFilterPlugin();
-            PluginWrapper iFilterWrapper = new PluginWrapper(iFilterPlugin, string.Empty, iFilterPlugin.Name, true, false, 1);
+            Plugins.MicrosoftWord.MicrosoftWordOpenXMLPlugin wordOpenXMLPlugin = new Plugins.MicrosoftWord.MicrosoftWordOpenXMLPlugin();
+            PluginWrapper wordOpenXMLWrapper = new PluginWrapper(wordOpenXMLPlugin, string.Empty, wordOpenXMLPlugin.Name, true, true, 1);
+            Add(wordOpenXMLWrapper);
+
+            Plugins.MicrosoftExcel.MicrosoftExcelPlugin excelPlugin = new Plugins.MicrosoftExcel.MicrosoftExcelPlugin();
+            PluginWrapper excelWrapper = new PluginWrapper(excelPlugin, string.Empty, excelPlugin.Name, true, true, 1);
+            Add(excelWrapper);
+
+            Plugins.FileHandlers.FileHandlersPlugin iFilterPlugin = new Plugins.FileHandlers.FileHandlersPlugin();
+            PluginWrapper iFilterWrapper = new PluginWrapper(iFilterPlugin, string.Empty, iFilterPlugin.Name, true, false, 2);
             Add(iFilterWrapper);
+
+            Plugins.PDF.PDFPlugin pdfPlugin = new Plugins.PDF.PDFPlugin();
+            PluginWrapper pdfWrapper = new PluginWrapper(pdfPlugin, string.Empty, pdfPlugin.Name, true, true, 3);
+            Add(pdfWrapper);
+
+            Plugins.MediaTag.MediaTagsPlugin tagsPlugin = new Plugins.MediaTag.MediaTagsPlugin();
+            PluginWrapper tagsWrapper = new PluginWrapper(tagsPlugin, string.Empty, tagsPlugin.Name, true, true, 3);
+            Add(tagsWrapper);
          }
 
          // load any external plugins

@@ -590,21 +590,14 @@ namespace libAstroGrep.EncodingDetection
       /// <returns>byte array of sample data</returns>
       /// <history>
       /// [Curtis_Beard]		05/18/2015	FIX: 69, set max size to 1024 instead of 10240
+      /// [Curtis_Beard]		07/12/2019	FIX: 115, use same logic to pull sample content
       /// </history>
       public static byte[] ReadFileContentSample(string filePath, int maxSize = 10240)
       {
-         byte[] buffer;
          using (FileStream stream = File.Open(filePath, FileMode.Open, FileAccess.Read))
          {
-            long streamLength = stream.Length;
-            long bufferSize = Math.Min(streamLength, maxSize);
-
-            buffer = new byte[bufferSize];
-
-            stream.Read(buffer, 0, (int)bufferSize);
+            return ReadFileContentSample(stream, maxSize);
          }
-
-         return buffer;
       }
 
       /// <summary>
@@ -615,6 +608,7 @@ namespace libAstroGrep.EncodingDetection
       /// <returns>byte array of sample data</returns>
       /// <history>
       /// [Curtis_Beard]		05/18/2015	FIX: 69, initial to use open stream.  set max size to 1024 instead of 10240
+      /// [Curtis_Beard]		07/12/2019	FIX: 115, if buffer is too small, copy data to make it bigger
       /// </history>
       public static byte[] ReadFileContentSample(FileStream stream, int maxSize = 10240)
       {
@@ -625,6 +619,24 @@ namespace libAstroGrep.EncodingDetection
          buffer = new byte[bufferSize];
 
          stream.Read(buffer, 0, (int)bufferSize);
+
+         if (buffer.Length < maxSize)
+         {
+            byte[] newBuffer = new byte[maxSize];
+            int steps = maxSize / buffer.Length;
+            for (int i = 0; i < steps; i++ )
+            {
+               Array.Copy(buffer, 0, newBuffer, buffer.Length * i, buffer.Length);
+            }
+
+            int rest = maxSize % buffer.Length;
+            if (rest > 0)
+            {
+               Array.Copy(buffer, 0, newBuffer, steps * buffer.Length, rest);
+            }
+
+            return newBuffer;
+         }
 
          return buffer;
       }

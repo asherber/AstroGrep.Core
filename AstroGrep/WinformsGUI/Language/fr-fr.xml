@@ -6,8 +6,6 @@
       <control name="lblFileTypes" value="Types de fichier" />
       <control name="btnCancel" value="&amp;Annuler" />
       <control name="lblSearchPath" value="Répertoire de recherche" />
-      <control name="lblContextLines" value="Lignes de contexte" tooltip="Affiche le nombre de lignes de contexte correspondantes au-dessus et au-dessous de l’expression trouvée" />
-      <control name="txtContextLines" tooltip="Affiche le nombre de lignes de contexte correspondantes au-dessus et au-dessous de l’expression trouvée" />
       <control name="chkNegation" value="&amp;Inverser la recherche" tooltip="Recherche les fichiers qui ne contiennent pas l’expression" />
       <control name="chkFileNamesOnly" value="Afficher &amp;seulement les noms de fichier" tooltip="Affiche les noms mais pas le contexte des fichiers trouvés (peut accélérer la recherche sur de gros fichiers)" />
       <control name="chkRecurse" value="Explorer les sous-&amp;répertoires" tooltip="Recherche aussi dans les sous-répertoires" />
@@ -19,6 +17,7 @@
       <control name="lblSearchOptions" value=" Options de recherche" />
       <control name="picBrowse" tooltip="Explorer...(Shift-Cliquez pour annexer)" />
       <control name="lnkExclusions" value="Exclusions" />
+      <control name="lnkPlugins" value="Extensions" />
       <control name="lstFileNames">
          <menuitem index="0" value="Copier la ligne" />
          <menuitem index="1" value="Copier le nom du fichier" />
@@ -47,6 +46,7 @@
          <menuitem index="5" value="&amp;Imprimer les résultats..." />
          <menuitem index="6" value="-" />
          <menuitem index="7" value="&amp;Quitter" />
+         <menuitem index="8" value="Quitter tout" />
       </menu>
       <menu index="1" value="&amp;Édition">
          <menuitem index="0" value="&amp;Sélectionner tous les fichiers" />
@@ -67,8 +67,9 @@
          <menuitem index="7" value="Renvoi à la ligne automatique" />
          <menuitem index="8" value="&amp;Supprimer les espaces vides en fin de ligne"/>
          <menuitem index="9" value="Fichier entier" />
-         <menuitem index="10" value="-" />
-         <menuitem index="11" value="Tous les résultats" />
+         <menuitem index="10" value="Afficher tous les caractères" />
+         <menuitem index="11" value="-" />
+         <menuitem index="12" value="Tous les résultats" />
       </menu>
       <menu index="3" value="&amp;Outils">
          <menuitem index="0" value="&amp;Effacer la mémoire des dernières recherches">
@@ -94,10 +95,26 @@
       </menu>
       
       <!-- status bar items default state-->
-      <control name="sbTotalCountPanel" value="Total : 0"/>
+      <control name="sbTotalCountPanel" value="Total : 0 / 0"/>
       <control name="sbFileCountPanel" value="Fichiers : 0 / 0"/>
       <control name="sbFilterCountPanel" value="Exclusions : 0" tooltip="Double cliquer pour afficher les exclusions"/>
       <control name="sbErrorCountPanel" value="Erreurs : 0" tooltip="Double cliquer pour afficher les erreurs"/>
+
+      <!-- Results Toolstrip -->
+      <control name="ResultsZoomInButton" tooltip="Zoom avant (Ctrl + Roulette de la souris vers le haut)" />
+      <control name="ResultsZoomOutButton" tooltip="Zoom arrière (Ctrl + Roulette de la souris vers le bas)" />
+      <control name="ResultsZoomResetButton" tooltip="Restaurer le zoom par défaut" />
+      <control name="ResultsViewLineNumbersButton" tooltip="Numéros de ligne" />
+      <control name="ResultsViewWordWrapButton" tooltip="Renvoi à la ligne automatique" />
+      <control name="ResultsViewRemovingLeadingButton" tooltip="Supprimer les espaces vides en fin de ligne" />
+      <control name="ResultsViewEntireFileButton" tooltip="Fichier entier" />
+      <control name="ResultsViewShowCharactersButton" tooltip="Afficher tous les caractères" />
+      <control name="ResultsViewAllResultsButton" tooltip="Tous les résultats" />
+      <control name="ResultsContextLinesLabel" value="Lignes de contexte" />
+      <control name="ResultsContextLinesBeforeCombo" tooltip="Affiche le nombre de lignes de contexte correspondantes au-dessus de l’expression trouvée" />
+      <control name="ResultsContextLinesAfterCombo" tooltip="Affiche le nombre de lignes de contexte correspondantes au-dessous de l’expression trouvée" />
+      <control name="ResultsNavPrevButton" tooltip="Aller au match précédent" />
+      <control name="ResultsNavNextButton" tooltip="Aller au prochain match" />
    </screen>
    
    <screen name="frmAbout" value="À propos d’{0}">
@@ -145,14 +162,9 @@
       <control name="tabGeneral" value="Général" />
       <control name="tabTextEditors" value="Éditeurs de texte" />
       <control name="LanguageGroup" value="Langue"/>
-      <control name="tabPlugins" value="Extensions"/>
       <control name="chkDesktopShortcut" value="Raccourcis du &amp;bureau"/>
       <control name="chkStartMenuShortcut" value="&amp;Raccourcis du menu démarrer"/>
       <control name="ShortcutGroup" value="Raccourcis"/>
-      <control name="PluginDetailsGroup" value="Détails de l’extension"/>
-      <control name="lblPluginDetailName" value="Nom :"/>
-      <control name="lblPluginDetailVersion" value="Version :"/>
-      <control name="lblPluginDetailAuthor" value="Auteur :"/>
       <control name="btnFindFont" value="Choisir une &amp;police..."/>
       <control name="chkShowExclusionErrorMessage" value="Affiche un &amp;message lorsqu’une recherche renvoie des éléments exclus ou provoque une erreur"/>
       <control name="chkSaveSearchOptions" value="Enregistrer les options de recherche en &amp;quittant"/>
@@ -179,6 +191,10 @@
       <control name="cmdPageSetup" value="&amp;Configuration" />
       <control name="cmdPrint" value="&amp;Imprimer" />
       <control name="cmdPreview" value="&amp;Aperçu" />
+      <control name="lblResultsMatch" value="Résultats trouvés:" />
+      <control name="rdbNone" value="&amp;Aucune" />
+      <control name="rdbBold" value="&amp;Audacieuse" />
+      <control name="rdbColor" value="C&amp;ouleur" />
    </screen>
 
    <screen name="frmExclusions" value="Exclusions">
@@ -220,6 +236,15 @@
       <control name="btnCancel" value="&amp;Annuler" />
       <control name="lblFilePath" value="Chemin du fichier" />
       <control name="lblEncoding" value="Encodage" />
+   </screen>
+
+   <screen name="frmPlugins" value="Extensions">
+      <control name="btnOK" value="&amp;OK" />
+      <control name="btnCancel" value="&amp;Annuler" />
+      <control name="PluginDetailsGroup" value="Détails de l’extension"/>
+      <control name="lblPluginDetailName" value="Nom :"/>
+      <control name="lblPluginDetailVersion" value="Version :"/>
+      <control name="lblPluginDetailAuthor" value="Auteur :"/>
    </screen>
    
    <generic>
@@ -329,6 +354,7 @@
       <text name="Exclusions.None" value=""/>
       <text name="Exclusions.Equals" value="Égal à"/>
       <text name="Exclusions.Contains" value="Contient"/>
+      <text name="Exclusions.NotContains" value="Ne contient pas"/>
       <text name="Exclusions.StartsWith" value="Commence par"/>
       <text name="Exclusions.EndsWith" value="Termine par"/>
       <text name="Exclusions.NotEquals" value="Différent de"/>
@@ -362,6 +388,11 @@
       <text name="FileEncoding.Performance.Default" value="Par défaut"/>
       <text name="FileEncoding.Performance.Accuracy" value="Précision"/>
       <text name="FileEncoding.CacheCleared" value="Cache vidé."/>
+
+      <text name="All" value="Tous"/>
+      <text name="Documents" value="Documents"/>
+      <text name="Code" value="Code"/>
+      <text name="Media" value="Médias"/>
    </generic>
    
 </language>

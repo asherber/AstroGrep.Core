@@ -37,6 +37,9 @@ namespace libAstroGrep.EncodingDetection
       /// <summary>
       /// The available encoding detectors.
       /// </summary>
+      /// <history>
+      /// [Curtis_Beard]		07/12/2019	FIX: 115, add AutoIt encoding method
+      /// </history>
       [Flags]
       public enum Options
       {
@@ -44,7 +47,8 @@ namespace libAstroGrep.EncodingDetection
          KlerkSoftHeuristics = 2,
          WinMerge = 4,
          MozillaUCD = 8,
-         MLang = 16
+         MLang = 16,
+         AutoIt = 32
       }
 
       /// <summary>
@@ -73,6 +77,7 @@ namespace libAstroGrep.EncodingDetection
       /// <returns>List of EncodingValue object</returns>
       /// <history>
       /// [Curtis_Beard]		12/01/2014	Created
+      /// [Curtis_Beard]		07/12/2019	FIX: 115, add AutoIt encoding method
       /// </history>
       public static List<EncodingValue> DetectAll(byte[] bytes)
       {
@@ -103,6 +108,11 @@ namespace libAstroGrep.EncodingDetection
          value.Option = Options.MLang;
          values.Add(value);
 
+         value = new EncodingValue();
+         value.Encoding = DetectEncodingUsingAutoIt(bytes);
+         value.Option = Options.AutoIt;
+         values.Add(value);
+
          return values;
       }
 
@@ -116,10 +126,26 @@ namespace libAstroGrep.EncodingDetection
       /// <history>
       /// [Curtis_Beard]		02/12/2014	Created
       /// [Curtis_Beard]		12/01/2014	ADD: support for Mozilla encoding detection, remove KlerkSoftHeuristics as a default
+      /// [Curtis_Beard]		07/12/2019	FIX: 115, add AutoIt encoding method
       /// </history>
-      public static Encoding Detect(byte[] bytes, out string usedEncoder, EncodingDetector.Options opts = Options.KlerkSoftBom | Options.WinMerge | Options.MozillaUCD | Options.MLang, Encoding defaultEncoding = null)
+      public static Encoding Detect(byte[] bytes, out string usedEncoder, EncodingDetector.Options opts = Options.KlerkSoftBom | Options.AutoIt | Options.MozillaUCD | Options.MLang, Encoding defaultEncoding = null)
       {
          Encoding encoding = null;
+         usedEncoder = string.Empty;
+
+         List<Tuple<Encoding, string>> foundEncodings = new List<Tuple<Encoding, string>>();
+
+         if ((opts & Options.AutoIt) == Options.AutoIt)
+         {
+            encoding = DetectEncodingUsingAutoIt(bytes);
+
+            if (encoding != null)
+            {
+               usedEncoder = Options.AutoIt.ToString();
+               foundEncodings.Add(new Tuple<Encoding, string>(encoding, usedEncoder));
+               //return encoding;
+            }
+         }
 
          // NOTE: this order determines which is run first, usually Mozilla is better than MLang
          if ((opts & Options.KlerkSoftBom) == Options.KlerkSoftBom)
@@ -129,7 +155,8 @@ namespace libAstroGrep.EncodingDetection
             if (encoding != null)
             {
                usedEncoder = Options.KlerkSoftBom.ToString();
-               return encoding;
+               foundEncodings.Add(new Tuple<Encoding, string>(encoding, usedEncoder));
+               //return encoding;
             }
          }
 
@@ -140,7 +167,8 @@ namespace libAstroGrep.EncodingDetection
             if (encoding != null)
             {
                usedEncoder = Options.KlerkSoftHeuristics.ToString();
-               return encoding;
+               foundEncodings.Add(new Tuple<Encoding, string>(encoding, usedEncoder));
+               //return encoding;
             }
          }
 
@@ -151,7 +179,8 @@ namespace libAstroGrep.EncodingDetection
             if (encoding != null)
             {
                usedEncoder = Options.WinMerge.ToString();
-               return encoding;
+               foundEncodings.Add(new Tuple<Encoding, string>(encoding, usedEncoder));
+               //return encoding;
             }
          }
 
@@ -162,7 +191,8 @@ namespace libAstroGrep.EncodingDetection
             if (encoding != null)
             {
                usedEncoder = Options.MozillaUCD.ToString();
-               return encoding;
+               foundEncodings.Add(new Tuple<Encoding, string>(encoding, usedEncoder));
+               //return encoding;
             }
          }
 
@@ -173,16 +203,24 @@ namespace libAstroGrep.EncodingDetection
             if (encoding != null)
             {
                usedEncoder = Options.MLang.ToString();
-               return encoding;
+               foundEncodings.Add(new Tuple<Encoding, string>(encoding, usedEncoder));
+               //return encoding;
             }
          }
 
          // default encoding use since nothing was found
-         usedEncoder = "Default";
          if (encoding == null)
          {
-            encoding = defaultEncoding;            
+            usedEncoder = "Default";
+            encoding = defaultEncoding;
+            foundEncodings.Add(new Tuple<Encoding, string>(encoding, usedEncoder));
          }
+
+         // find the winner (most selected encoding)
+         var rslts = foundEncodings.GroupBy(e => e.Item1).Select(g => new { g.Key, Count = g.Count() }).OrderByDescending(r => r.Count);
+         System.Diagnostics.Debug.WriteLine(string.Join(", ", rslts));
+         encoding = rslts.ElementAt(0).Key;
+         usedEncoder = string.Join(", ", foundEncodings.Where(f => f.Item1 == encoding).Select(f => f.Item2));
 
          return encoding;
       }
@@ -279,6 +317,43 @@ namespace libAstroGrep.EncodingDetection
             }
          }
          catch { }
+
+         return null;
+      }
+
+      /// <summary>
+      /// Detects encoding using AutoIt detector.
+      /// </summary>
+      /// <param name="bytes">sample data</param>
+      /// <returns>Detected encoding or null if not detected</returns>
+      /// <history>
+      /// [Curtis_Beard]		07/12/2019	FIX: 115, add AutoIt encoding method
+      /// </history>
+      private static Encoding DetectEncodingUsingAutoIt(Byte[] bytes)
+      {
+         AutoItEncodingDetector autoDetect = new AutoItEncodingDetector();
+         var autoEncoding = autoDetect.DetectEncoding(bytes, bytes.Length);
+         if (autoEncoding != AutoItEncodingDetector.Encoding.None)
+         {
+            switch (autoEncoding)
+            {
+               case AutoItEncodingDetector.Encoding.Ansi:
+               case AutoItEncodingDetector.Encoding.Ascii:
+                  return System.Text.Encoding.ASCII;
+
+               case AutoItEncodingDetector.Encoding.Utf16BeBom:
+               case AutoItEncodingDetector.Encoding.Utf16BeNoBom:
+                  return System.Text.Encoding.BigEndianUnicode;
+
+               case AutoItEncodingDetector.Encoding.Utf16LeBom:
+               case AutoItEncodingDetector.Encoding.Utf16LeNoBom:
+                  return System.Text.Encoding.Unicode;
+
+               case AutoItEncodingDetector.Encoding.Utf8Bom:
+               case AutoItEncodingDetector.Encoding.Utf8NoBom:
+                  return System.Text.Encoding.UTF8;
+            }
+         }
 
          return null;
       }

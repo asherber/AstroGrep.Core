@@ -64,9 +64,12 @@ namespace AstroGrep.Windows
       /// </summary>
       /// <param name="filesize">The numeric value to be converted.</param>
       /// <returns>the converted string</returns>
+	  /// <history>
+	  /// [Curtis_Beard]	  05/07/2022	FIX: 122, give more capacity to prevent cutoffs in other languages
+	  /// </history>
       public static string StrFormatByteSize(long filesize)
       {
-         System.Text.StringBuilder sb = new System.Text.StringBuilder(11);
+         System.Text.StringBuilder sb = new System.Text.StringBuilder(50);
          StrFormatByteSize(filesize, sb, sb.Capacity);
          return sb.ToString();
       }
@@ -1536,7 +1539,7 @@ namespace AstroGrep.Windows
          {
             SetWindowTheme(listViewControl.Handle, "Explorer", null);
             SendMessage(listViewControl.Handle, LVM_SETEXTENDEDLISTVIEWSTYLE, new IntPtr(LVS_EX_DOUBLEBUFFER), new IntPtr(LVS_EX_DOUBLEBUFFER));
-         }
+		 }
       }
       #endregion
 
@@ -2264,6 +2267,6 @@ namespace AstroGrep.Windows
          }
       }
 
-      #endregion
-   }
+		#endregion
+	}
 }

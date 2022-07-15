@@ -66,11 +66,14 @@ namespace AstroGrep.Windows.Controls
       /// <history>
       /// [Curtis_Beard]		04/08/2015	ADD: update RichTextBox to AvalonEdit
       /// [Curtis_Beard]		07/06/2015  FIX: 78, fix issue when LineNumbers selection list doesn't have any results (crash)
+      /// [Curtis_Beard]		09/09/2019	CHG: better handle no line numbers (e.g. from a plugin)
       /// </history>
       protected override System.Windows.Size MeasureOverride(System.Windows.Size availableSize)
       {
          int numberLength = 2;
-         if (LineNumbers != null && LineNumbers.Count == this.Document.LineCount)
+         bool noNumbers = LineNumbers == null || LineNumbers.Where(l => l.Number == -1).Count() == LineNumbers.Count;
+
+         if (LineNumbers != null && LineNumbers.Count == this.Document.LineCount && !noNumbers)
          {
             var list = (from n in LineNumbers where n.Number > -1 select n.Number);
             if (list != null && list.Count() > 0)
@@ -107,6 +110,7 @@ namespace AstroGrep.Windows.Controls
       /// <param name="drawingContext">The current drawing context used to write line numbers</param>
       /// <history>
       /// [Curtis_Beard]		04/08/2015	ADD: update RichTextBox to AvalonEdit
+      /// [Curtis_Beard]		09/09/2019	CHG: better handle no line numbers (e.g. from a plugin)
       /// </history>
       protected override void OnRender(System.Windows.Media.DrawingContext drawingContext)
       {
@@ -116,6 +120,7 @@ namespace AstroGrep.Windows.Controls
          {
             var foreground = (Brush)GetValue(Control.ForegroundProperty);  // non-match line
             var matchForeground = (Brush)GetValue(Control.BackgroundProperty); // match line
+            bool noNumbers = LineNumbers == null || LineNumbers.Where(l => l.Number == -1).Count() == LineNumbers.Count;
 
             foreach (VisualLine line in textView.VisualLines)
             {
@@ -124,7 +129,12 @@ namespace AstroGrep.Windows.Controls
                if (LineNumbers != null)
                {
                   // all line numbers are specified
-                  if (LineNumbers.Count == this.Document.LineCount)
+                  if (noNumbers)
+                  {
+                     lineNumber = -1;
+                     isMatch = true;
+                  }
+                  else if (LineNumbers.Count == this.Document.LineCount)
                   {
                      lineNumber = -1;
 

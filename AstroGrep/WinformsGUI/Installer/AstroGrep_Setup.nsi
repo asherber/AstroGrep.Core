@@ -13,8 +13,8 @@
 
 !define MUI_COMPONENTSPAGE_SMALLDESC
 !define MUI_LANGDLL_ALLLANGUAGES
-!define INS_VERSION 4.4.7.0
-!define APP_VERSION "4.4.7"
+!define INS_VERSION 4.4.8.0
+!define APP_VERSION "4.4.8"
 
 ;--------------------------------
 ;Variables
@@ -96,29 +96,29 @@
 	!insertmacro MUI_LANGUAGE "Polish"
 	!insertmacro MUI_LANGUAGE "French"
 	
-	LangString MessageDotNetRequires ${LANG_ENGLISH} "Microsoft .NET Framework v4.0 or newer is required."
-	LangString MessageDotNetRequires ${LANG_DANISH} "Microsoft NET Framework v4.0 eller nyere er påkrævet."
-	LangString MessageDotNetRequires ${LANG_GERMAN} "Microsoft NET Framework v4.0 oder höher erforderlich."
-	LangString MessageDotNetRequires ${LANG_ITALIAN} "È richiesto Microsoft NET Framework v4.0 o più recente."
-	LangString MessageDotNetRequires ${LANG_SPANISH} "Se requiere Microsoft NET Framework v4.0 o posterior."
-	LangString MessageDotNetRequires ${LANG_POLISH} "Wymagany Microsoft .NET Framework v4.0 lub nowszy."
-	LangString MessageDotNetRequires ${LANG_FRENCH} "Microsoft .NET Framework v4.0 ou plus récent est requis."
+	LangString MessageDotNetRequires ${LANG_ENGLISH} "Microsoft .NET Framework v4.5 or newer is required."
+	LangString MessageDotNetRequires ${LANG_DANISH} "Microsoft NET Framework v4.5 eller nyere er påkrævet."
+	LangString MessageDotNetRequires ${LANG_GERMAN} "Microsoft NET Framework v4.5 oder höher erforderlich."
+	LangString MessageDotNetRequires ${LANG_ITALIAN} "È richiesto Microsoft NET Framework v4.5 o più recente."
+	LangString MessageDotNetRequires ${LANG_SPANISH} "Se requiere Microsoft NET Framework v4.5 o posterior."
+	LangString MessageDotNetRequires ${LANG_POLISH} "Wymagany Microsoft .NET Framework v4.5 lub nowszy."
+	LangString MessageDotNetRequires ${LANG_FRENCH} "Microsoft .NET Framework v4.5 ou plus récent est requis."
 	
-	LangString MessageDotNetChecking ${LANG_ENGLISH} "Checking for version 4.0 or newer..."
-	LangString MessageDotNetChecking ${LANG_DANISH} "Kontrol for version 4.0 eller nyere ..."
-	LangString MessageDotNetChecking ${LANG_GERMAN} "Überprüfen auf Version 4.0 oder neuer ..."
-	LangString MessageDotNetChecking ${LANG_ITALIAN} "Controllo versione 4.0 o più recente ..."
-	LangString MessageDotNetChecking ${LANG_SPANISH} "Comprobación de la versión 4.0 o más reciente ..."
-	LangString MessageDotNetChecking ${LANG_POLISH} "Sprawdzanie dostępności wersji 4.0 lub nowszej..."
-	LangString MessageDotNetChecking ${LANG_FRENCH} "Vérification de la version 4.0 ou plus récente ..."
+	LangString MessageDotNetChecking ${LANG_ENGLISH} "Checking for version 4.5 or newer..."
+	LangString MessageDotNetChecking ${LANG_DANISH} "Kontrol for version 4.5 eller nyere ..."
+	LangString MessageDotNetChecking ${LANG_GERMAN} "Überprüfen auf Version 4.5 oder neuer ..."
+	LangString MessageDotNetChecking ${LANG_ITALIAN} "Controllo versione 4.5 o più recente ..."
+	LangString MessageDotNetChecking ${LANG_SPANISH} "Comprobación de la versión 4.5 o más reciente ..."
+	LangString MessageDotNetChecking ${LANG_POLISH} "Sprawdzanie dostępności wersji 4.5 lub nowszej..."
+	LangString MessageDotNetChecking ${LANG_FRENCH} "Vérification de la version 4.5 ou plus récente ..."
 	
-	LangString MessageDotNetFound ${LANG_ENGLISH} "v4.0 or newer found."
-	LangString MessageDotNetFound ${LANG_DANISH} "v4.0 eller nyere fundet."
-	LangString MessageDotNetFound ${LANG_GERMAN} "v4.0 oder höher gefunden."
-	LangString MessageDotNetFound ${LANG_ITALIAN} "v4.0 o più recente trovato."
-	LangString MessageDotNetFound ${LANG_SPANISH} "v4.0 o más reciente encontrado."
-	LangString MessageDotNetFound ${LANG_POLISH} "Znaleziono wersję 4.0 lub nowszą."
-	LangString MessageDotNetFound ${LANG_FRENCH} "V4.0 ou plus récente."
+	LangString MessageDotNetFound ${LANG_ENGLISH} "v4.5 or newer found."
+	LangString MessageDotNetFound ${LANG_DANISH} "v4.5 eller nyere fundet."
+	LangString MessageDotNetFound ${LANG_GERMAN} "v4.5 oder höher gefunden."
+	LangString MessageDotNetFound ${LANG_ITALIAN} "v4.5 o più recente trovato."
+	LangString MessageDotNetFound ${LANG_SPANISH} "v4.5 o más reciente encontrado."
+	LangString MessageDotNetFound ${LANG_POLISH} "Znaleziono wersję 4.5 lub nowszą."
+	LangString MessageDotNetFound ${LANG_FRENCH} "V4.5 ou plus récente."
 	
 	LangString MessageDotNetNotFound ${LANG_ENGLISH} "Microsoft .NET Framework is not installed. Downloading..."
 	LangString MessageDotNetNotFound ${LANG_DANISH} "Microsoft NET Framework er ikke installeret. Downloading..."
@@ -223,7 +223,7 @@
   
 ;--------------------------------
 ;Handles checking for .Net framework 
-; v4.0, aborts install if not found
+; v4.5, aborts install if not found
 ;--------------------------------
 Function .onInit
 	; when silent, write out a default language
@@ -262,11 +262,20 @@ Section $(TITLE_SecRequired) SecRequired
   File "..\bin\release\AstroGrep.AdminProcess.exe"
   File "..\bin\release\AstroGrep.AdminProcess.exe.config"
   File "..\bin\release\ICSharpCode.AvalonEdit.dll"
-  File "..\bin\release\NLog.dll"
-  File "..\bin\release\astrogrep.VisualElementsManifest.xml"
+  File "..\bin\release\taglibsharp.dll"
+  File "..\bin\release\NLog.dll"  
+  File "..\bin\release\ExcelNumberFormat.dll"
+  File "..\bin\release\ExcelDataReader.dll"
+  File "..\bin\release\ICSharpCode.SharpZipLib.dll"
+  File "..\bin\release\DocumentFormat.OpenXml.dll"  
+  File "..\bin\release\CommandLine.dll"
+  ;File "..\bin\release\astrogrep.VisualElementsManifest.xml"
   File "..\bin\release\AstroGrep_256x256.png"
   File "license.txt"
   File "readme.txt"
+  
+  ; Remove this file if it exists as we no longer desire this effect
+  Delete $INSTDIR\astrogrep.VisualElementsManifest.xml
   
   ;Store installation folder
   WriteRegStr HKCU "Software\AstroGrep" "" $INSTDIR
@@ -353,11 +362,17 @@ Section "Uninstall"
     Delete $INSTDIR\license.txt
 	Delete $INSTDIR\readme.txt
 	Delete $INSTDIR\ICSharpCode.AvalonEdit.dll
-	Delete $INSTDIR\NLog.dll
+	Delete $INSTDIR\NLog.dll	
+	Delete $INSTDIR\ExcelNumberFormat.dll
+	Delete $INSTDIR\ExcelDataReader.dll
+	Delete $INSTDIR\ICSharpCode.SharpZipLib.dll
+	Delete $INSTDIR\DocumentFormat.OpenXml.dll
+	Delete $INSTDIR\taglibsharp.dll
 	Delete $INSTDIR\AstroGrep.AdminProcess.exe.config
 	Delete $INSTDIR\AstroGrep.AdminProcess.exe
 	Delete $INSTDIR\libAstroGrep.dll
 	Delete $INSTDIR\AstroGrep.Common.dll
+	Delete $INSTDIR\CommandLine.dll
 	Delete $INSTDIR\AstroGrep.exe.config
 	Delete $INSTDIR\AstroGrep.exe
 	Delete $INSTDIR\astrogrep.VisualElementsManifest.xml

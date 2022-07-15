@@ -146,6 +146,7 @@ namespace libAstroGrep.EncodingDetection
       /// <returns>EncodingDetector.Options bit flag representation of selected detectors</returns>
       /// <history>
       /// [Curtis_Beard]	   05/26/2015	FIX: 69, add performance setting for file detection
+      /// [Curtis_Beard]		07/12/2019	FIX: 115, add AutoIt encoding method
       /// </history>
       public static EncodingDetector.Options GetEncodingDetectorOptionsByPerformance(Performance performanceSetting)
       {
@@ -154,16 +155,16 @@ namespace libAstroGrep.EncodingDetection
          switch (performanceSetting)
          {
             case Performance.Speed:
-               opts = EncodingDetector.Options.KlerkSoftBom | EncodingDetector.Options.WinMerge;
+               opts = EncodingDetector.Options.AutoIt;
                break;
 
             case Performance.Default:
             default:
-               opts = EncodingDetector.Options.KlerkSoftBom | EncodingDetector.Options.WinMerge | EncodingDetector.Options.MLang;
+               opts = EncodingDetector.Options.KlerkSoftBom | EncodingDetector.Options.MLang | EncodingDetector.Options.AutoIt;
                break;
 
             case Performance.Accuracy:
-               opts = EncodingDetector.Options.KlerkSoftBom | EncodingDetector.Options.WinMerge | EncodingDetector.Options.MozillaUCD | EncodingDetector.Options.MLang;
+               opts = EncodingDetector.Options.KlerkSoftBom | EncodingDetector.Options.MozillaUCD | EncodingDetector.Options.MLang | EncodingDetector.Options.AutoIt | EncodingDetector.Options.KlerkSoftHeuristics;
                break;
          }
 

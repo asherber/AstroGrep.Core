@@ -37,6 +37,7 @@ namespace AstroGrep.Core
    /// [Curtis_Beard]	   03/07/2012	ADD: 3131609, exclusions
    /// [Curtis_Beard]	   04/08/2015	ADD: 54, option to show all results after a search
    /// [Curtis_Beard]	   05/07/2015	CHG: default context lines to 2 instead of 0
+   /// [Curtis_Beard]	   08/20/2019  CHG: 142, dynamically display context lines
    /// </history>
    public sealed class SearchSettings
    {
@@ -55,7 +56,9 @@ namespace AstroGrep.Core
       private bool fileNamesOnly = false;
       private bool negation = false;
       private bool lineNumbers = true;
-      private int contextLines = 2;
+      private int contextLines = -1;
+      private int contextLinesBefore = 2;
+      private int contextLinesAfter = 2;
       private bool showAllResultsAfterSearch = false;
       
       private string filterItems = Constants.DefaultFilterItems;
@@ -180,7 +183,34 @@ namespace AstroGrep.Core
       static public int ContextLines
       {
          get { return MySettings.contextLines; }
-         set { MySettings.contextLines = value; }
+         set 
+         {
+            if (value > -1)
+            {
+               MySettings.contextLines = -1;
+
+               // pull old context lines value into new ones
+               MySettings.contextLinesBefore = MySettings.contextLinesAfter = value;
+            }
+         }
+      }
+
+      /// <summary>
+      /// Number of before context lines to display.
+      /// </summary>
+      static public int ContextLinesBefore
+      {
+         get { return MySettings.contextLinesBefore; }
+         set { MySettings.contextLinesBefore = value; }
+      }
+
+      /// <summary>
+      /// Number of after context lines to display.
+      /// </summary>
+      static public int ContextLinesAfter
+      {
+         get { return MySettings.contextLinesAfter; }
+         set { MySettings.contextLinesAfter = value; }
       }
 
       /// <summary>

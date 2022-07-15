@@ -316,7 +316,7 @@ namespace AstroGrep.Windows.Forms
          item.FilterType = cboTypeItem.Value as FilterType;
          item.Value = fvtValue.Value;
          item.ValueIgnoreCase = chkIgnoreCase.Checked;
-         item.Enabled = true;
+         item.Enabled = _item != null ? _item.Enabled : true;
 
          // size needs size option
          if (item.FilterType.Category == FilterType.Categories.File && item.FilterType.SubCategory == FilterType.SubCategories.Size)

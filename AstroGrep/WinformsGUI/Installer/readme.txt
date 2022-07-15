@@ -1,34 +1,46 @@
-﻿Changelog for AstroGrep v4.4.7
+﻿Changelog for AstroGrep v4.4.8
 ===================================================================
 Bugs
--85: Possible issue with word plugin and leaving winword.exe process open.
--98: Error "the string was not recognized as a valid DateTime"
--100: Performance issues
--101: Searching Multiple MS Word Documents
--102: Context Lines Display Discrepancy
--103: Astrogrep 4.4.6 hangs clicking on found file
--104: commandline spath not accepting multiple searchPath
--108: Used ListSeparator on right mouse "Copy all"
--109: Command Line issues - Check logic and docs
--113: Feature 108 is not working (Add additional text editor parameter for search text)
+-094: AstroGrep cant seem to search for japanese characters properly (tied with #115)
+-111: Open File from search results fails for some menu selections (more logging)
+-114: Disabled exclusions become enabled over time
+-115: Improve small file and non-BOM encoding detection
+-116: IFilterPlugin file full path
+-117: IFilterPlugin txt file in zip archive
+-119: v4.4.7 RegEx not working. .NET 4.8 installed. (New Word Plugin for .docx can do RegEx now)
+-120: [CRITICAL] Astrogrep executes AutoOpen macros regardless of security settings
+-122: Typo in size units (French, StrFormatByteSize issue with buffer length)
+-123: Exclusions apply to search path (don't apply exclusions to initial search paths)
 
 Featured Requests:
--101: Stopped painting status bar as often
--110: Exclude directories that do not match pattern (added not equals option for path based options)
--119: Added line hit count to count column values (format: total / line in current Count column)
--122: Add option to only show x chars before/​after matched text
--125: Support to add many search target directories from UI (Hold down shift and click the folder icon to append a path)
--129: Added total files search to File search bar text (format: found / searched)
--136: Scanning all files as UTF-8 encoded (Tools -> Options -> File Encoding, Choose a Force Encoding from the list.  Selecting the blank (first) will disable)
+-055: Create plugin for Microsoft Excel files
+-105: Show the context of a file only if left click
+-117: Print Results... Emphasize search text
+-130: Filetypes grouping
+-131: GUI's Tab Stops
+-135: AstroGrep missing feature: no navigation between search results (part of new results viewer toolbar)
+-138: Add Close All menu item (File->Exit All menu item)
+-141: Custom key combination to toggle between files and results (properly handle tab/shift-tab in results view)
+-142: Make context lines switch dynamically instead of requiring a new search
+-143: Show context before the matched line (x lines before /​ y lines after)
+-144: Add ability to exclude more than one extension at once
 
 Patches:
--5: Caching translation strings for most common texts in IDE
--7: Remove white space not working when displaying entire file
+-008: Translation polish for German language file
+-010: Post-build event fix (support spaces in path names)
+-011: Precompilation of regex before search (moved all common regex logic to one place and build it outside any loops)
 
 Support Requests:
--8: Silent Install (supported by /S command line to the installer.  Note: this defaults to English)
--10: Files without extensions implicitly excluded (bug fix)
+N/A
 
 Other:
-- Fixed issue with Spanish language where it wouldn't load
-- Use extension method to check for InvokeRequired instead of defining delegates
+- Now requires .Net framework v4.5 (which removes Windows XP support)
+- Microsoft Word Plugin will now only be used for older .doc files, where Microsoft Word Open XML plugin will be used for .docx files going forward
+- Created a new PDF plugin to better support text based pdf files (does not handle ocr of pdf images)
+- Created a new Media Tags plugin to allow searching within media file tags
+- Moved search plugins from options screen to main search options area (above Exclusions)
+- Added a results viewer toolbar to give direct access to viewing options for the results viewer (line numbers, context lines, show all characters, etc.)
+- Cleaned up regular expression creation
+- Switched some code to use newer .Net 4.5 features
+- Rework unhandled exception handler
+- Correct spelling error in en-us language

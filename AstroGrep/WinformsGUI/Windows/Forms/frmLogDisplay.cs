@@ -80,7 +80,7 @@ namespace AstroGrep.Windows.Forms
          // use custom renderer to have background show selected state better than default (using default color though).
          if (API.IsWindowsVistaOrLater)
          {
-            toolStrip1.Renderer = new MyRenderer();
+            toolStrip1.Renderer = new AstroGrep.Windows.Controls.CustomToolStripProfessionalRender();
          }
          else
          {
@@ -257,42 +257,6 @@ namespace AstroGrep.Windows.Forms
             foreach (ListViewItem lvi in lstLog.Items)
             {
                lvi.Selected = true;
-            }
-         }
-      }
-
-      /// <summary>
-      /// Handle better showing button selected state.
-      /// </summary>
-      /// <history>
-      /// [Curtis_Beard]	   11/11/2014	Initial
-      /// </history>
-      private class MyRenderer : ToolStripProfessionalRenderer
-      {
-         /// <summary>
-         /// Adjust button background display to better show selected item.
-         /// </summary>
-         /// <param name="e">render event argument</param>
-         /// <history>
-         /// [Curtis_Beard]	   11/11/2014	Initial
-         /// </history>
-         protected override void OnRenderButtonBackground(ToolStripItemRenderEventArgs e)
-         {
-            var btn = e.Item as ToolStripButton;
-            if (btn != null && btn.CheckOnClick && btn.Checked)
-            {
-               Rectangle bounds = new Rectangle(Point.Empty, e.Item.Size);
-
-               // fill button background
-               e.Graphics.FillRectangle(new SolidBrush(ProfessionalColors.ButtonCheckedHighlight), bounds);
-
-               // draw border around button
-               bounds.Inflate(-1, -1);
-               e.Graphics.DrawRectangle(new Pen(ProfessionalColors.ButtonCheckedHighlightBorder), bounds);
-            }
-            else
-            {
-               base.OnRenderButtonBackground(e);
             }
          }
       }

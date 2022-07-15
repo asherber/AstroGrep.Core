@@ -40,7 +40,7 @@ using System;
 
 namespace Ude.Core
 {
-    // TODO: Using trigrams the detector should be able to discriminate between 
+    // Future?: Using trigrams the detector should be able to discriminate between 
     // latin-1 and iso8859-2
     public class Latin1Prober : CharsetProber
     {
