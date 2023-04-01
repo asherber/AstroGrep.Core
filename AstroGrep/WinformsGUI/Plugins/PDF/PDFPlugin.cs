@@ -101,6 +101,11 @@ namespace AstroGrep.Plugins.PDF
 		public bool IsAvailable { get; private set; }
 
 		/// <summary>
+		/// Determines whether the plug-in skipped the file and it should be read by another plug-in or the default search.
+		/// </summary>
+		public bool IsFileSkipped => false;
+
+		/// <summary>
 		/// Gets the name of the plugin.
 		/// </summary>
 		public string Name

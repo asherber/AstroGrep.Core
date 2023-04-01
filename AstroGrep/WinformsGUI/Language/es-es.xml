@@ -183,6 +183,7 @@
       <control name="chkUseEncodingCache" value="Habilitar caché para las codificaciones detectadas."/>
       <control name="btnCacheClear" value="Limpiar caché"/>
       <control name="lblForceEncoding" value="Codificación de fuerza"/>
+      <control name="ThemeGroup" value="Tema"/>
    </screen>
    
    <screen name="frmPrint" value="Impresión">
@@ -394,6 +395,10 @@
       <text name="Documents" value="Documentos"/>
       <text name="Code" value="Código"/>
       <text name="Media" value="Medios de comunicación"/>
+
+      <text name="Theme.System" value="Sistema"/>
+      <text name="Theme.Light" value="Luz"/>
+      <text name="Theme.Dark" value="Oscuro"/>
    </generic>
    
 </language>

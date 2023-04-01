@@ -183,6 +183,7 @@
       <control name="chkUseEncodingCache" value="Włącz pamięć podręczną dla wykrytych kodowań"/>
       <control name="btnCacheClear" value="Wyczyść podręczną"/>
       <control name="lblForceEncoding" value="Wymuś kodowanie"/>
+      <control name="ThemeGroup" value="Motyw"/>
    </screen>
    
    <screen name="frmPrint" value="Drukuj">
@@ -393,6 +394,10 @@
       <text name="Documents" value="Dokumenty"/>
       <text name="Code" value="Kod"/>
       <text name="Media" value="Głoska bezdźwięczna"/>
+
+      <text name="Theme.System" value="System"/>
+      <text name="Theme.Light" value="Światło"/>
+      <text name="Theme.Dark" value="Ciemny"/>
    </generic>
    
 </language>

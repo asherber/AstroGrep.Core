@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using CommandLine;
 
 // Help information for this assembly
-[assembly: CommandLine.Text.AssemblyUsage("Search for files and within the file contents.")]
+[assembly: CommandLine.Text.AssemblyUsage("Search for files and within file contents.")]
 
 namespace AstroGrep.Windows
 {

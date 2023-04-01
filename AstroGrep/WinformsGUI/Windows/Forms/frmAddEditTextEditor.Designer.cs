@@ -35,7 +35,7 @@ namespace AstroGrep.Windows.Forms
       private System.Windows.Forms.TextBox txtFileType;
       private System.Windows.Forms.Label lblFileType;
       private System.Windows.Forms.Label lblAllTypesMessage;
-      private System.Windows.Forms.ToolTip HoverTips;
+      private Windows.Controls.ThemeToolTip HoverTips;
 
       private void InitializeComponent()
       {
@@ -46,7 +46,7 @@ namespace AstroGrep.Windows.Forms
          this.txtFileType = new System.Windows.Forms.TextBox();
          this.lblFileType = new System.Windows.Forms.Label();
          this.lblAllTypesMessage = new System.Windows.Forms.Label();
-         this.HoverTips = new System.Windows.Forms.ToolTip(this.components);
+         this.HoverTips = new Windows.Controls.ThemeToolTip(this.components);
          this.lblMultiTypes = new System.Windows.Forms.Label();
          this.grpEditor = new System.Windows.Forms.GroupBox();
          this.chkUseQuotesAroundFileName = new System.Windows.Forms.CheckBox();

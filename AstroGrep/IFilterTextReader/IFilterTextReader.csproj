@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{26945563-DFDC-40EA-B807-F0F81A58E551}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>IFilterTextReader</RootNamespace>
+    <AssemblyName>IFilterTextReader</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="ComHelpers.cs" />
+    <Compile Include="Exceptions\IFAccesFailure.cs" />
+    <Compile Include="Exceptions\IFAccessFailure.cs" />
+    <Compile Include="Exceptions\IFClassFactoryFailure.cs" />
+    <Compile Include="Exceptions\IFFileIsPasswordProtected.cs" />
+    <Compile Include="Exceptions\IFFileToLarge.cs" />
+    <Compile Include="Exceptions\IFFilterNotFound.cs" />
+    <Compile Include="Exceptions\IFFilterPartiallyFiltered.cs" />
+    <Compile Include="Exceptions\IFilterTimeout.cs" />
+    <Compile Include="Exceptions\IFOldFilterFormat.cs" />
+    <Compile Include="Exceptions\IFUnknownFormat.cs" />
+    <Compile Include="FileTypeSelector.cs" />
+    <Compile Include="FilterLoader.cs" />
+    <Compile Include="FilterReader.cs" />
+    <Compile Include="FilterReaderOptions.cs" />
+    <Compile Include="FilterSearcher.cs" />
+    <Compile Include="IStreamWrapper.cs" />
+    <Compile Include="Job.cs" />
+    <Compile Include="Localization\LanguageConsts.Designer.cs" />
+    <Compile Include="NativeMethods.cs" />
+    <Compile Include="Property.cs" />
+    <Compile Include="PropertyMapper.cs" />
+    <Compile Include="UnmappedPropertyEventArgs.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Localization\LanguageConsts.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties.xlsx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

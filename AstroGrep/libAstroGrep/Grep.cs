@@ -357,7 +357,7 @@ namespace libAstroGrep
 					{
 						foreach (var dir in SearchSpec.StartDirectories)
 						{
-							Execute(new DirectoryInfo(dir), null, filter, isStartDirectory: true);
+							Execute(new DirectoryInfo(dir), null, filter, allFileFilters: filters, isStartDirectory: true);
 						}
 					}
 				}
@@ -623,6 +623,7 @@ namespace libAstroGrep
 		/// <param name="sourceDirectoryFilter">any directory specifications</param>
 		/// <param name="sourceFileFilter">any file specifications</param>
 		/// <param name="isStartDirectory">true when <paramref name="sourceDirectory"/> is a starting directory, false (default) otherwise</param>
+		/// <param name="allFileFilters">When defined, a list of all file filters specified</param>
 		/// <remarks>Recursive algorithm</remarks>
 		/// <history>
 		/// [Curtis_Beard]      09/08/2005	Created
@@ -640,8 +641,9 @@ namespace libAstroGrep
 		/// [Curtis_Beard]      09/20/2013  CHG: use EnumerateFiles and EnumerateDirectories instead of GetFiles,GetDirectories to not lock up on waiting for those methods.
 		/// [Curtis_Beard]	    09/29/2016	CHG: 24/115, use one interface for search in prep for saving to file
 		/// [Curtis_Beard]	    06/28/2022	FIX: 123, handle starting directories different than others
+		/// [Curtis_Beard]	    03/30/2023	FIX: 126, for sub directories, pass false as isStartDirectory
 		/// </history>
-		private void Execute(DirectoryInfo sourceDirectory, string sourceDirectoryFilter, string sourceFileFilter, bool isStartDirectory = false)
+		private void Execute(DirectoryInfo sourceDirectory, string sourceDirectoryFilter, string sourceFileFilter, bool isStartDirectory = false, List<string> allFileFilters = null)
 		{
 			// skip directory if matches an exclusion item (exclude starting directories)
 			if (!isStartDirectory && SearchSpec != null && SearchSpec.FilterItems != null)
@@ -672,7 +674,7 @@ namespace libAstroGrep
 			foreach (FileInfo SourceFile in sourceDirectory.EnumerateFiles(filePattern))
 			{
 				bool processFile = true;
-				if (sourceFileFilter != null && !StriktMatch(SourceFile.Extension, sourceFileFilter.Trim()))
+				if (sourceFileFilter != null && !StriktMatch(SourceFile.Extension, sourceFileFilter.Trim(), allFileFilters))
 				{
 					processFile = false;
 
@@ -694,7 +696,7 @@ namespace libAstroGrep
 				{
 					try
 					{
-						Execute(sourceSubDirectory, sourceDirectoryFilter, sourceFileFilter);
+						Execute(sourceSubDirectory, sourceDirectoryFilter, sourceFileFilter, false, allFileFilters);
 					}
 					catch
 					{
@@ -783,17 +785,18 @@ namespace libAstroGrep
 		/// [Curtis_Beard]		04/02/2015	CHG: remove line number logic and always include line number in MatchResultLine.
 		/// [Curtis_Beard]		05/18/2015	FIX: 72, don't grab file sample when detect encoding option is turned off.
 		/// [Curtis_Beard]		05/18/2015	FIX: 69, use same stream to detect encoding and grep contents
-		/// [Curtis_Beard]	   05/26/2015	FIX: 69, add performance setting for file detection
+		/// [Curtis_Beard]		05/26/2015	FIX: 69, add performance setting for file detection
 		/// [Curtis_Beard]		06/02/2015	FIX: 75, use sample size from performance setting
 		/// [theblackbunny]		06/25/2015	FIX: 39, remove context lines that intersect with each other in different MatchResults
-		/// [Curtis_Beard]	   08/18/2016	CHG: 109, adjust context lines to support max instead of hard coded
+		/// [Curtis_Beard]		08/18/2016	CHG: 109, adjust context lines to support max instead of hard coded
 		/// [Curtis_Beard]		05/26/2017	FIX: 97, detect file size change to read encoding again
 		/// [Curtis_Beard]      08/15/2017  FIX: 101/85, don't call plugin's unload for each file
 		/// [LinkNet]           08/21/2017  FIX: 102, fix issue with context lines
 		/// [Curtis_Beard]      08/21/2017  CHG: pass FileInfo to plugin event
-		/// [Curtis_Beard]	   01/10/2019  CHG: 136, check option to force encoding for all
+		/// [Curtis_Beard]		01/10/2019  CHG: 136, check option to force encoding for all
 		/// [Curtis_Beard]      01/16/2019	FIX: 103, CHG: 122, trim long lines support
 		/// [Curtis_Beard]      02/28/2020  Create RegEx object outside loop to create it only once
+		/// [Curtis_Beard]      09/02/2022	ADD: IsFileSkipped to support be able to skip this file within a plug-in
 		/// </history>
 		private void SearchFileContents(FileInfo file)
 		{
@@ -837,8 +840,13 @@ namespace libAstroGrep
 							// load plugin and perform grep
 							if (Plugins[i].Plugin.Load())
 							{
-								OnSearchingFileByPlugin(file, Plugins[i].Plugin.Name);
 								match = Plugins[i].Plugin.Grep(file, SearchSpec, ref pluginEx);
+
+								// only report when this plugin actually searched the file
+								if (!Plugins[i].Plugin.IsFileSkipped)
+								{
+									OnSearchingFileByPlugin(file, Plugins[i].Plugin.Name);
+								}
 							}
 							else
 							{
@@ -883,7 +891,11 @@ namespace libAstroGrep
 								OnSearchError(file, pluginEx);
 							}
 
-							return;
+							// only bail when the plugin actually processed the file
+							if (!Plugins[i].Plugin.IsFileSkipped)
+							{
+								return;
+							}
 						}
 					}
 				}
@@ -1332,13 +1344,14 @@ namespace libAstroGrep
 		/// </summary>
 		/// <param name="fileExtension">Current file extension</param>
 		/// <param name="searchPattern">Current file search pattern</param>
+		/// <param name="allFileFilters">A list of all file filters (can be null)</param>
 		/// <returns>true if valid, false otherwise</returns>
 		/// <history>
 		/// [Curtis_Beard]      09/17/2013    FIX: 45, check against a specific extension when only 3 characters is defined (*.txt can return things like *.txtabc due to .net GetFiles)
 		/// [Curtis_Beard]      05/08/2014    FIX: 55, handle when no . in searchPattern (e.g. *)
 		/// [Curtis_Beard]      04/01/2019    FIX: 10, (Support Request) handle no file extension
 		/// </history>
-		private bool StriktMatch(string fileExtension, string searchPattern)
+		private bool StriktMatch(string fileExtension, string searchPattern, List<string> allFileFilters)
 		{
 			bool isStriktMatch = false;
 
@@ -1356,6 +1369,16 @@ namespace libAstroGrep
 			else if (string.Compare(fileExtension, extension, true) == 0)
 			{
 				isStriktMatch = true;
+			}
+			else if (allFileFilters != null)
+			{
+				foreach (string filter in allFileFilters.Where(f => !f.Equals(searchPattern, StringComparison.OrdinalIgnoreCase)))
+				{
+					if (StriktMatch(fileExtension, filter, null))
+					{
+						return true;
+					}
+				}
 			}
 
 			return isStriktMatch;

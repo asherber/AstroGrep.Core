@@ -37,7 +37,7 @@
          this.lblFilePath = new System.Windows.Forms.Label();
          this.lblEncoding = new System.Windows.Forms.Label();
          this.picBrowse = new AstroGrep.Windows.Controls.PictureButton();
-         this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+         this.toolTip1 = new Windows.Controls.ThemeToolTip(this.components);
          ((System.ComponentModel.ISupportInitialize)(this.picBrowse)).BeginInit();
          this.SuspendLayout();
          // 
@@ -154,6 +154,6 @@
       private System.Windows.Forms.Label lblFilePath;
       private System.Windows.Forms.Label lblEncoding;
       private Controls.PictureButton picBrowse;
-      private System.Windows.Forms.ToolTip toolTip1;
+      private Windows.Controls.ThemeToolTip toolTip1;
    }
 }

@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using AstroGrep.Common;
 using AstroGrep.Common.Logging;
 using AstroGrep.Core;
+using AstroGrep.Core.Theme;
 using AstroGrep.Output;
 using AstroGrep.Windows.Controls;
 using libAstroGrep;
@@ -56,6 +57,8 @@ namespace AstroGrep.Windows.Forms
 	{
 		private readonly LogItems LogItems = new LogItems();
 		private readonly List<ICSharpCode.AvalonEdit.Document.TextAnchor> matchAnchors = new List<ICSharpCode.AvalonEdit.Document.TextAnchor>();
+		private readonly RegistryMonitor registryMonitor;
+		private readonly ContextMenuStrip TxtHitsContextMenuStrip = new ContextMenuStrip();
 		private CommandLineProcessing.CommandLineArguments __CommandLineArgs = new CommandLineProcessing.CommandLineArguments();
 		private List<FilterItem> __FilterItems = new List<FilterItem>();
 		private Grep __Grep = null;
@@ -89,15 +92,33 @@ namespace AstroGrep.Windows.Forms
 
 			API.ListViewExtensions.SetTheme(lstFileNames);
 
-			// use custom renderer to have background show selected state better than default (using default color though).
-			if (API.IsWindowsVistaOrLater)
+			// theme specific renderer
+			ResultsToolStrip.Renderer = ThemeProvider.Theme.ToolStripRenderer;
+			MainMenuStrip.Renderer = ThemeProvider.Theme.MenuRenderer;
+			fileLstMnu.Renderer = ThemeProvider.Theme.MenuRenderer;
+			TxtHitsContextMenuStrip.Renderer = ThemeProvider.Theme.MenuRenderer;
+
+			// setup results display context menu actions
+			TxtHitsContextMenuStrip.Opening += TxtHitsContextMenuStrip_Opening;
+			txtHits.MouseRightButtonUp += TxtHits_MouseRightButtonUp;
+
+			// create and setup the registry monitor to detect the Windows Theme setting
+			registryMonitor = new RegistryMonitor(Registry.ThemePath)
 			{
-				ResultsToolStrip.Renderer = new AstroGrep.Windows.Controls.CustomToolStripProfessionalRender();
-			}
-			else
+				RegChangeNotifyFilter = RegChangeNotifyFilter.Value
+			};
+			registryMonitor.RegChanged += RegistryMonitor_RegChanged;
+			registryMonitor.Error += RegistryMonitor_Error;
+
+			// turn off tool tips on tool strip but implement our own theme based tool tip instead
+			ResultsToolStrip.ShowItemToolTips = false;
+			foreach (ToolStripItem item in ResultsToolStrip.Items)
 			{
-				// for xp show a more system look
-				ResultsToolStrip.RenderMode = ToolStripRenderMode.System;
+				if (item is ToolStripButton || item is ToolStripComboBox)
+				{
+					item.MouseEnter += ResultsToolStripItem_MouseEnter;
+					item.MouseLeave += ResultsToolStripItem_MouseLeave;
+				}
 			}
 		}
 
@@ -198,8 +219,14 @@ namespace AstroGrep.Windows.Forms
 		/// </history>
 		private void AddContextMenuForResults()
 		{
+			/*
 			var menu = new System.Windows.Controls.ContextMenu();
 			var item = new System.Windows.Controls.MenuItem();
+
+			var bgMediaColor = System.Windows.Media.Color.FromArgb(ThemeProvider.Theme.Colors.BackColor.A, ThemeProvider.Theme.Colors.BackColor.R, ThemeProvider.Theme.Colors.BackColor.G, ThemeProvider.Theme.Colors.BackColor.B);
+			var fgMediaColor = System.Windows.Media.Color.FromArgb(ThemeProvider.Theme.Colors.ForeColor.A, ThemeProvider.Theme.Colors.ForeColor.R, ThemeProvider.Theme.Colors.ForeColor.G, ThemeProvider.Theme.Colors.ForeColor.B);
+			menu.Background = new System.Windows.Media.SolidColorBrush(bgMediaColor);
+			menu.Foreground = new System.Windows.Media.SolidColorBrush(fgMediaColor);
 
 			item.Click += openFile_Click;
 			item.Header = Language.GetGenericText("ResultsContextMenu.OpenFileCurrentLine");
@@ -222,6 +249,28 @@ namespace AstroGrep.Windows.Forms
 
 			txtHits.ContextMenu = menu;
 			txtHits.ContextMenuOpening += menu_ContextMenuOpening;
+			*/
+
+			// open current line in editor
+			TxtHitsContextMenuStrip.Items.Clear();
+			var stripItem = new ToolStripMenuItem(Language.GetGenericText("ResultsContextMenu.OpenFileCurrentLine"));
+			stripItem.Image = Properties.Resources.OpenText;
+			stripItem.Click += openFile_Click;
+			TxtHitsContextMenuStrip.Items.Add(stripItem);
+
+			TxtHitsContextMenuStrip.Items.Add(new ToolStripSeparator());
+
+			// copy
+			stripItem = new ToolStripMenuItem(Language.GetGenericText("ResultsContextMenu.Copy"));
+			stripItem.Image = Properties.Resources.page_copy;
+			stripItem.Click += copyItem_Click;
+			TxtHitsContextMenuStrip.Items.Add(stripItem);
+
+			// select all
+			stripItem = new ToolStripMenuItem(Language.GetGenericText("ResultsContextMenu.SelectAll"));
+			stripItem.Image = Properties.Resources.Select;
+			stripItem.Click += selectAllItem_Click;
+			TxtHitsContextMenuStrip.Items.Add(stripItem);
 		}
 
 		/// <summary>
@@ -665,7 +714,7 @@ namespace AstroGrep.Windows.Forms
 		/// <history>
 		/// [Curtis_Beard]		04/08/2015	Initial
 		/// </history>
-		private void copyItem_Click(object sender, System.Windows.RoutedEventArgs e)
+		private void copyItem_Click(object sender, EventArgs e)
 		{
 			txtHits.Copy();
 		}
@@ -1168,6 +1217,16 @@ namespace AstroGrep.Windows.Forms
 				textElementHost.Dispose();
 			}
 
+			try
+			{
+				registryMonitor.Stop();
+				registryMonitor.Dispose();
+			}
+			catch (Exception ex)
+			{
+				LogClient.Instance.Logger.Warn(ex, $"Issue stopping registry monitor for theme detection: {ex.Message}");
+			}
+
 			LogClient.Instance.Logger.Info("### STOPPING {0}, version {1}{2} ###",
 			   ProductInformation.ApplicationName,
 			   ProductInformation.ApplicationVersion.ToString(3),
@@ -1198,7 +1257,8 @@ namespace AstroGrep.Windows.Forms
 		/// [LinkNet]			04/30/2017	ADD: Load Windows DPI settings
 		/// [Curtis_Beard]		05/19/2017	CHG: 120, add option to use accent color
 		/// [Curtis_Beard]		08/20/2019  CHG: 142, dynamically display context lines
-		/// [Curtis_Beard]		08/20/2019  CHG: app color for splitters and use system color for default instead of black
+		/// [Curtis_Beard]		08/20/2019  CHG: application color for splitters and use system color for default instead of black
+		/// [Curtis_Beard]		08/27/2022  Add theme support
 		/// </history>
 		private void frmMain_Load(object sender, System.EventArgs e)
 		{
@@ -1237,38 +1297,31 @@ namespace AstroGrep.Windows.Forms
 			// Delete registry entry (if exist)
 			Legacy.DeleteRegistry();
 
-			// Load plugins
+			// Load plug-ins
 			PluginManager.Load();
 
 			// set view state of controls
-			LoadViewStates();
+			LoadLinkLabelStates();
 
 			// Handle any command line arguments
 			ProcessCommandLine();
 
-			// set focus to search text combobox
+			// set focus to search text combo-box
 			cboSearchForText.Select();
 
 			// Enlarge font without changing font family
 			lblSearchHeading.Font = new Font(lblSearchHeading.Font.FontFamily, 12F);
 			lblSearchOptions.Font = new Font(lblSearchOptions.Font.FontFamily, 12F);
 
-			// set app color for splitters
-			splitUpDown.BackColor = AstroGrep.Common.ProductInformation.ApplicationColor;
-			splitLeftRight.BackColor = AstroGrep.Common.ProductInformation.ApplicationColor;
-
-			// turn off any app colors
-			if (!GeneralSettings.UseAstroGrepAccentColor)
-			{
-				lblSearchHeading.ForeColor = SystemColors.ControlText;
-				lblSearchOptions.ForeColor = SystemColors.ControlText;
-
-				splitUpDown.BackColor = SystemColors.Control;
-				splitLeftRight.BackColor = SystemColors.Control;
-			}
-
+			// Fonts
 			MainMenu.Font = Font;
 			stbStatus.Font = Font;
+
+			// reload the theme based on current setting
+			if (Enum.TryParse(GeneralSettings.ThemeType.ToString(), out ThemeProvider.ThemeType themeType))
+			{
+				ReloadTheme(themeType);
+			}
 		}
 
 		/// <summary>
@@ -1573,7 +1626,7 @@ namespace AstroGrep.Windows.Forms
 			var rect = lblSearchHeading.ClientRectangle;
 			rect.Height -= 1;
 
-			e.Graphics.DrawLine(new Pen(GeneralSettings.UseAstroGrepAccentColor ? ProductInformation.ApplicationColor : SystemColors.ControlText) { Width = 2 }, rect.X, rect.Height, rect.Width, rect.Height);
+			e.Graphics.DrawLine(new Pen(ThemeProvider.Theme.Colors.ApplicationAccentColor) { Width = 2 }, rect.X, rect.Height, rect.Width, rect.Height);
 		}
 
 		/// <summary>
@@ -1590,7 +1643,7 @@ namespace AstroGrep.Windows.Forms
 			var rect = lblSearchOptions.ClientRectangle;
 			rect.Height -= 1;
 
-			e.Graphics.DrawLine(new Pen(GeneralSettings.UseAstroGrepAccentColor ? ProductInformation.ApplicationColor : SystemColors.ControlText) { Width = 2 }, rect.X, rect.Height, rect.Width, rect.Height);
+			e.Graphics.DrawLine(new Pen(ThemeProvider.Theme.Colors.ApplicationAccentColor) { Width = 2 }, rect.X, rect.Height, rect.Width, rect.Height);
 		}
 
 		/// <summary>
@@ -1624,6 +1677,8 @@ namespace AstroGrep.Windows.Forms
 			if (dlg.ShowDialog(this) == DialogResult.OK)
 			{
 				__FilterItems = dlg.FilterItems;
+
+				LoadLinkLabelStates();
 			}
 		}
 
@@ -1639,6 +1694,8 @@ namespace AstroGrep.Windows.Forms
 		{
 			var dlg = new frmPlugins();
 			dlg.ShowDialog(this);
+
+			LoadLinkLabelStates();
 		}
 
 		/// <summary>
@@ -1710,6 +1767,95 @@ namespace AstroGrep.Windows.Forms
 
 				// store setting in global variables
 				GeneralSettings.WindowsDPIPerCentSetting = dpi_percent;
+			}
+		}
+
+		/// <summary>
+		/// Set the view states of the controls.
+		/// </summary>
+		/// <history>
+		/// [Curtis_Beard]      05/16/2007  ADD: created
+		/// [LinkNet]           04/29/2017  CHG: removed redundant commented out code
+		/// </history>
+		private void LoadLinkLabelStates()
+		{
+			Regex regex = new Regex(@" \(\d*\)$", RegexOptions.Compiled);
+
+			// Plugins
+			int pluginCount = PluginManager.Items.Where(p => p.Enabled).Count();
+			if (regex.IsMatch(lnkPlugins.Text))
+			{
+				if (pluginCount > 0)
+					lnkPlugins.Text = regex.Replace(lnkPlugins.Text, $" ({pluginCount})");
+				else
+					lnkPlugins.Text = regex.Replace(lnkPlugins.Text, string.Empty);
+			}
+			else if (pluginCount > 0)
+			{
+				lnkPlugins.Text += $" ({pluginCount})";
+			}
+			if (pluginCount > 0)
+			{
+				StringBuilder tipBuilder = new StringBuilder();
+				tipBuilder.AppendFormat("{0}:", Language.GetGenericText("PluginsColumnEnabled", "Enabled"));
+				tipBuilder.AppendLine();
+				tipBuilder.AppendLine();
+				tipBuilder.Append(string.Join(Environment.NewLine, PluginManager.Items.Where(p => p.Enabled).OrderBy(p => p.Index).Select(p => p.Plugin.Name)));
+				toolTip1.SetToolTip(lnkPlugins, tipBuilder.ToString());
+			}
+			else
+			{
+				toolTip1.SetToolTip(lnkPlugins, string.Empty);
+			}
+
+			// Exclusions/Filters
+			int filterCount = __FilterItems.Where(f => f.Enabled).Count();
+			if (regex.IsMatch(lnkExclusions.Text))
+			{
+				if (filterCount > 0)
+					lnkExclusions.Text = regex.Replace(lnkExclusions.Text, $" ({filterCount})");
+				else
+					lnkExclusions.Text = regex.Replace(lnkExclusions.Text, string.Empty);
+			}
+			else if (filterCount > 0)
+			{
+				lnkExclusions.Text += $" ({filterCount})";
+			}
+			if (filterCount > 0)
+			{
+				StringBuilder tipBuilder = new StringBuilder();
+				tipBuilder.AppendFormat("{0}:", Language.GetControlText(lnkExclusions));
+				tipBuilder.AppendLine();
+				tipBuilder.AppendLine();
+				foreach (var filterItem in __FilterItems.Where(f => f.Enabled))
+				{
+					tipBuilder.Append(Language.GetGenericText($"Exclusions.{filterItem.FilterType.Category}", filterItem.FilterType.Category.ToString()));
+					tipBuilder.Append("/");
+					tipBuilder.Append(Language.GetGenericText($"Exclusions.{filterItem.FilterType.SubCategory}", filterItem.FilterType.SubCategory.ToString()));
+
+					string valueText = filterItem.Value;
+					string optionText = Language.GetGenericText($"Exclusions.{filterItem.ValueOption}");
+					string additionalInfo = string.Empty;
+					if (filterItem.ValueIgnoreCase)
+					{
+						additionalInfo = Language.GetGenericText("Exclusions.IgnoreCase");
+					}
+					else if (filterItem.FilterType.Category == FilterType.Categories.File && filterItem.FilterType.SubCategory == FilterType.SubCategories.Size && !string.IsNullOrEmpty(filterItem.ValueSizeOption))
+					{
+						valueText = string.Format("{0} {1}", AstroGrep.Core.Convertors.ConvertFileSizeForDisplay(filterItem.Value, filterItem.ValueSizeOption), filterItem.ValueSizeOption);
+					}
+
+					tipBuilder.Append(" ");
+					tipBuilder.Append(valueText);
+					tipBuilder.Append(" ");
+					tipBuilder.AppendFormat("{0}{1}", optionText, additionalInfo);
+					tipBuilder.AppendLine();
+				}
+				toolTip1.SetToolTip(lnkExclusions, tipBuilder.ToString());
+			}
+			else
+			{
+				toolTip1.SetToolTip(lnkExclusions, string.Empty);
 			}
 		}
 
@@ -1818,6 +1964,7 @@ namespace AstroGrep.Windows.Forms
 		/// [LinkNet]        04/27/2016  CHG: Duplicate code transferred from LoadSettings and OptionsMenuItem_Click
 		/// [LinkNet]        04/27/2016  ADD: Adjust texteditor font size for DPI font scaling
 		/// [Curtis_Beard]   09/09/2019  ADD: Show editor characters
+		/// [Curtis_Beard]   08/27/2022  Remove existing event handlers before adding
 		/// </history>
 		private void LoadTextEditorSettings()
 		{
@@ -1834,11 +1981,18 @@ namespace AstroGrep.Windows.Forms
 			txtHits.FontSize = font.SizeInPoints * 96 / 72;
 			txtHits.WordWrap = ResultsViewWordWrapButton.Checked = WordWrapMenuItem.Checked = GeneralSettings.ResultsWordWrap;
 
-			// Sets texteditor scroll bar visibilty to windows system default
+			// Sets text editor scroll bar visibility to windows system default
 			txtHits.HorizontalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Auto;
 			txtHits.VerticalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Auto;
 
-			// Handles finding the current line under the mouse pointer during a double click to open the texteditor at that location
+			/*
+			 * Handles finding the current line under the mouse pointer during a double click to open the text editor at that location
+			*/
+			// remove any existing handlers
+			txtHits.PreviewMouseDoubleClick -= txtHits_PreviewMouseDoubleClick;
+			txtHits.PreviewKeyDown -= txtHits_PreviewKeyDown;
+
+			// add handlers
 			txtHits.PreviewMouseDoubleClick += txtHits_PreviewMouseDoubleClick;
 			txtHits.PreviewKeyDown += txtHits_PreviewKeyDown;
 
@@ -1847,39 +2001,27 @@ namespace AstroGrep.Windows.Forms
 		}
 
 		/// <summary>
-		/// Set the view states of the controls.
-		/// </summary>
-		/// <history>
-		/// [Curtis_Beard]      05/16/2007  ADD: created
-		/// [LinkNet]           04/29/2017  CHG: removed redundant commented out code
-		/// </history>
-		private void LoadViewStates()
-		{
-		}
-
-		/// <summary>
 		/// Load the window settings.
 		/// </summary>
 		/// <history>
-		/// [Curtis_Beard]	   06/28/2007	Created
-		/// [Curtis_Beard]	   03/02/2015	FIX: 63, fix issue when window doesn't fit on a screen (like when a screen is removed)
-		/// [Curtis_Beard]	   05/14/2015	CHG: adjust display of MenuStrip in Windows XP
-		/// [LinkNet]			   04/24/2017	CHG: set initial form start position to center of screen corrected for DPI setting
-		/// [LinkNet]			   04/27/2017	CHG: increase minimum search panel width to avoid cutoff text with higher DPI settings
-		/// [LinkNet]			   04/29/2017	CHG: set initial file panel column widths corrected for DPI setting
-		/// [LinkNet]			   04/29/2017	CHG: set initial file panel height corrected for DPI setting
+		/// [Curtis_Beard]		06/28/2007	Created
+		/// [Curtis_Beard]		03/02/2015	FIX: 63, fix issue when window doesn't fit on a screen (like when a screen is removed)
+		/// [Curtis_Beard]		05/14/2015	CHG: adjust display of MenuStrip in Windows XP
+		/// [LinkNet]			04/24/2017	CHG: set initial form start position to center of screen corrected for DPI setting
+		/// [LinkNet]			04/27/2017	CHG: increase minimum search panel width to avoid cutoff text with higher DPI settings
+		/// [LinkNet]			04/29/2017	CHG: set initial file panel column widths corrected for DPI setting
+		/// [LinkNet]			04/29/2017	CHG: set initial file panel height corrected for DPI setting
+		/// [Curtis_Beard]	    08/27/2022	Safety check for file name list height, better checking for values
 		/// </history>
 		private void LoadWindowSettings()
 		{
-			int _state = GeneralSettings.WindowState;
-
 			Rectangle defaultBounds = Bounds;
 
 			// set the form start position method
 			StartPosition = FormStartPosition.Manual;
 
 			// set the form top position
-			if (GeneralSettings.WindowTop != -1)
+			if (GeneralSettings.WindowTop > 0)
 				Top = GeneralSettings.WindowTop;
 			else
 			{
@@ -1888,7 +2030,7 @@ namespace AstroGrep.Windows.Forms
 			}
 
 			// set the form left position
-			if (GeneralSettings.WindowLeft != -1)
+			if (GeneralSettings.WindowLeft > 0)
 				Left = GeneralSettings.WindowLeft;
 			else
 			{
@@ -1897,7 +2039,7 @@ namespace AstroGrep.Windows.Forms
 			}
 
 			// set the form width
-			if (GeneralSettings.WindowWidth != -1)
+			if (GeneralSettings.WindowWidth > 0)
 				Width = GeneralSettings.WindowWidth;
 			else
 			{
@@ -1907,7 +2049,7 @@ namespace AstroGrep.Windows.Forms
 			}
 
 			// set the form height
-			if (GeneralSettings.WindowHeight != -1)
+			if (GeneralSettings.WindowHeight > 0)
 				Height = GeneralSettings.WindowHeight;
 			else
 			{
@@ -1922,20 +2064,31 @@ namespace AstroGrep.Windows.Forms
 				Bounds = defaultBounds;
 			}
 
-			if (_state != -1 && _state == (int)FormWindowState.Maximized)
+			// Maximize state check
+			if (Enum.TryParse(GeneralSettings.WindowState.ToString(), out FormWindowState stateValue) && stateValue == FormWindowState.Maximized)
 			{
 				WindowState = FormWindowState.Maximized;
 			}
 
 			// set the splitter position
-			if (GeneralSettings.WindowSearchPanelWidth != -1)
+			if (GeneralSettings.WindowSearchPanelWidth > 0)
 				pnlSearch.Width = GeneralSettings.WindowSearchPanelWidth;
 
 			// set the file panel height
-			if (GeneralSettings.WindowFilePanelHeight != -1)
+			if (GeneralSettings.WindowFilePanelHeight > 0)
 				lstFileNames.Height = GeneralSettings.WindowFilePanelHeight;
 			else
 				lstFileNames.Height = GeneralSettings.DEFAULT_FILE_PANEL_HEIGHT * GeneralSettings.WindowsDPIPerCentSetting / 100;
+
+			// adjust splitter position if necessary
+			if (lstFileNames.Height < splitUpDown.MinSize)
+			{
+				lstFileNames.Height = splitUpDown.MinSize;
+			}
+			else if (lstFileNames.Height >= pnlRightSide.Height - splitUpDown.MinExtra)
+			{
+				lstFileNames.Height = pnlRightSide.Height - splitUpDown.MinExtra;
+			}
 
 			// increase minimum default splitter position to avoid cutoff text with increasing DPI values
 			splitLeftRight.MinSize = Constants.DEFAULT_SEARCH_PANEL_WIDTH * GeneralSettings.WindowsDPIPerCentSetting / 100;
@@ -1946,40 +2099,33 @@ namespace AstroGrep.Windows.Forms
 				pnlSearch.Width = splitLeftRight.MinSize;
 			}
 
-			// for windows xp and below, use the system render mode to make it look better
-			if (!API.IsWindowsVistaOrLater)
-			{
-				MainMenu.RenderMode = ToolStripRenderMode.System;
-			}
-
 			// set file column widths from user settings
-
-			if (GeneralSettings.WindowFileColumnNameWidth != -1)
+			if (GeneralSettings.WindowFileColumnNameWidth > 0)
 				lstFileNames.Columns[Constants.COLUMN_INDEX_FILE].Width = GeneralSettings.WindowFileColumnNameWidth;
 			else
 				lstFileNames.Columns[Constants.COLUMN_INDEX_FILE].Width = Constants.COLUMN_WIDTH_FILE * GeneralSettings.WindowsDPIPerCentSetting / 100;
 
-			if (GeneralSettings.WindowFileColumnLocationWidth != -1)
+			if (GeneralSettings.WindowFileColumnLocationWidth > 0)
 				lstFileNames.Columns[Constants.COLUMN_INDEX_DIRECTORY].Width = GeneralSettings.WindowFileColumnLocationWidth;
 			else
 				lstFileNames.Columns[Constants.COLUMN_INDEX_DIRECTORY].Width = Constants.COLUMN_WIDTH_DIRECTORY * GeneralSettings.WindowsDPIPerCentSetting / 100;
 
-			if (GeneralSettings.WindowFileColumnFileExtWidth != -1)
+			if (GeneralSettings.WindowFileColumnFileExtWidth > 0)
 				lstFileNames.Columns[Constants.COLUMN_INDEX_FILE_EXT].Width = GeneralSettings.WindowFileColumnFileExtWidth;
 			else
 				lstFileNames.Columns[Constants.COLUMN_INDEX_FILE_EXT].Width = Constants.COLUMN_WIDTH_FILE_EXT * GeneralSettings.WindowsDPIPerCentSetting / 100;
 
-			if (GeneralSettings.WindowFileColumnDateWidth != -1)
+			if (GeneralSettings.WindowFileColumnDateWidth > 0)
 				lstFileNames.Columns[Constants.COLUMN_INDEX_DATE].Width = GeneralSettings.WindowFileColumnDateWidth;
 			else
 				lstFileNames.Columns[Constants.COLUMN_INDEX_DATE].Width = Constants.COLUMN_WIDTH_DATE * GeneralSettings.WindowsDPIPerCentSetting / 100;
 
-			if (GeneralSettings.WindowFileColumnSizeWidth != -1)
+			if (GeneralSettings.WindowFileColumnSizeWidth > 0)
 				lstFileNames.Columns[Constants.COLUMN_INDEX_SIZE].Width = GeneralSettings.WindowFileColumnSizeWidth;
 			else
 				lstFileNames.Columns[Constants.COLUMN_INDEX_SIZE].Width = Constants.COLUMN_WIDTH_SIZE * GeneralSettings.WindowsDPIPerCentSetting / 100;
 
-			if (GeneralSettings.WindowFileColumnCountWidth != -1)
+			if (GeneralSettings.WindowFileColumnCountWidth > 0)
 				lstFileNames.Columns[Constants.COLUMN_INDEX_COUNT].Width = GeneralSettings.WindowFileColumnCountWidth;
 			else
 				lstFileNames.Columns[Constants.COLUMN_INDEX_COUNT].Width = Constants.COLUMN_WIDTH_COUNT * GeneralSettings.WindowsDPIPerCentSetting / 100;
@@ -2355,7 +2501,7 @@ namespace AstroGrep.Windows.Forms
 		/// [Curtis_Beard]		04/08/2015	Initial
 		/// [Curtis_Beard]		06/29/2015	CHG: reconfigure to use common method
 		/// </history>
-		private void openFile_Click(object sender, System.Windows.RoutedEventArgs e)
+		private void openFile_Click(object sender, EventArgs e)
 		{
 			var opener = GetEditorAtLocation(txtHits.GetPositionFromRightClickPoint());
 			if (opener.HasValue())
@@ -2485,7 +2631,7 @@ namespace AstroGrep.Windows.Forms
 
 			if (optionsForm.ShowDialog(this) == DialogResult.OK)
 			{
-				//update combobox lengths
+				//update combo-box lengths
 				while (cboFilePath.Items.Count > GeneralSettings.MaximumMRUPaths)
 					cboFilePath.Items.RemoveAt(cboFilePath.Items.Count - 1);
 				while (cboSearchForText.Items.Count > GeneralSettings.MaximumMRUPaths)
@@ -2505,31 +2651,26 @@ namespace AstroGrep.Windows.Forms
 
 					// reload system file filters
 					CreateFileFilterHelper();
+
+					LoadLinkLabelStates();
 				}
 
 				// this will also reload any language changes if needed
 				fileFilterHelper.AdjustUserValueMax(cboFileName, GeneralSettings.MaximumMRUPaths);
 
+				lstFileNames.Font = Convertors.ConvertStringToFont(GeneralSettings.FilePanelFont);
+
 				// reload the text editor settings
 				LoadTextEditorSettings();
 
-				lstFileNames.Font = Convertors.ConvertStringToFont(GeneralSettings.FilePanelFont);
-
-				if (GeneralSettings.UseAstroGrepAccentColor)
+				if (optionsForm.IsThemeChange)
 				{
-					lblSearchHeading.ForeColor = ProductInformation.ApplicationColor;
-					lblSearchOptions.ForeColor = ProductInformation.ApplicationColor;
+					if (Enum.TryParse(GeneralSettings.ThemeType.ToString(), out ThemeProvider.ThemeType themeType))
+					{
+						ThemeProvider.ChangeTheme(themeType);
 
-					splitUpDown.BackColor = AstroGrep.Common.ProductInformation.ApplicationColor;
-					splitLeftRight.BackColor = AstroGrep.Common.ProductInformation.ApplicationColor;
-				}
-				else
-				{
-					lblSearchHeading.ForeColor = SystemColors.ControlText;
-					lblSearchOptions.ForeColor = SystemColors.ControlText;
-
-					splitUpDown.BackColor = SystemColors.Control;
-					splitLeftRight.BackColor = SystemColors.Control;
+						ReloadTheme(themeType);
+					}
 				}
 
 				// update current display
@@ -3729,6 +3870,87 @@ namespace AstroGrep.Windows.Forms
 		}
 
 		/// <summary>
+		/// Log the registry monitor errors.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void RegistryMonitor_Error(object sender, ErrorEventArgs e)
+		{
+			var ex = e.GetException();
+			if (ex != null)
+			{
+				LogClient.Instance.Logger.Warn(ex, $"Failure during registry monitoring for theme change: {ex.Message}");
+			}
+			else
+			{
+				LogClient.Instance.Logger.Warn($"Failure during registry monitoring for theme change: unknown error.");
+			}
+		}
+
+		/// <summary>
+		/// Handle the system theme registry key value change event.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void RegistryMonitor_RegChanged(object sender, EventArgs e)
+		{
+			// change the actual theme provider
+			ThemeProvider.ChangeThemeBySystem();
+
+			// reload this form's theming
+			ReloadTheme(ThemeProvider.ThemeType.System);
+		}
+
+		/// <summary>
+		/// Reload this form based on the selected theme.
+		/// </summary>
+		/// <param name="themeType"></param>
+		private void ReloadTheme(ThemeProvider.ThemeType themeType)
+		{
+			this.InvokeIfRequired(() =>
+			{
+				LoadTheme(this);
+
+				toolTip1.Reset();
+
+				// update text editor main colors based on theme change
+				GeneralSettings.ResultsBackColor = Convertors.ConvertColorToString(ThemeProvider.Theme.Colors.Window);
+				GeneralSettings.ResultsForeColor = Convertors.ConvertColorToString(ThemeProvider.Theme.Colors.ForeColor);
+
+				// reload text editor with new theme colors above
+				LoadTextEditorSettings();
+
+				ResultsToolStrip.Renderer = ThemeProvider.Theme.ToolStripRenderer;
+				MainMenuStrip.Renderer = ThemeProvider.Theme.MenuRenderer;
+				TxtHitsContextMenuStrip.Renderer = ThemeProvider.Theme.MenuRenderer;
+				fileLstMnu.Renderer = ThemeProvider.Theme.MenuRenderer;
+				stbStatus.Reset();
+
+				lblSearchHeading.ForeColor = ThemeProvider.Theme.Colors.ApplicationAccentColor;
+				lblSearchOptions.ForeColor = ThemeProvider.Theme.Colors.ApplicationAccentColor;
+
+				splitUpDown.BackColor = GeneralSettings.UseAstroGrepAccentColor ? ThemeProvider.Theme.Colors.ApplicationAccentColor : ThemeProvider.Theme.Colors.Control;
+				splitLeftRight.BackColor = GeneralSettings.UseAstroGrepAccentColor ? ThemeProvider.Theme.Colors.ApplicationAccentColor : ThemeProvider.Theme.Colors.Control;
+
+				SetStatusBarFilterCount(GetLogItemsCountByType(LogItem.LogItemTypes.Exclusion));
+				SetStatusBarErrorCount(GetLogItemsCountByType(LogItem.LogItemTypes.Error));
+
+				// start up registry monitor for system theme detection change
+				if (themeType == ThemeProvider.ThemeType.System)
+				{
+					if (!registryMonitor.IsMonitoring)
+					{
+						registryMonitor.Start();
+					}
+				}
+				else
+				{
+					registryMonitor.Stop();
+				}
+			});
+		}
+
+		/// <summary>
 		/// Remove the status bar search progress (Thread Safe)
 		/// </summary>
 		/// <history>
@@ -3871,6 +4093,31 @@ namespace AstroGrep.Windows.Forms
 				txtHits.TextArea.Caret.BringCaretToView();
 				txtHits.TextArea.Caret.Show();
 			}
+		}
+
+		/// <summary>
+		/// Handle showing results tool strip item's tool tip.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void ResultsToolStripItem_MouseEnter(object sender, EventArgs e)
+		{
+			var item = sender as ToolStripItem;
+			if (item is ToolStripButton || item is ToolStripComboBox)
+			{
+				var newPoint = PointToClient(Cursor.Position);
+				toolTip1.Show(Language.GetControlToolTipText(item), this, newPoint.X, newPoint.Y);
+			}
+		}
+
+		/// <summary>
+		/// Handle hiding results tool strip item's tool tip.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void ResultsToolStripItem_MouseLeave(object sender, EventArgs e)
+		{
+			toolTip1.Hide(this);
 		}
 
 		/// <summary>
@@ -4205,7 +4452,7 @@ namespace AstroGrep.Windows.Forms
 		/// <history>
 		/// [Curtis_Beard]		04/08/2015	Initial
 		/// </history>
-		private void selectAllItem_Click(object sender, System.Windows.RoutedEventArgs e)
+		private void selectAllItem_Click(object sender, EventArgs e)
 		{
 			txtHits.Focus();
 			txtHits.SelectAll();
@@ -4363,7 +4610,8 @@ namespace AstroGrep.Windows.Forms
 			stbStatus.InvokeIfRequired(() =>
 			{
 				sbErrorCountPanel.Text = string.Format(Language.GetGenericText("ResultsStatusErrorCount"), count);
-				sbErrorCountPanel.BackColor = count > 0 ? Color.Red : SystemColors.Control;
+				sbErrorCountPanel.BackColor = count > 0 ? Color.Red : Color.Transparent;
+				sbErrorCountPanel.ForeColor = count > 0 ? Color.White : ThemeProvider.Theme.Colors.ForeColor;
 			});
 		}
 
@@ -4397,7 +4645,8 @@ namespace AstroGrep.Windows.Forms
 			stbStatus.InvokeIfRequired(() =>
 			{
 				sbFilterCountPanel.Text = string.Format(Language.GetGenericText("ResultsStatusFilterCount"), count);
-				sbFilterCountPanel.BackColor = count > 0 ? Color.Yellow : SystemColors.Control;
+				sbFilterCountPanel.BackColor = count > 0 ? Color.Yellow : Color.Transparent;
+				sbFilterCountPanel.ForeColor = count > 0 ? Color.Black : ThemeProvider.Theme.Colors.ForeColor;
 			});
 		}
 
@@ -4634,6 +4883,20 @@ namespace AstroGrep.Windows.Forms
 		}
 
 		/// <summary>
+		/// Handle showing a <see cref="ContextMenuStrip"/> for the results editor.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		/// <history>
+		/// [Curtis_Beard]      08/26/2022  Created
+		/// </history>
+		private void TxtHits_MouseRightButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			var point = e.GetPosition((System.Windows.IInputElement)e.Source);
+			TxtHitsContextMenuStrip.Show(textElementHost, new Point((int)point.X, (int)point.Y));
+		}
+
+		/// <summary>
 		/// Handles finding moving the focus to the next/previous control when tab is pressed.
 		/// </summary>
 		/// <param name="sender">system parameter</param>
@@ -4683,6 +4946,22 @@ namespace AstroGrep.Windows.Forms
 					TextEditors.Open(opener);
 				}
 			}
+		}
+
+		/// <summary>
+		/// Disable the first <see cref="ContextMenuStrip"/> item for the results editor
+		/// if no text editor is available for this line.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		/// <history>
+		/// [Curtis_Beard]      08/26/2022  Created
+		/// </history>
+		private void TxtHitsContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			// enable open at menu item
+			var opener = GetEditorAtLocation(txtHits.GetPositionFromRightClickPoint());
+			(TxtHitsContextMenuStrip.Items[0] as ToolStripMenuItem).Enabled = opener.HasValue();
 		}
 
 		/// <summary>

@@ -13,8 +13,8 @@
 
 !define MUI_COMPONENTSPAGE_SMALLDESC
 !define MUI_LANGDLL_ALLLANGUAGES
-!define INS_VERSION 4.4.8.0
-!define APP_VERSION "4.4.8"
+!define INS_VERSION 4.4.9.0
+!define APP_VERSION "4.4.9"
 
 ;--------------------------------
 ;Variables
@@ -269,6 +269,7 @@ Section $(TITLE_SecRequired) SecRequired
   File "..\bin\release\ICSharpCode.SharpZipLib.dll"
   File "..\bin\release\DocumentFormat.OpenXml.dll"  
   File "..\bin\release\CommandLine.dll"
+  File "..\bin\release\IFilterTextReader.dll"
   ;File "..\bin\release\astrogrep.VisualElementsManifest.xml"
   File "..\bin\release\AstroGrep_256x256.png"
   File "license.txt"
@@ -373,6 +374,7 @@ Section "Uninstall"
 	Delete $INSTDIR\libAstroGrep.dll
 	Delete $INSTDIR\AstroGrep.Common.dll
 	Delete $INSTDIR\CommandLine.dll
+	Delete $INSTDIR\IFilterTextReader.dll
 	Delete $INSTDIR\AstroGrep.exe.config
 	Delete $INSTDIR\AstroGrep.exe
 	Delete $INSTDIR\astrogrep.VisualElementsManifest.xml

@@ -398,6 +398,20 @@ namespace AstroGrep.Windows
 		}
 
 		/// <summary>
+		/// Sets the given context menu strip item's text property.
+		/// </summary>
+		/// <param name="holder">Control containing ContextMenu</param>
+		/// <param name="item"><see cref="ToolStripMenuItem"/> to set</param>
+		/// <param name="itemIndex"></param>
+		/// <history>
+		/// [Curtis_Beard]		08/25/2022	Created
+		/// </history>
+		public static void SetContextMenuStripItemText(Control holder, ToolStripMenuItem item, int itemIndex)
+		{
+			SetContextMenuStripItemText(holder, item, null, itemIndex, -1);
+		}
+
+		/// <summary>
 		/// Sets the given context menuitem's text property or sub menuitem if specified.
 		/// </summary>
 		/// <param name="holder">Control containing ContextMenu</param>
@@ -419,6 +433,49 @@ namespace AstroGrep.Windows
 				else
 				{
 					node = __RootNode.SelectSingleNode("screen[@name='" + formName + "']/control[@name='" + holder.Name + "']/menuitem[@index='" + item.Index + "']/menuitem[@index='" + subItem.Index + "']");
+				}
+
+				if (node != null)
+				{
+					if (node.Attributes["value"] != null)
+					{
+						if (subItem == null)
+						{
+							item.Text = node.Attributes["value"].Value;
+						}
+						else
+						{
+							subItem.Text = node.Attributes["value"].Value;
+						}
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Sets the given context menu strip item's text property or sub <see cref="ToolStripMenuItem"/> if specified.
+		/// </summary>
+		/// <param name="holder">Control containing ContextMenu</param>
+		/// <param name="item"><see cref="ToolStripMenuItem"/></param>
+		/// <param name="subItem"><see cref="ToolStripMenuItem"/>'s child <see cref="ToolStripMenuItem"/> to set</param>
+		/// <param name="itemIndex"></param>
+		/// <param name="subItemIndex"></param>
+		/// <history>
+		/// [Curtis_Beard]		08/25/2022	Created
+		/// </history>
+		public static void SetContextMenuStripItemText(Control holder, ToolStripMenuItem item, ToolStripMenuItem subItem, int itemIndex, int subItemIndex)
+		{
+			if (__RootNode != null)
+			{
+				string formName = GetParentControl(holder).Name;
+				XmlNode node;
+				if (subItem == null)
+				{
+					node = __RootNode.SelectSingleNode("screen[@name='" + formName + "']/control[@name='" + holder.Name + "']/menuitem[@index='" + itemIndex + "']");
+				}
+				else
+				{
+					node = __RootNode.SelectSingleNode("screen[@name='" + formName + "']/control[@name='" + holder.Name + "']/menuitem[@index='" + itemIndex + "']/menuitem[@index='" + subItemIndex + "']");
 				}
 
 				if (node != null)
@@ -939,6 +996,7 @@ namespace AstroGrep.Windows
 		/// [Curtis_Beard]		02/01/2012	ADD: support for control's contextmenu
 		/// [Curtis_Beard]		09/18/2013	ADD: 65, support for contextmenu sub items
 		/// [Curtis_Beard]		08/20/2019	CHG: support ToolStrip and StatusStrip controls outside main form
+		/// [Curtis_Beard]		08/25/2022	ADD: support for ContextMenuStrip
 		/// </history>
 		private static void ProcessControl(Control control, ToolTip tip)
 		{
@@ -965,6 +1023,30 @@ namespace AstroGrep.Windows
 								foreach (MenuItem subItem in item.MenuItems)
 								{
 									SetContextMenuItemText(control, item, subItem);
+								}
+							}
+						}
+					}
+
+					// set context menu strip if available
+					if (control.ContextMenuStrip != null && control.ContextMenuStrip.Items.Count > 0)
+					{
+						for (int i = 0; i < control.ContextMenuStrip.Items.Count; i++)
+						{
+							if (control.ContextMenuStrip.Items[i] is ToolStripMenuItem item)
+							{
+								SetContextMenuStripItemText(control, item, i);
+
+								// process any sub menu items
+								if (item.DropDownItems != null && item.DropDownItems.Count > 0)
+								{
+									for (int j = 0; j < item.DropDownItems.Count; j++)
+									{
+										if (item.DropDownItems[j] is ToolStripMenuItem subItem)
+										{
+											SetContextMenuStripItemText(control, item, subItem, i, j);
+										}
+									}
 								}
 							}
 						}

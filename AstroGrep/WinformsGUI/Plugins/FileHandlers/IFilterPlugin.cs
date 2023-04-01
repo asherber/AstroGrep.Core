@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-
+using IFilterTextReader;
 using libAstroGrep;
 using libAstroGrep.Plugin;
 
@@ -40,6 +40,7 @@ namespace AstroGrep.Plugins.FileHandlers
 	public class FileHandlersPlugin : IAstroGrepPlugin
 	{
 		private bool __IsAvailable;
+		private bool __IsFileSkipped = false;
 
 		/// <summary>
 		/// Initializes a new instance of the IFilterPlugin class.
@@ -66,51 +67,38 @@ namespace AstroGrep.Plugins.FileHandlers
 		/// <summary>
 		/// Gets the author of the plugin.
 		/// </summary>
-		public string Author
-		{
-			get { return "The AstroGrep Team"; }
-		}
+		public string Author => "The AstroGrep Team";
 
 		/// <summary>
 		/// Gets the description of the plugin.
 		/// </summary>
-		public string Description
-		{
-			get { return "Searches documents using the system file handler (IFilter) for the given file extension.  Currently doesn't support Context lines or Line Numbers.  Can be slower."; }
-		}
+		public string Description => "Searches documents using the system file handler (IFilter) for the given file extension.  Currently doesn't support Context lines or Line Numbers.  Can be slower.";
 
 		/// <summary>
 		/// Gets the valid extensions for this grep type.
 		/// </summary>
 		/// <remarks>Comma separated list of strings.</remarks>
-		public string Extensions
-		{
-			get { return "File Handlers"; }
-		}
+		public string Extensions => "File Handlers";
 
 		/// <summary>
 		/// Checks to see if the plugin is available on this system.
 		/// </summary>
-		public bool IsAvailable
-		{
-			get { return __IsAvailable; }
-		}
+		public bool IsAvailable => __IsAvailable;
+
+		/// <summary>
+		/// Determines if the file should be skipped or not.
+		/// </summary>
+		public bool IsFileSkipped => __IsFileSkipped;
 
 		/// <summary>
 		/// Gets the name of the plugin.
 		/// </summary>
-		public string Name
-		{
-			get { return "File Handlers"; }
-		}
+		public string Name => "File Handlers";
 
 		/// <summary>
 		/// Gets the version of the plugin.
 		/// </summary>
-		public string Version
-		{
-			get { return "1.2.0"; }
-		}
+		public string Version => "1.2.1";
 
 		/// <summary>
 		/// Handles disposing of the object.
@@ -141,97 +129,92 @@ namespace AstroGrep.Plugins.FileHandlers
 			ex = null;
 			MatchResult match = null;
 
-			if (IsFileSupported(file))
+			try
 			{
-				try
+				Regex reg = libAstroGrep.Grep.BuildSearchRegEx(searchSpec);
+				using (FilterReader reader = new FilterReader(file.FullName))
 				{
-					Regex reg = libAstroGrep.Grep.BuildSearchRegEx(searchSpec);
-					byte[] allBytes = File.ReadAllBytes(file.FullName);
-					using (FilterReader reader = new FilterReader(allBytes))
+					string line;
+					while ((line = reader.ReadLine()) != null)
 					{
-						reader.Init();
+						int posInStr = -1;
+						MatchCollection regCol = null;
 
-						string fileContent = reader.ReadToEnd();
-
-						if (!string.IsNullOrEmpty(fileContent))
+						if (searchSpec.UseRegularExpressions)
 						{
-							string[] lines = fileContent.Split(new char[] { '\n', '\r' });
-							for (int i = 0; i < lines.Length; i++)
+							regCol = reg.Matches(line);
+
+							if (regCol.Count > 0)
 							{
-								string line = lines[i];
-
-								int posInStr = -1;
-								MatchCollection regCol = null;
-
-								if (searchSpec.UseRegularExpressions)
+								posInStr = 1;
+							}
+						}
+						else
+						{
+							// If we are looking for whole worlds only, perform the check.
+							if (searchSpec.UseWholeWordMatching)
+							{
+								// if match is found, also check against our internal line hit count method to be sure they are in sync
+								Match mtc = reg.Match(line);
+								if (mtc != null && mtc.Success && libAstroGrep.Grep.RetrieveLineMatches(line, searchSpec).Count > 0)
 								{
-									regCol = reg.Matches(line);
-
-									if (regCol.Count > 0)
-									{
-										posInStr = 1;
-									}
-								}
-								else
-								{
-									// If we are looking for whole worlds only, perform the check.
-									if (searchSpec.UseWholeWordMatching)
-									{
-										// if match is found, also check against our internal line hit count method to be sure they are in sync
-										Match mtc = reg.Match(line);
-										if (mtc != null && mtc.Success && libAstroGrep.Grep.RetrieveLineMatches(line, searchSpec).Count > 0)
-										{
-											posInStr = mtc.Index;
-										}
-									}
-									else
-									{
-										posInStr = line.IndexOf(searchSpec.SearchText, searchSpec.UseCaseSensitivity ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase);
-									}
-								}
-
-								if (posInStr > -1)
-								{
-									if (match == null)
-									{
-										match = new MatchResult(file);
-
-										// found hit in file so just return
-										if (searchSpec.ReturnOnlyFileNames)
-										{
-											break;
-										}
-									}
-
-									var matchLineFound = new MatchResultLine() { Line = line, LineNumber = -1, HasMatch = true, LongLineCharCount = searchSpec.LongLineCharCount, BeforeAfterCharCount = searchSpec.BeforeAfterCharCount };
-
-									if (searchSpec.UseRegularExpressions)
-									{
-										posInStr = regCol[0].Index;
-										match.SetHitCount(regCol.Count);
-
-										foreach (Match regExMatch in regCol)
-										{
-											matchLineFound.Matches.Add(new MatchResultLineMatch(regExMatch.Index, regExMatch.Length));
-										}
-									}
-									else
-									{
-										var lineMatches = libAstroGrep.Grep.RetrieveLineMatches(line, searchSpec);
-										match.SetHitCount(lineMatches.Count);
-										matchLineFound.Matches = lineMatches;
-									}
-									matchLineFound.ColumnNumber = 1;
-									match.Matches.Add(matchLineFound);
+									posInStr = mtc.Index;
 								}
 							}
+							else
+							{
+								posInStr = line.IndexOf(searchSpec.SearchText, searchSpec.UseCaseSensitivity ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase);
+							}
+						}
+
+						if (posInStr > -1)
+						{
+							if (match == null)
+							{
+								match = new MatchResult(file);
+
+								// found hit in file so just return
+								if (searchSpec.ReturnOnlyFileNames)
+								{
+									break;
+								}
+							}
+
+							var matchLineFound = new MatchResultLine() { Line = line, LineNumber = -1, HasMatch = true, LongLineCharCount = searchSpec.LongLineCharCount, BeforeAfterCharCount = searchSpec.BeforeAfterCharCount };
+
+							if (searchSpec.UseRegularExpressions)
+							{
+								posInStr = regCol[0].Index;
+								match.SetHitCount(regCol.Count);
+
+								foreach (Match regExMatch in regCol)
+								{
+									matchLineFound.Matches.Add(new MatchResultLineMatch(regExMatch.Index, regExMatch.Length));
+								}
+							}
+							else
+							{
+								var lineMatches = libAstroGrep.Grep.RetrieveLineMatches(line, searchSpec);
+								match.SetHitCount(lineMatches.Count);
+								matchLineFound.Matches = lineMatches;
+							}
+							matchLineFound.ColumnNumber = 1;
+							match.Matches.Add(matchLineFound);
 						}
 					}
 				}
-				catch (Exception funcEx)
-				{
-					ex = funcEx;
-				}
+			}
+			catch (IFilterTextReader.Exceptions.IFFilterNotFound iEx)
+			{
+				// record warning to log file but don't report this error back up to grep processing
+				Common.Logging.LogClient.Instance.Logger.Warn(iEx, $"iFilter not found for {file.FullName}");
+
+				// flag this particular file to be searched by another plug-in/common grep processing
+				__IsFileSkipped = true;
+			}
+			catch (Exception funcEx)
+			{
+				ex = funcEx;
 			}
 
 			return match;
@@ -248,7 +231,27 @@ namespace AstroGrep.Plugins.FileHandlers
 		/// </history>
 		public bool IsFileSupported(FileInfo file)
 		{
-			return FilterLoader.LoadIFilter(file.Extension) != null;
+			//try
+			//{
+			//	using (FilterReader reader = new FilterReader(file.FullName))
+			//	{
+			//		reader.Dispose();
+			//	}
+
+			//	return true;
+			//}
+			//catch (IFilterTextReader.Exceptions.IFFilterNotFound iEx)
+			//{
+			//	// known that is file is not supported
+			//	Common.Logging.LogClient.Instance.Logger.Warn(iEx, $"iFilter not found for {file.FullName}");
+			//}
+			//catch (Exception ex)
+			//{
+			//	Common.Logging.LogClient.Instance.Logger.Warn(ex, $"Unknown error trying to detect iFilter for {file.FullName}");
+			//}
+
+			//return false;
+			return true;
 		}
 
 		/// <summary>
@@ -273,6 +276,7 @@ namespace AstroGrep.Plugins.FileHandlers
 		/// </history>
 		public bool Load(bool visible)
 		{
+			__IsFileSkipped = false;
 			return true;
 		}
 

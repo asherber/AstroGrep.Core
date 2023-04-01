@@ -33,7 +33,7 @@ namespace AstroGrep.Windows.Forms
       private System.Windows.Forms.Label lblDescription;
       private System.Windows.Forms.Label lblDisclaimer;
       private System.Windows.Forms.Label CopyrightLabel;
-      private System.Windows.Forms.ToolTip toolTip1;
+      private Windows.Controls.ThemeToolTip toolTip1;
 
       private void InitializeComponent()
       {
@@ -48,7 +48,7 @@ namespace AstroGrep.Windows.Forms
 			this.CopyrightLabel = new System.Windows.Forms.Label();
 			this.lblDescription = new System.Windows.Forms.Label();
 			this.lblDisclaimer = new System.Windows.Forms.Label();
-			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+			this.toolTip1 = new Windows.Controls.ThemeToolTip(this.components);
 			this.HeaderPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.picIcon)).BeginInit();
 			this.SuspendLayout();

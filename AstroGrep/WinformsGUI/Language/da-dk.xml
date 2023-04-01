@@ -183,6 +183,7 @@
       <control name="chkUseEncodingCache" value="Aktiver cache for fundne kodninger"/>
       <control name="btnCacheClear" value="Ryd cache"/>
       <control name="lblForceEncoding" value="Force Encoding"/>
+      <control name="ThemeGroup" value="Tema"/>
    </screen>
    
    <screen name="frmPrint" value="Print">
@@ -394,5 +395,9 @@
       <text name="Documents" value="Dokumenter"/>
       <text name="Code" value="Kode"/>
       <text name="Media" value="Medier"/>
+
+      <text name="Theme.System" value="System"/>
+      <text name="Theme.Light" value="Lys"/>
+      <text name="Theme.Dark" value="Mørk"/>
    </generic>
 </language>

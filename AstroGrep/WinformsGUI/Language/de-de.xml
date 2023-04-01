@@ -183,6 +183,7 @@
       <control name="chkUseEncodingCache" value="Zwischenspeicher für erkannte Kodierungen aktivieren"/>
       <control name="btnCacheClear" value="Zwischenspeicher leeren"/>
       <control name="lblForceEncoding" value="Kodierung erzwingen"/>
+      <control name="ThemeGroup" value="Thema"/>
    </screen>
 
    <screen name="frmPrint" value="Drucken">
@@ -394,6 +395,10 @@
       <text name="Documents" value="Unterlagen"/>
       <text name="Code" value="Code"/>
       <text name="Media" value="Medien"/>
+
+      <text name="Theme.System" value="System"/>
+      <text name="Theme.Light" value="Licht"/>
+      <text name="Theme.Dark" value="Dunkel"/>
    </generic>
 
 </language>

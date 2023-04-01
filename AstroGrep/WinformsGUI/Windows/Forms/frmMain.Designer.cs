@@ -28,7 +28,7 @@ namespace AstroGrep.Windows.Forms
       private System.Windows.Forms.Splitter splitUpDown;
       private System.Windows.Forms.Splitter splitLeftRight;
       private System.Windows.Forms.Panel pnlRightSide;
-      private System.Windows.Forms.StatusStrip stbStatus;
+      private Windows.Controls.ThemeStatusStrip stbStatus;
       private System.Windows.Forms.ToolStripStatusLabel sbStatusPanel;
       private System.Windows.Forms.ToolStripStatusLabel sbEncodingPanel;
       private System.Windows.Forms.ToolStripStatusLabel sbTotalCountPanel;
@@ -37,7 +37,7 @@ namespace AstroGrep.Windows.Forms
       private System.Windows.Forms.ToolStripStatusLabel sbErrorCountPanel;
       private System.Windows.Forms.Label lblSearchOptions;
       private System.Windows.Forms.LinkLabel lnkExclusions;
-      private System.Windows.Forms.ToolTip toolTip1;
+      private Windows.Controls.ThemeToolTip toolTip1;
       private System.Windows.Forms.Panel PanelOptionsContainer;
       private System.Windows.Forms.CheckBox chkNegation;
       private System.Windows.Forms.CheckBox chkCaseSensitive;
@@ -46,23 +46,23 @@ namespace AstroGrep.Windows.Forms
       private System.Windows.Forms.CheckBox chkRegularExpressions;
       private System.Windows.Forms.CheckBox chkSearchInResults;
       private System.Windows.Forms.CheckBox chkWholeWordOnly;
-      private System.Windows.Forms.MenuItem menuItem4;
-      private System.Windows.Forms.MenuItem CopyMenuItem;
-      private System.Windows.Forms.MenuItem OpenMenuItem;
-      private System.Windows.Forms.MenuItem DeleteMenuItem;
-      private System.Windows.Forms.MenuItem OpenFolderMenuItem;
-      private System.Windows.Forms.MenuItem menuItem2;
-      private System.Windows.Forms.MenuItem CopyNameMenuItem;
-      private System.Windows.Forms.MenuItem CopyLocatedInMenuItem;
-      private System.Windows.Forms.MenuItem CopyLocatedInAndNameMenuItem;
-      private System.Windows.Forms.MenuItem OpenWithAssociatedApp;
-      private System.Windows.Forms.MenuItem FileOperationsMenuItem;
-      private System.Windows.Forms.MenuItem FileCopyMenuItem;
-      private System.Windows.Forms.MenuItem FileDeleteMenuItem;
-      private System.Windows.Forms.MenuItem menuItem6;
+      private System.Windows.Forms.ToolStripSeparator menuItem4;
+      private System.Windows.Forms.ToolStripMenuItem CopyMenuItem;
+      private System.Windows.Forms.ToolStripMenuItem OpenMenuItem;
+      private System.Windows.Forms.ToolStripMenuItem DeleteMenuItem;
+      private System.Windows.Forms.ToolStripMenuItem OpenFolderMenuItem;
+      private System.Windows.Forms.ToolStripSeparator menuItem2;
+      private System.Windows.Forms.ToolStripMenuItem CopyNameMenuItem;
+      private System.Windows.Forms.ToolStripMenuItem CopyLocatedInMenuItem;
+      private System.Windows.Forms.ToolStripMenuItem CopyLocatedInAndNameMenuItem;
+      private System.Windows.Forms.ToolStripMenuItem OpenWithAssociatedApp;
+      private System.Windows.Forms.ToolStripMenuItem FileOperationsMenuItem;
+      private System.Windows.Forms.ToolStripMenuItem FileCopyMenuItem;
+      private System.Windows.Forms.ToolStripMenuItem FileDeleteMenuItem;
+      private System.Windows.Forms.ToolStripSeparator menuItem6;
       private System.Windows.Forms.ImageList ListViewImageList;
       private AstroGrep.Windows.Controls.PictureButton picBrowse;      
-      private System.Windows.Forms.ContextMenu fileLstMnu;      
+      private System.Windows.Forms.ContextMenuStrip fileLstMnu;      
       private System.Windows.Forms.CheckBox chkAllResultsAfterSearch;      
 
       private MenuStrip MainMenu;
@@ -171,31 +171,31 @@ namespace AstroGrep.Windows.Forms
 			this.ResultsNavPrevButton = new System.Windows.Forms.ToolStripButton();
 			this.splitUpDown = new System.Windows.Forms.Splitter();
 			this.lstFileNames = new System.Windows.Forms.ListView();
-			this.fileLstMnu = new System.Windows.Forms.ContextMenu();
-			this.CopyMenuItem = new System.Windows.Forms.MenuItem();
-			this.CopyNameMenuItem = new System.Windows.Forms.MenuItem();
-			this.CopyLocatedInMenuItem = new System.Windows.Forms.MenuItem();
-			this.CopyLocatedInAndNameMenuItem = new System.Windows.Forms.MenuItem();
-			this.menuItem4 = new System.Windows.Forms.MenuItem();
-			this.FileOperationsMenuItem = new System.Windows.Forms.MenuItem();
-			this.FileCopyMenuItem = new System.Windows.Forms.MenuItem();
-			this.FileDeleteMenuItem = new System.Windows.Forms.MenuItem();
-			this.menuItem6 = new System.Windows.Forms.MenuItem();
-			this.OpenMenuItem = new System.Windows.Forms.MenuItem();
-			this.OpenFolderMenuItem = new System.Windows.Forms.MenuItem();
-			this.OpenWithAssociatedApp = new System.Windows.Forms.MenuItem();
-			this.menuItem2 = new System.Windows.Forms.MenuItem();
-			this.DeleteMenuItem = new System.Windows.Forms.MenuItem();
+			this.fileLstMnu = new System.Windows.Forms.ContextMenuStrip();
+			this.CopyMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.CopyNameMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.CopyLocatedInMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.CopyLocatedInAndNameMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.menuItem4 = new System.Windows.Forms.ToolStripSeparator();
+			this.FileOperationsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.FileCopyMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.FileDeleteMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.menuItem6 = new System.Windows.Forms.ToolStripSeparator();
+			this.OpenMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.OpenFolderMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.OpenWithAssociatedApp = new System.Windows.Forms.ToolStripMenuItem();
+			this.menuItem2 = new System.Windows.Forms.ToolStripSeparator();
+			this.DeleteMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.ListViewImageList = new System.Windows.Forms.ImageList(this.components);
 			this.splitLeftRight = new System.Windows.Forms.Splitter();
-			this.stbStatus = new System.Windows.Forms.StatusStrip();
+			this.stbStatus = new Windows.Controls.ThemeStatusStrip();
 			this.sbStatusPanel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.sbEncodingPanel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.sbTotalCountPanel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.sbFileCountPanel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.sbFilterCountPanel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.sbErrorCountPanel = new System.Windows.Forms.ToolStripStatusLabel();
-			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+			this.toolTip1 = new Windows.Controls.ThemeToolTip(this.components);
 			this.MainMenu = new System.Windows.Forms.MenuStrip();
 			this.FileMenu = new System.Windows.Forms.ToolStripMenuItem();
 			this.NewWindowMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -246,6 +246,7 @@ namespace AstroGrep.Windows.Forms
 			this.HelpSep2Separator = new System.Windows.Forms.ToolStripSeparator();
 			this.donateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.AboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.MainMenuSeparator = new Controls.ThemeSeparator();
 			this.pnlSearch.SuspendLayout();
 			this.pnlSearchOptions.SuspendLayout();
 			this.PanelOptionsContainer.SuspendLayout();
@@ -827,6 +828,8 @@ namespace AstroGrep.Windows.Forms
 			this.splitUpDown.Cursor = System.Windows.Forms.Cursors.SizeNS;
 			this.splitUpDown.Dock = System.Windows.Forms.DockStyle.Top;
 			this.splitUpDown.Location = new System.Drawing.Point(2, 192);
+			this.splitUpDown.MinExtra = 100;
+			this.splitUpDown.MinSize = 100;
 			this.splitUpDown.Name = "splitUpDown";
 			this.splitUpDown.Size = new System.Drawing.Size(492, 2);
 			this.splitUpDown.TabIndex = 2;
@@ -835,7 +838,7 @@ namespace AstroGrep.Windows.Forms
 			// lstFileNames
 			// 
 			this.lstFileNames.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.lstFileNames.ContextMenu = this.fileLstMnu;
+			this.lstFileNames.ContextMenuStrip = this.fileLstMnu;
 			this.lstFileNames.Dock = System.Windows.Forms.DockStyle.Top;
 			this.lstFileNames.FullRowSelect = true;
 			this.lstFileNames.HideSelection = false;
@@ -856,7 +859,7 @@ namespace AstroGrep.Windows.Forms
 			// 
 			// fileLstMnu
 			// 
-			this.fileLstMnu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+			this.fileLstMnu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.CopyMenuItem,
             this.CopyNameMenuItem,
             this.CopyLocatedInMenuItem,
@@ -872,84 +875,72 @@ namespace AstroGrep.Windows.Forms
 			// 
 			// CopyMenuItem
 			// 
-			this.CopyMenuItem.Index = 0;
 			this.CopyMenuItem.Text = "Copy All";
 			this.CopyMenuItem.Click += new System.EventHandler(this.CopyMenuItem_Click);
 			// 
 			// CopyNameMenuItem
 			// 
-			this.CopyNameMenuItem.Index = 1;
 			this.CopyNameMenuItem.Text = "Copy Name";
 			this.CopyNameMenuItem.Click += new System.EventHandler(this.CopyNameMenuItem_Click);
 			// 
 			// CopyLocatedInMenuItem
 			// 
-			this.CopyLocatedInMenuItem.Index = 2;
 			this.CopyLocatedInMenuItem.Text = "Copy Located In";
 			this.CopyLocatedInMenuItem.Click += new System.EventHandler(this.CopyLocatedInMenuItem_Click);
 			// 
 			// CopyLocatedInAndNameMenuItem
 			// 
-			this.CopyLocatedInAndNameMenuItem.Index = 3;
 			this.CopyLocatedInAndNameMenuItem.Text = "Copy Located In + Name";
 			this.CopyLocatedInAndNameMenuItem.Click += new System.EventHandler(this.CopyLocatedInAndNameMenuItem_Click);
 			// 
 			// menuItem4
 			// 
-			this.menuItem4.Index = 4;
 			this.menuItem4.Text = "-";
 			// 
 			// FileOperationsMenuItem
 			// 
-			this.FileOperationsMenuItem.Index = 5;
-			this.FileOperationsMenuItem.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+			this.FileOperationsMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.FileCopyMenuItem,
             this.FileDeleteMenuItem});
 			this.FileOperationsMenuItem.Text = "File Operations";
 			// 
 			// FileCopyMenuItem
 			// 
-			this.FileCopyMenuItem.Index = 0;
+			this.FileCopyMenuItem.Image = Properties.Resources.page_copy;
 			this.FileCopyMenuItem.Text = "Copy";
 			this.FileCopyMenuItem.Click += new System.EventHandler(this.FileCopyMenuItem_Click);
 			// 
 			// FileDeleteMenuItem
 			// 
-			this.FileDeleteMenuItem.Index = 1;
+			this.FileDeleteMenuItem.Image = Properties.Resources.cross;
 			this.FileDeleteMenuItem.Text = "Delete";
 			this.FileDeleteMenuItem.Click += new System.EventHandler(this.FileDeleteMenuItem_Click);
 			// 
 			// menuItem6
 			// 
-			this.menuItem6.Index = 6;
 			this.menuItem6.Text = "-";
 			// 
 			// OpenMenuItem
 			// 
-			this.OpenMenuItem.Index = 7;
 			this.OpenMenuItem.Text = "Open File";
 			this.OpenMenuItem.Click += new System.EventHandler(this.OpenMenuItem_Click);
 			// 
 			// OpenFolderMenuItem
 			// 
-			this.OpenFolderMenuItem.Index = 8;
 			this.OpenFolderMenuItem.Text = "Open Directory";
 			this.OpenFolderMenuItem.Click += new System.EventHandler(this.OpenFolderMenuItem_Click);
 			// 
 			// OpenWithAssociatedApp
 			// 
-			this.OpenWithAssociatedApp.Index = 9;
 			this.OpenWithAssociatedApp.Text = "Open With Associated App";
 			this.OpenWithAssociatedApp.Click += new System.EventHandler(this.OpenWithAssociatedApp_Click);
 			// 
 			// menuItem2
 			// 
-			this.menuItem2.Index = 10;
 			this.menuItem2.Text = "-";
 			// 
 			// DeleteMenuItem
 			// 
-			this.DeleteMenuItem.Index = 11;
 			this.DeleteMenuItem.Text = "Remove from list";
 			this.DeleteMenuItem.Click += new System.EventHandler(this.DeleteMenuItem_Click);
 			// 
@@ -1090,6 +1081,7 @@ namespace AstroGrep.Windows.Forms
 			// 
 			// SelectPathMenuItem
 			// 
+			this.SelectPathMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("picBrowse.Image")));
 			this.SelectPathMenuItem.Name = "SelectPathMenuItem";
 			this.SelectPathMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
 			this.SelectPathMenuItem.Size = new System.Drawing.Size(222, 22);
@@ -1453,6 +1445,15 @@ namespace AstroGrep.Windows.Forms
 			this.AboutMenuItem.Text = "&About AstroGrep";
 			this.AboutMenuItem.Click += new System.EventHandler(this.AboutMenuItem_Click);
 			// 
+			// MainMenuSeparator
+			// 
+			this.MainMenuSeparator.Dock = System.Windows.Forms.DockStyle.Top;
+			this.MainMenuSeparator.Location = new System.Drawing.Point(0, 24);
+			this.MainMenuSeparator.Name = "MainMenuSeparator";
+			this.MainMenuSeparator.Size = new System.Drawing.Size(944, 2);
+			this.MainMenuSeparator.TabIndex = 4;
+			this.MainMenuSeparator.Text = "MainMenuSeparator";
+			// 
 			// frmMain
 			// 
 			this.AcceptButton = this.btnSearch;
@@ -1464,6 +1465,7 @@ namespace AstroGrep.Windows.Forms
 			this.Controls.Add(this.pnlRightSide);
 			this.Controls.Add(this.pnlSearch);
 			this.Controls.Add(this.stbStatus);
+			this.Controls.Add(this.MainMenuSeparator);
 			this.Controls.Add(this.MainMenu);
 			this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -1535,5 +1537,6 @@ namespace AstroGrep.Windows.Forms
       private ToolStripMenuItem ShowCharactersMenuItem;
       private LinkLabel lnkPlugins;
       private ToolStripMenuItem ExitAllMenuItem;
+	  private Controls.ThemeSeparator MainMenuSeparator;
    }
 }
