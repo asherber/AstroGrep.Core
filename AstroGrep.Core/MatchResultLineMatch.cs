@@ -6,7 +6,7 @@ using System.Text;
 namespace AstroGrep.Core
 {
    /// <summary>
-   /// 
+   /// Contains the information for an individual match within the a given line.
    /// </summary>
    /// <remarks>
    /// AstroGrep File Searching Utility. Written by Theodore L. Ward
@@ -31,11 +31,15 @@ namespace AstroGrep.Core
    /// </remarks>
    /// <history>
    /// [Curtis_Beard]      03/31/2015	ADD: rework Grep/Matches
+   /// [Curtis_Beard]      01/16/2019	FIX: 103, CHG: 122, trim long lines support
    /// </history>
    public class MatchResultLineMatch
    {
       /// <summary>Start position of found match in this line</summary>
       public int StartPosition { get; set; }
+
+      /// <summary>The original start position of found match in this line</summary>
+      public int OriginalStartPosition { get; set; }
 
       /// <summary>Length of found match in this line</summary>
       public int Length { get; set; }
@@ -46,6 +50,7 @@ namespace AstroGrep.Core
       public MatchResultLineMatch()
       {
          StartPosition = -1;
+         OriginalStartPosition = -1;
          Length = 0;
       }
 
@@ -57,6 +62,7 @@ namespace AstroGrep.Core
       public MatchResultLineMatch(int startPosition, int length)
       {
          StartPosition = startPosition;
+         OriginalStartPosition = StartPosition;
          Length = length;
       }
    }

@@ -32,6 +32,7 @@ namespace AstroGrep.Core.EncodingDetection
    /// </remarks>
    /// <history>
    /// [Curtis_Beard]		05/28/2015	FIX: 69, Created for speed improvements for encoding detection
+   /// [Curtis_Beard]	   01/10/2019  CHG: 136, add option to force encoding for all
    /// </history>
    public class EncodingOptions
    {
@@ -80,6 +81,15 @@ namespace AstroGrep.Core.EncodingDetection
       }
 
       /// <summary>
+      /// Gets/Sets whether a forced encoding CodePage is used.
+      /// </summary>
+      public int ForcedEncoding
+      {
+         get;
+         set;
+      }
+
+      /// <summary>
       /// Creates an instance of the EncodingOptions class.
       /// </summary>
       public EncodingOptions()
@@ -87,6 +97,7 @@ namespace AstroGrep.Core.EncodingDetection
          DetectFileEncoding = true;
          PerformanceSetting = Performance.Default;
          UseEncodingCache = true;
+         ForcedEncoding = -1;
       }
 
       /// <summary>
@@ -135,6 +146,7 @@ namespace AstroGrep.Core.EncodingDetection
       /// <returns>EncodingDetector.Options bit flag representation of selected detectors</returns>
       /// <history>
       /// [Curtis_Beard]	   05/26/2015	FIX: 69, add performance setting for file detection
+      /// [Curtis_Beard]		07/12/2019	FIX: 115, add AutoIt encoding method
       /// </history>
       public static EncodingDetector.Options GetEncodingDetectorOptionsByPerformance(Performance performanceSetting)
       {
@@ -143,16 +155,16 @@ namespace AstroGrep.Core.EncodingDetection
          switch (performanceSetting)
          {
             case Performance.Speed:
-               opts = EncodingDetector.Options.KlerkSoftBom | EncodingDetector.Options.WinMerge;
+               opts = EncodingDetector.Options.AutoIt;
                break;
 
             case Performance.Default:
             default:
-               opts = EncodingDetector.Options.KlerkSoftBom | EncodingDetector.Options.WinMerge | EncodingDetector.Options.MLang;
+               opts = EncodingDetector.Options.KlerkSoftBom | EncodingDetector.Options.MLang | EncodingDetector.Options.AutoIt;
                break;
 
             case Performance.Accuracy:
-               opts = EncodingDetector.Options.KlerkSoftBom | EncodingDetector.Options.WinMerge | EncodingDetector.Options.MozillaUCD | EncodingDetector.Options.MLang;
+               opts = EncodingDetector.Options.KlerkSoftBom | EncodingDetector.Options.MozillaUCD | EncodingDetector.Options.MLang | EncodingDetector.Options.AutoIt | EncodingDetector.Options.KlerkSoftHeuristics;
                break;
          }
 
